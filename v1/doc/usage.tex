@@ -1,0 +1,99 @@
+The most important class in \Cengine{} is that of the compute engine itself, \ccode{Cengine::Cengine}. 
+Normally a single instance of this class is initialized at startup and keeps running until 
+the user's program terminates. For example, 
+
+\texttt{~~~Cengine::Cengine engine(4)}
+
+initializes a compute engine with 4 CPU threads. 
+
+User level code does not have direct access to the data objects managed by the engine. 
+Rather, it can only issues commands to the engine via its \ccode{push} method. 
+The \ccode{push} method then returns a handle, which can subsequently be used to reference the object 
+stored internally. For example, 
+
+\texttt{~~~Chandle A=engine.push<new\_ctensor\_gaussian>(\{3,3\});}
+
+instructs the engine to create a new \m{3\times 3} complex matrix filled with random numbers 
+drawn IID from the standard normal distribution. Issuing the command 
+
+\texttt{~~~Chandle B=engine.push<ctensor\_add>(A,A);}
+
+adds \ccode{A} to itself and stores the result in an object referenced by \ccode{B}. 
+
+\Cengine{} follows the asynchronous, delayed execution model of computation. This means that most  
+commands are not executed immediately, but at some later moment in time, when,  
+depending on context, either a CPU thread becomes available, or a sufficient number of operations 
+of the same type have accumulated for execution on the GPU. 
+The order in which the operations are executed might also differ from the order that they 
+were issued to the engine. 
+However, the engine keeps track of dependencies between operations to ensure that the final result of 
+any computation is correct. 
+ 
+%This means that by the time the second of the above commands is issued to the engine, the original 
+%matrix \ccode{A} will not have been constructed yet. Therefore the engine enqueues the second operation 
+%respecting its dependency on the 
+
+In contrast, a small set of commands are \emph{blocking}, which means that calling function will  
+wait until the result has actually been computed. For example, the command 
+
+\texttt{~~~Gtensor M=engine.push<ctensor\_get>(B)}
+
+returns the value of \ccode{B} in a user side tensor object \ccode{M}. This command requires 
+explicitly materializing \ccode{B}, therefore it only returns after all computations leading up to \ccode{B} 
+are complete and \ccode{B} has been computed as well. Calling 
+
+\texttt{~~~cengine::flush(B)}
+
+has a similar effect, while 
+
+\texttt{~~~cengine::flush()}
+
+flushes all pending operations.  
+
+\Cengine{} also automatically takes care of memory management. In particular, 
+for any given backend object \ccode{T}, as soon as there are no operations pending that take \ccode{T} 
+as an argument and there are no user side handles pointing to \ccode{T} either, 
+\ccode{T} is scheduled for deletion. When the \ccode{Cengine::engine} object is shut down, all pending 
+operations are flushed and all backend objects are destroyed. 
+
+\section*{Operators}
+
+Commands in \Cengine{} are actually operators and the template argument of \ccode{Cengine::push} 
+command is the name of the corresponding class. The abstract base class of all 
+operator classes is \ccode{Cengine::Coperator}.  
+For example, the internal definition of the \ccode{ctensor\_add\_op} operator in abbreviated form is 
+
+\boxedcode{
+  class ctensor\_add\_op: public Coperator, public CumulativeOperator\{\\
+  public:\\ 
+\\ 
+\phantom{MMM}using Coperator::Coperator; \\ 
+\\
+\phantom{MMM}void exec()\{\\
+\phantom{MMMMMM}owner->obj=inputs[0]->obj;\\
+\phantom{MMMMMM}asCtensorB(owner).add(asCtensorB(inputs[1]));\\
+\phantom{MMM}\}\\
+\\
+\phantom{MMM}string str() const\{\\
+\phantom{MMMMMM}return "ctensor\_add"+inp\_str();\\
+\phantom{MMM}\}\\
+\\    
+\};
+}
+\mbox{} 
+
+In each operator class, the \ccode{exec} method is responsible for carrying out the actual operation on 
+the operator's arguments. In the case of \ccode{ctensor\_add\_op} this is  
+just involves calling the backend object's method for tensor summation. 
+However, in user-defined operators, the \ccode{exec} method is often significantly more involved. 
+Adding a new operator to \Cengine{} just requires defining the corresponding operator class. 
+
+The concrete data object that \ccode{ctensor\_add\_op} operates on is of type \ccode{Censing::CtensorB}, 
+which is the backend container for \ccode{ctensor} objects. 
+The built-in \ccode{rscalar, scalar} and \ccode{ctensor}, extended by user defined operators, 
+are sufficient for many purposes. However, new backend object classes are also easy to add, 
+by subclassing the \ccode{Cengine::Cobject} abstract class. 
+
+
+
+ 

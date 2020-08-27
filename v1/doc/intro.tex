@@ -1,0 +1,28 @@
+\Cengine{} is a lightweight \cpp{} compute engine designed to dynamically parallelize unstructured 
+numerical computations in a combination of two ways: 
+%mathematical workloads by 
+\begin{compactenum}[~~\m{\circ}]
+\item Distributing operations across multiple CPU threads, and/or 
+\item Batching together large number of operations of the same kind for parallel execution on the GPU. 
+\end{compactenum}
+\Cengine{} employs the delayed execution model of computation and internally uses a DAG-based scheduler 
+to ensure that dependency relationships are not violated. 
+
+From the user side the engine just expects a sequence of simple instructions such as 
+
+\texttt{~~~c=engine.push<ctensor\_add\_op>(a,b)}
+
+instructing it to add tensors \ccode{a} and \ccode{b} and store the result in \ccode{c}. 
+However, the instructions are not executed immediately, but rather buffered until one of the 
+internal CPU threads becomes 
+available and/or a sufficient number of operations have accumulated to be efficiently executed in parallel 
+on the GPU. The result of a sequence of operations is returned to the user once it is ready. 
+
+\Cengine{} offers a small number of built-in data types such as \ccode{rscalar, cscalar} and \ccode{ctensor} 
+for real/ complex valued scalar and tensor objects, together with a complement of basic linear algebra 
+operators acting on them. However, is designed to function equaly well with user-defined data types and 
+custom operators, and in fact we expect that in most use cases the engine will be extended in this way. 
+
+\Cengine{} is written in standard \cppe{} and has no other dependencies besides CUDA/CUBLAS 
+for GPU functionality.  
+

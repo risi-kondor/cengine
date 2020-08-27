@@ -77,6 +77,17 @@ namespace Cengine{
     }
 
 
+    template<typename OP>
+    Chandle* push(Chandle* h0){
+      return new_handle(enqueue(new OP(nodeof(h0))));
+    }
+
+    template<typename OP>
+    Chandle* push(Chandle* h0, Chandle* h1){
+      return new_handle(enqueue(new OP(nodeof(h0),nodeof(h1))));
+    }
+
+
     Chandle* operator()(Coperator* op){
       return new_handle(enqueue(op));
     }

@@ -1,0 +1,43 @@
+\begin{cldescr}{\ccode{Cscalar}}
+
+\begin{clgroup}[Constructors]
+\mmember{
+new\_cscalar\_op(const int nbu=-1, const int dev	=0)\\
+new\_cscalar\_zero\_op(const int nbu=-1, const int dev=0)\\
+new\_cscalar\_gaussian\_op(const int nbu=-1, const int dev=0)
+}{Construct a new \ccode{cscalar} object with \ccode{nbu} bundles on \ccode{dev}. 
+The three cases correspond to the object being uninitialized, initialized to zero, 
+or initialized with random standard normal entries.  
+\ccode{nbu=-1} signifies that the object is not bundled and \ccode{device=0} is the host.}
+
+\member{cscalar\_copy\_op(const cscalar\& x)}{Create a new \ccode{cscalar} by copying \ccode{x}}. 
+\end{clgroup}
+
+\begin{clgroup}[In-place operators]
+\member{cscalar\_set\_zero\_op(const cscalar\& x)}{Set \ccode{x} to zero.}
+\end{clgroup}
+
+\begin{clgroup}[Not in-place operators]
+\member{cscalar\_conj\_op(const cscalar\& x)}{Return \m{\wbar{x}}.}
+\member{cscalar\_get\_real\_op(const cscalar\& x)}{Return the real part of \m{x}.}
+\member{cscalar\_get\_imag\_op(const cscalar\& x)}{Return the imaginary part of \m{x}.}
+\end{clgroup}
+
+\begin{clgroup}[Cumulative operators]
+\member{cscalar\_add\_op(const cscalar\& r, const cscalar\& x)}{Set \m{r\leftarrow r+x}.}
+\member{cscalar\_subtract\_op(const cscalar\& r, const cscalar\& x)}{Set \m{r\leftarrow r-x}.}
+\member{cscalar\_add\_prod\_op(const cscalar\& r, const cscalar\& x, const cscalar\& y)}{
+	Set \m{r\leftarrow r+xy}.}
+\member{cscalar\_add\_div\_op(const cscalar\& r, const cscalar\& x, const cscalar\& y)}{
+	Set \m{r\leftarrow r+x/y}.}
+\\
+\member{cscalar\_add\_to\_real\_op(const cscalar\& r, const rscalar\& x)}{Set \m{r\leftarrow r+(x,0)}.}
+\member{cscalar\_add\_to\_imag\_op(const cscalar\& r, const rscalar\& x)}{Set \m{r\leftarrow r+(0,x)}.}
+\\
+\member{cscalar\_add\_abs\_op(const cscalar\& r, const cscalar\& x)}{Set \m{r\leftarrow r+\abs{x}}.}
+\member{cscalar\_add\_exp\_op(const cscalar\& r, const cscalar\& x)}{Set \m{r\leftarrow r+e^{x}}.}
+\member{cscalar\_add\_pow\_op(const cscalar\& r, const cscalar\& x, const float p, const float c)}{
+Set \m{r\leftarrow r+c\,x^p}.}
+\end{clgroup}
+
+\end{cldescr}

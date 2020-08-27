@@ -13,10 +13,9 @@ namespace Cengine{
 
   public:
 
-    virtual string classname() const=0;
-      //{
-      //return "CtensorB";
-      //}
+    virtual string classname() const{
+      return "";
+    }
 
 
   };

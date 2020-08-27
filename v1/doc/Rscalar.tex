@@ -1,0 +1,38 @@
+\begin{cldescr}{\ccode{Rscalar}}
+
+\begin{clgroup}[Constructors]
+\mmember{
+new\_rscalar\_op(const int nbu=-1, const int dev=0)\\
+new\_rscalar\_zero\_op(const int nbu=-1, const int dev=0)\\
+new\_rscalar\_gaussian\_op(const int nbu=-1, const int dev=0)
+}{Construct a new \ccode{rscalar} object with \ccode{nbu} bundles on device \ccode{dev}. 
+The three cases correspond to the object being uninitialized, initialized to zero, 
+or initialized with random standard normal entries. 
+\ccode{nbu=-1} signifies that the object is not bundled and \ccode{dev=0} is the host.}
+
+\member{rscalar\_copy\_op(const rscalar\& x)}{Create a new \ccode{rscalar} by copying \ccode{x}}. 
+\end{clgroup}
+
+\begin{clgroup}[In-place operators]
+\member{rscalar\_set\_zero\_op(const rscalar\& x)}{Set \ccode{x} to zero.}
+\end{clgroup}
+
+\begin{clgroup}[Cumulative operators]
+\member{rscalar\_add\_op(const rscalar\& r, const rscalar\& x)}{Set \m{r\leftarrow r+x}.}
+\member{rscalar\_subtract\_op(const rscalar\& r, const rscalar\& x)}{Set \m{r\leftarrow r-x}.}
+\member{rscalar\_add\_prod\_op(const rscalar\& r, const rscalar\& x, const rscalar\& y)}{
+	Set \m{r\leftarrow r+xy}.}
+\member{rscalar\_add\_div\_op(const rscalar\& r, const rscalar\& x, const rscalar\& y)}{
+	Set \m{r\leftarrow r+x/y}.}
+\\
+\member{rscalar\_add\_abs\_op(const rscalar\& r, const rscalar\& x)}{Set \m{r\leftarrow r+\abs{x}}.}
+\member{rscalar\_add\_exp\_op(const rscalar\& r, const rscalar\& x)}{Set \m{r\leftarrow r+e^{x}}.}
+\member{rscalar\_add\_pow\_op(const rscalar\& r, const rscalar\& x, const float p, const float c)}{
+Set \m{r\leftarrow r+c\,x^p}.}
+\end{clgroup}
+
+\begin{clgroup}[Blocking operators]
+\member{}
+\end{clgroup}
+
+\end{cldescr}

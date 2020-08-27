@@ -1,0 +1,77 @@
+\begin{cldescr}{\ccode{Ctensor}}
+
+\begin{clgroup}[Constructors]
+\mmember{
+new\_ctensor\_op(const Gdims\& dims, const int nbu=-1, const int dev	=0)\\
+new\_ctensor\_zero\_op(const Gdims\& dims, const int nbu=-1, const int dev=0)\\
+new\_ctensor\_identity\_op(const Gdims\& dims, const int nbu=-1, const int dev=0)\\
+new\_ctensor\_gaussian\_op(const Gdims\& dims, const int nbu=-1, const int dev=0)
+}{Construct a new \ccode{ctensor} object of size \ccode{dims} with \ccode{nbu} bundles on \ccode{dev}. 
+The four cases correspond to the object being uninitialized, initialized to zero, the identity matrix, 
+or initialized with random standard normal entries.  
+\ccode{nbu=-1} signifies that the object is not bundled and \ccode{device=0} is the host.}
+
+\member{new\_ctensor\_from\_gtensor\_op(const Gtensor\& T, const int nbu=-1, const int dev=0)}{
+Create a new \ccode{ctensor} from the \ccode{Gtensor} \ccode{T}.}. 
+
+\member{ctensor\_copy\_op(const ctensor\& x)}{Create a new \ccode{ctensor} by copying \ccode{x}}. 
+\end{clgroup}
+
+\begin{clgroup}[In-place operators]
+\member{ctensor\_set\_zero\_op(const ctensor\& x)}{Set \ccode{x} to zero.}
+\end{clgroup}
+
+\begin{clgroup}[Not in-place operators]
+\member{ctensor\_conj\_op(const ctensor\& x)}{Return \m{\wbar{x}}.}
+\member{ctensor\_get\_real\_op(const ctensor\& x)}{Return the real part of \m{x}.}
+\member{ctensor\_get\_imag\_op(const ctensor\& x)}{Return the imaginary part of \m{x}.}
+\end{clgroup}
+
+\begin{clgroup}[Cumulative operators]
+\member{ctensor\_add\_op(const ctensor\& r, const ctensor\& x)}{Set \m{r\leftarrow r+x}.}
+\member{ctensor\_add\_conj\_op(const ctensor\& r, const ctensor\& x)}{Set \m{r\leftarrow r+\wbar{x}}.}
+\member{ctensor\_add\_transp\_op(const ctensor\& r, const ctensor\& x)}{Set \m{r\leftarrow r+x^\top}.}
+\member{ctensor\_add\_herm\_op(const ctensor\& r, const ctensor\& x)}{Set \m{r\leftarrow r+x^\dag}.}
+\\ 
+\member{ctensor\_add\_times\_real\_op(const ctensor\& R, const ctensor\& A, const float c)}{Set \m{R\leftarrow R+cA}.}
+\member{ctensor\_add\_times\_complex\_op(const ctensor\& R, const ctensor\& A, const complex<float> c)}{Set \m{R\leftarrow R+cA}.}
+\\ 
+\member{ctensor\_add\_prod\_rA\_op(const ctensor\& R, const rscalar\& c, const ctensor\& A)}{Set \m{R\leftarrow R+cA}.}
+\member{ctensor\_add\_prod\_cA\_op(const ctensor\& R, const cscalar\& c, const ctensor\& A)}{Set \m{R\leftarrow R+cA}.}
+\\
+\mmember{
+ctensor\_add\_Mprod\_op(const ctensor\& R, const ctensor\& A, const ctensor\& B)\\
+ctensor\_add\_Mprod\_AT\_op(const ctensor\& R, const ctensor\& A, const ctensor\& B)\\
+ctensor\_add\_Mprod\_TA\_op(const ctensor\& R, const ctensor\& A, const ctensor\& B)\\
+ctensor\_add\_Mprod\_AC\_op(const ctensor\& R, const ctensor\& A, const ctensor\& B)\\
+ctensor\_add\_Mprod\_TC\_op(const ctensor\& R, const ctensor\& A, const ctensor\& B)\\
+ctensor\_add\_Mprod\_AH\_op(const ctensor\& R, const ctensor\& A, const ctensor\& B)\\
+ctensor\_add\_Mprod\_HA\_op(const ctensor\& R, const ctensor\& A, const ctensor\& B)\\
+}{
+Set \m{R\leftarrow R+AB},~ \m{R\leftarrow R+AB^\top},~ \m{R\leftarrow R+A^\topB},~ \m{R\leftarrow R+A\wbar{B}},~ 
+\m{R\leftarrow R+A^\top\wbar{B}},~ \m{R\leftarrow R+AB^\dag},~  \m{R\leftarrow R+A^\dagB}.}
+
+\end{clgroup}
+
+\begin{clgroup}[Into operators]
+\member{ctensor\_add\_inp\_op(const cscalar\& r, const ctensor\& A, const ctensor\& B)}{
+Set \m{r\leftarrow r+\inp{A,B}}.}
+\end{clgroup}
+
+\end{cldescr}
+
+\ignore{
+\member{ctensor\_subtract\_op(const ctensor\& r, const ctensor\& x)}{Set \m{r\leftarrow r-x}.}
+\member{ctensor\_add\_prod\_op(const ctensor\& r, const ctensor\& x, const ctensor\& y)}{
+	Set \m{r\leftarrow r+xy}.}
+\member{ctensor\_add\_div\_op(const ctensor\& r, const ctensor\& x, const ctensor\& y)}{
+	Set \m{r\leftarrow r+x/y}.}
+\\
+\member{ctensor\_add\_to\_real\_op(const ctensor\& r, const rscalar\& x)}{Set \m{r\leftarrow r+(x,0)}.}
+\member{ctensor\_add\_to\_imag\_op(const ctensor\& r, const rscalar\& x)}{Set \m{r\leftarrow r+(0,x)}.}
+\\
+\member{ctensor\_add\_abs\_op(const ctensor\& r, const ctensor\& x)}{Set \m{r\leftarrow r+\abs{x}}.}
+\member{ctensor\_add\_exp\_op(const ctensor\& r, const ctensor\& x)}{Set \m{r\leftarrow r+e^{x}}.}
+\member{ctensor\_add\_pow\_op(const ctensor\& r, const ctensor\& x, const float p, const float c)}{
+Set \m{r\leftarrow r+c\,x^p}.}
+}

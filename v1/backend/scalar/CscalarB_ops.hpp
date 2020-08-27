@@ -248,8 +248,10 @@ namespace Cengine{
   class cscalar_add_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
   public:
 
-    cscalar_add_op(Cnode* r, Cnode* x):
-      Coperator(r,x){}
+    using Coperator::Coperator; 
+
+    //cscalar_add_op(Cnode* r, Cnode* x):
+    //Coperator(r,x){}
 
     virtual void exec(){
       assert(!owner->obj);

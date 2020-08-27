@@ -10,22 +10,6 @@
 
 namespace Cengine{
 
-  class CtensorObject;
-
-  class CtensorSeed{
-  public:
-    
-    Gdims dims;
-    int nbu=-1;
-    int device; 
-
-    CtensorSeed(const Gdims& _dims, const int _nbu, const int _device=0):
-      dims(_dims), nbu(_nbu), device(_device){}
-
-    CtensorObject spawn(const fill_zero& fill);
-
-  };
-
 
   class CtensorObject{
   public:
@@ -124,9 +108,9 @@ namespace Cengine{
       return *this;
     }
     
-    CtensorSeed* seed() const{
-      return new CtensorSeed(dims,nbu);
-    }
+    //CtensorSeed* seed() const{
+    //return new CtensorSeed(dims,nbu);
+    //}
 
     CtensorObject(CtensorObject& x, const view_flag& flag):
       hdl(new_handle(x.hdl->node)){}
@@ -483,3 +467,20 @@ namespace Cengine{
     }
   */
 
+  /*
+  class CtensorObject;
+
+  class CtensorSeed{
+  public:
+    
+    Gdims dims;
+    int nbu=-1;
+    int device; 
+
+    CtensorSeed(const Gdims& _dims, const int _nbu, const int _device=0):
+      dims(_dims), nbu(_nbu), device(_device){}
+
+    CtensorObject spawn(const fill_zero& fill);
+
+  };
+  */

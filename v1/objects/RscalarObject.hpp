@@ -155,7 +155,8 @@ namespace Cengine{
 
 
     void add(const RscalarObject& x){
-      replace(hdl,(*Cengine_engine)(new rscalar_add_op(nodeof(hdl),nodeof(x.hdl))));
+      //replace(hdl,(*Cengine_engine)(new rscalar_add_op(nodeof(hdl),nodeof(x.hdl))));
+      replace(hdl,Cengine_engine->push<rscalar_add_op>(hdl,x.hdl));
     }
 
     void add(const RscalarObject& x, const float c){

@@ -1,0 +1,148 @@
+\documentclass{report}
+%\documentclass[9pt]{extreport}
+
+\usepackage{color}
+\usepackage{fancybox}
+\newcommand{\ccode}[1]{\texttt{#1}}
+\newcommand{\fcode}[1]{\framebox{\ccode{#1}}}
+\newcommand{\ffcode}[1]{\doublebox{\ccode{#1}}}
+\usepackage{tikz}
+\usetikzlibrary{patterns}
+\usetikzlibrary{shadows,matrix, calc, positioning, arrows,shapes,backgrounds, arrows.meta, quotes}
+\usetikzlibrary{shapes.geometric,fit,matrix,positioning,shapes.multipart}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{decorations.pathreplacing,fadings}
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+\usetikzlibrary{topaths, calc,3d}
+\usetikzlibrary{fit}
+\usepackage{fullpage}
+\usepackage{rbase}
+\usepackage{stmaryrd}
+\usepackage{natbib}
+\usepackage{epsfig}
+\usepackage{parskip}
+\usepackage{enumerate}
+\usepackage{enumitem}
+\usepackage{paralist}
+\usepackage[colorlinks=true, linkcolor=black, citecolor=black, urlcolor=blue]{hyperref}
+\usepackage{anyfontsize}
+\usepackage{tabularx}
+\usepackage{verbatim}
+\usepackage{algorithmic}
+\usepackage[all,2cell,ps,line]{xy}
+\usepackage{graphicx}
+
+\input{formatting}
+
+
+% ---- Custom definitions ---------------------------------------------------------------------------------------
+
+
+\newcommand{\exclude}[1]{#1}
+\newcommand{\df}[1]{\textbf{#1}}
+s\newcommand{\ignorefornow}{}
+\newcommand{\todo}[1]{{\color{red}[#1]}}
+\newcommand{\unimpl}[1]{{\color{gray} #1}}
+\newcommand{\variance}[1]{{\color{blue}#1}}
+\newcommand{\hidden}[1]{}
+\newcommand{\cconst}{}
+\newcommand{\includepic}[2]{\includegraphics[width=#1\textwidth]{#2}}
+\newcommand{\includepicc}[2]{\centerline{\includegraphics[width=#1\textwidth]{#2}}}
+
+\newcommand{\Cengine}{{\avant Cengine}}
+\newcommand{\GEnet}{{\avant GEnet}}
+\newcommand{\PyTorch}{\ccode{PyTorch}}
+\newcommand{\TensorFlow}{\ccode{TensorFlow}}
+\newcommand{\cpp}{C\texttt{++}}
+\newcommand{\cppe}{C\texttt{++11}}
+\newcommand{\numpy}{\texttt{numpy}}
+\newcommand{\BLAS}{\ccode{BLAS}}
+\newcommand{\Eigen}{\ccode{Eigen}}
+\newcommand{\Matlab}{\textsc{MATLAB}} %\texttrademark{}}
+\newcommand{\purev}{} %{\maltese}
+\newcommand{\const}{\copyright}
+\newcommand{\blck}[1]{\llbracket #1 \rrbracket} 
+
+\renewcommand{\v}{\ensuremath{\textbf{\textrm{v}}}}
+\newcommand{\w}{\ensuremath{\textbf{\textrm{w}}}}
+\renewcommand{\u}{\ensuremath{\textbf{\textrm{u}}}}
+\renewcommand{\zvec}{\ensuremath{\textbf{\textrm{z}}}}
+
+\newcommand{\mult}{mult}
+\newcommand{\apply}{apply}
+\newcommand{\iapply}{iapply}
+
+\makeatletter
+\providecommand*{\cupdotB}{\mathbin{\mathpalette\@cupdotB{}}}
+\newcommand*{\@cupdotB}[2]{\ooalign{$\m@th#1\cup$\cr\hidewidth$\m@th#1\cdot$\hidewidth}}
+\makeatother
+\newcommand{\cupdot}{\mathop{\cupdotB}}
+\newcommand{\prz}{\ensuremath{\mathbf{z}}}
+
+\newcommand{\anonym}[1]{#1}
+%\newcommand{\anonym}[1]{\m{\blacksquare\blacksquare\blacksquare}}
+
+\newcommand{\TODO}{{\color{red} TODO}}
+\newcommand{\sigr}[1]{{\color{blue}#1}}
+
+% ---------------------------------------------------------------------------------------------------------------
+
+
+
+\begin{document}
+\mbox{}\vspace{200pt}\\
+\noindent {\fontsize{50}{60}\fontfamily{pag}\selectfont \mbox{}\hspace{-3pt}Cengine}\vspace{8pt}\\ 
+\noindent {\fontsize{16}{25}\fontfamily{pag}\selectfont Asynchronous C++ CPU/GPU hybrid compute engine, v\ts 0.0}\\ \\ \\ \\ \\
+%\noindent {\fontsize{14}{20}\fontfamily{pag}\selectfont Current snapshot:~ April 2020}\\ 
+\vspace{180pt}\\
+\noindent{\mbox{}\hfill \fontsize{20}{16}\fontfamily{pag}\selectfont Risi Kondor}\vspace{4pt} \\ 
+%\noindent{\mbox{}\hfill \large \avant{Department of Computer Science, Statistics,}}\vspace{4pt} \\
+%\noindent{\mbox{}\hfill \large \avant{and the Computational and Applied Math Initiative}}\vspace{4pt} \\
+\noindent{\mbox{}\hfill \large \avant{Flatiron Institute NYC, and}}\vspace{4pt} \\
+\noindent{\mbox{}\hfill \large \avant{The University of Chicago}}\vspace{4pt} \\
+%\noindent{\large \avant{The University of Chicago}}\\ \\
+\pagestyle{empty}
+\clearpage
+
+%\maketitle
+\tableofcontents
+\clearpage
+
+\chapter*{Overview}
+\addcontentsline{toc}{part}{Overview}
+\input{intro}
+
+\addcontentsline{toc}{part}{Installation}
+\input{installation.tex} 
+\clearpage
+
+\chapter*{Usage}
+\addcontentsline{toc}{part}{Usage}
+\input{usage.tex} 
+\clearpage
+
+
+\part*{Reference}
+\addcontentsline{toc}{part}{Reference}
+%\input{cpp_classes}
+\clearpage 
+
+\chapter*{Built-in types and operators}
+\addcontentsline{toc}{chapter}{Built-in types and operators}
+%\input{}
+\clearpage 
+
+\input{Rscalar}
+\clearpage
+\input{Cscalar}
+\clearpage
+\input{Ctensor}
+\clearpage 
+
+\chapter*{Wrapper classes}
+\addcontentsline{toc}{chapter}{Wrapper classes}
+
+
+
+\end{document}
