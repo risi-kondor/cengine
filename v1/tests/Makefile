@@ -5,7 +5,7 @@ INCLUDE= -I$(INCLUDEDIR) -I$(SCALARDIR) -I$(TENSORDIR) -I$(ENGINEDIR) -I$(OBJECT
 
 DEPENDENCIES= $(INCLUDEDIR)/*.hpp $(SCALARDIR)/*.hpp $(TENSORDIR)/*.hpp $(ENGINEDIR)/*.hpp $(OBJECTSDIR)/*.hpp
 
-TESTS= testCengine1 testCengine2 testCengine3 testCengine4 testCengine6 
+TESTS= testCengine1 testCengine2 testCengine3 testCengine4 testCengine6 testCengine7 
 
 EXECS= 
 
@@ -69,6 +69,14 @@ ifdef WITH_CUDA
 	$(NVCC) $(NVCCFLAGS) -o testCengine6 testCengine6.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
 else
 	$(CC) -o testCengine6 testCengine6.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
+endif
+
+
+testCengine7: testCengine7.cpp $(DEPENDENCIES) 
+ifdef WITH_CUDA
+	$(NVCC) $(NVCCFLAGS) -o testCengine7 testCengine7.cpp $(CUDA_EXTERNS) $(CUDA_OBJECTS) $(CFLAGS) $(MACROS) $(INCLUDE) $(LIBS) 
+else
+	$(CC) -o testCengine7 testCengine7.cpp $(CFLAGS) $(INCLUDE) $(LIBS) 
 endif
 
 

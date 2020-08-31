@@ -1,13 +1,13 @@
-The most important class in \Cengine{} is that of the compute engine itself, \ccode{Cengine::Cengine}. 
+The most important class in \Cengine{} is the compute engine itself, \ccode{Cengine::Cengine}. 
 Normally a single instance of this class is initialized at startup and keeps running until 
-the user's program terminates. For example, 
+the program terminates. For example, 
 
 \texttt{~~~Cengine::Cengine engine(4)}
 
 initializes a compute engine with 4 CPU threads. 
 
 User level code does not have direct access to the data objects managed by the engine. 
-Rather, it can only issues commands to the engine via its \ccode{push} method. 
+Rather, it issues commands to the engine via the engine's \ccode{push} method. 
 The \ccode{push} method then returns a handle, which can subsequently be used to reference the object 
 stored internally. For example, 
 

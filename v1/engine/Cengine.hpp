@@ -22,6 +22,8 @@ namespace Cengine{
   class Cengine: public BasicCnodeEngine{
   public:
 
+    int nbatchers;
+
     set<Cnode*> nodes;
     deque<Cnode*> ready;
     set<Cnode*> waiting;
@@ -30,7 +32,8 @@ namespace Cengine{
     //set<Chandle*> handles;
 
     vector<Cworker*> workers;
-    vector<GenericMetaBatcher*> batchers;
+    //vector<GenericMetaBatcher*> batchers;
+    vector<Batcher*> batchers;
     bool shutdown=false; 
 
     int nnodes=0;
@@ -87,6 +90,11 @@ namespace Cengine{
       return new_handle(enqueue(new OP(nodeof(h0),nodeof(h1))));
     }
 
+    template<typename OP>
+    Chandle* push(Chandle* h0, Chandle* h1, Chandle* h2){
+      return new_handle(enqueue(new OP(nodeof(h0),nodeof(h1),nodeof(h2))));
+    }
+
 
     Chandle* operator()(Coperator* op){
       return new_handle(enqueue(op));
@@ -108,23 +116,33 @@ namespace Cengine{
       node->engine=this;
       Cnode* rnode=node;
 
-      if(dynamic_cast<BatchedOperator*>(op)){
-	//const int id=dynamic_cast<BatchedOperator*>(op)->batcher_id();
-	//assert(id<batchers.size());
-	//batchers[id]->push(op);
-	//if(dynamic_cast<ctensor_add_Mprod_op*>(op)) batchers[0]->push(op); 
-	//return rnode;
-      }
-
+      // An in-place operator is dependent on on all dependents of its self-argument
       if(dynamic_cast<InPlaceOperator*>(op)){
 	for(auto p: op->inputs[0]->dependents){
 	  if((p->dependents.insert(node)).second){
-	    //cout<<p->ident()<<":"<<p->computed<<endl; 
 	    if(!p->computed) node->nblockers++;
 	  }
 	}
-	//if(op->inputs[0]->dependents.size()>0) 
-	//cout<<op->str()<<endl; 
+      }
+
+      // Delegate to batched operator, if it exists 
+      if(dynamic_cast<BatchedOperator*>(op)){
+	BatchedOperator* bop=dynamic_cast<BatchedOperator*>(op);
+	if(bop->batcher_id()==0){
+	  bop->set_batcher_id(++nbatchers);
+	  batchers.push_back(bop->spawn_batcher());
+	}
+	if(dynamic_cast<InPlaceOperator*>(op)){
+	  op->inputs[0]->is_view=true; 
+	}
+	for(auto p: op->inputs){
+	  if((p->dependents.insert(node)).second){
+	    if(!p->computed) node->nblockers++;
+	  }
+	}
+	batchers[bop->batcher_id()-1]->push(op);
+	nodes.insert(node);
+	return rnode;
       }
 
       // Make diamond to reflect commutativity of cumulative operators 
@@ -193,8 +211,6 @@ namespace Cengine{
       //DEBUG_ENGINE({CoutLock lk; cout<<"    Releasing "<<node->ident()<<endl;});
       if(waiting.find(node)!=waiting.end()) waiting.erase(node);
       node->released=true; 
-      //unique_lock<mutex> lock(get_task_mx);
-      //get_task_cv.wait(lock);
       {
 	lock_guard<mutex> lock(ready_mx);
 	auto it=find(ready.begin(), ready.end(),node);
@@ -212,7 +228,7 @@ namespace Cengine{
 #else
       lock_guard<mutex> lock(done_mx);
 #endif
-      // DEBUG_ENGINE({CoutLock lk; cout<<"    Done "<<node->ident()<<endl;});
+      DEBUG_ENGINE({CoutLock lk; cout<<"    Done "<<node->ident()<<endl;});
       Coperator* op=node->op; 
       if(op){
 	for(int i=0; i<op->inputs.size(); i++){
@@ -272,17 +288,34 @@ namespace Cengine{
 
 
     void flush(Cnode* node){
-      //cout<<"flush"<<endl; 
+      {CoutLock lk; cout<<"flush"<<endl;}
       while(!node->computed){this_thread::sleep_for(chrono::milliseconds(13));} // TODO 
       return; 
      }
 
 
     void flush(){
-      //cout<<"flush"<<endl; 
-      while(ready.size()>0){this_thread::sleep_for(chrono::milliseconds(13));} // TODO 
+      {CoutLock lk; cout<<"flush"<<endl;}
+      //for(auto p:batchers) p->flush(); 
+      while(true){
+	{
+#ifdef ENGINE_PRIORITY
+	  priority_guard<3> lock(done_pmx,2); 
+#else
+	  lock_guard<mutex> lock(done_mx);
+#endif
+	  lock_guard<mutex> lock2(ready_mx);
+	  bool all_done=true;
+	  for(auto p:batchers) 
+	    if(p->flush()>0) all_done=false; 
+	  if(ready.size()>0) all_done=false;
+	  if(all_done) break;
+	}
+	this_thread::sleep_for(chrono::milliseconds(13));
+      }
+      {CoutLock lk; cout<<"flushed"<<endl;}
       return; 
-     }
+    }
 
 
   public: // ---- Handles ------------------------------------------------------------------------------------
@@ -304,7 +337,10 @@ namespace Cengine{
 	lock_guard<mutex> lock(done_mx);
 #endif
 	node->nhandles--;
-	if(node->dependents.size()==0 && node->nhandles==0) kill(node); 
+	if(node->dependents.size()==0 && node->nhandles==0){
+	  if(node->batcher) node->batcher->kill(node);
+	  else kill(node); 
+	}
     }
 
 

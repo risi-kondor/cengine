@@ -1,11 +1,12 @@
 #ifndef _Coperator
 #define _Coperator
 
-//#include ""
+//#include "Chandle.hpp"
 
 namespace Cengine{
 
   class Cnode;
+  class Batcher; 
 
 
   class Coperator{
@@ -58,14 +59,24 @@ namespace Cengine{
   };
 
 
+  // ---- Subclasses ---------------------------------------------------------------------------------------
+
+
   class CumulativeOperator{};
 
+
   class InPlaceOperator{};
+
 
   class BatchedOperator{
   public: 
     virtual int batcher_id() const=0;
+    virtual void set_batcher_id(const int i)=0;
+    virtual Batcher* spawn_batcher() const=0;
+    //virtual string classname() const {return "";}
   };
+
+
 
 }
 

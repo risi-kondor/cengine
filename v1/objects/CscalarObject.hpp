@@ -184,7 +184,8 @@ namespace Cengine{
 
 
     void add(const CscalarObject& x){
-      replace(hdl,engine::cscalar_add(hdl,x.hdl));
+      //replace(hdl,engine::cscalar_add(hdl,x.hdl));
+      replace(hdl,Cengine_engine->push<cscalar_add_op>(hdl,x.hdl));
     }
 
     void add_to_real(const RscalarObject& x){
@@ -222,7 +223,9 @@ namespace Cengine{
 
 
     void add_prod(const CscalarObject& x, const CscalarObject& y){
-      replace(hdl,engine::cscalar_add_prod(hdl,x.hdl,y.hdl));
+      //replace(hdl,engine::cscalar_add_prod(hdl,x.hdl,y.hdl));
+      //replace(hdl,Cengine_engine->push<cscalar_add_prod_op>(hdl,x.hdl,y.hdl));
+      replace(hdl,Cengine_engine->push<cscalar_add_prod2_op>(hdl,x.hdl,y.hdl));
     }
 
     void add_prodc1(const CscalarObject& x, const CscalarObject& y){

@@ -2,6 +2,8 @@
 #define _CscalarB_ops
 
 #include "CscalarB.hpp"
+#include "Coperators.hpp"
+
 
 namespace Cengine{
 
@@ -405,6 +407,23 @@ namespace Cengine{
 
     string str() const{
       return "cscalar_add_prod"+inp_str();
+    }
+
+  };
+
+
+  
+  class cscalar_add_prod2_op: public CumulativeOp3<CscalarB,CscalarB,CscalarB>{
+  public:
+
+    using CumulativeOp3::CumulativeOp3; 
+
+    void exec(CscalarB& r, const CscalarB& x, const CscalarB& y){
+      output().add_prod(x,y);
+    }
+
+    string str() const{
+      return "cscalar_add_prod2"+inp_str();
     }
 
   };

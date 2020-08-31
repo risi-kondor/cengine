@@ -6,6 +6,8 @@
 
 namespace Cengine{
 
+
+  /*
   class GenericMetaBatcher{
   public:
     
@@ -14,16 +16,32 @@ namespace Cengine{
     virtual void push(Coperator* op)=0; 
 
   };
+  */
+
+  /*
+  class Batcher{
+  public:
+
+    virtual ~Batcher(){}
+
+    virtual void push(Coperator* op)=0;
+    virtual void flush()=0; 
+
+  };
+  */
 
 
   template<typename OP, typename SUBINDEX, typename BATCHER>
-  class MetaBatcher: public GenericMetaBatcher{
+  class MetaBatcher: public Batcher{
   public:
+
+    BasicCnodeEngine* engine;
 
     unordered_map<SUBINDEX,BATCHER*> subengines;
 
-    MetaBatcher(){
-      //cout<<"New MetaBatcher for "<<OP::classname()<<endl;
+    MetaBatcher(BasicCnodeEngine* _engine): 
+      engine(_engine){
+      {CoutLock lk; cout<<"New MetaBatcher for "<<OP::classname()<<endl;}
     }
 
     virtual ~MetaBatcher(){
@@ -39,15 +57,30 @@ namespace Cengine{
 
       auto it=subengines.find(ix);
       if(it!=subengines.end()){
-	//it->second->push(op);
+	it->second->push(op);
 	return;
       }
 
-      BATCHER* sub=new BATCHER(ix);
+      BATCHER* sub=new BATCHER(engine,ix);
       subengines[ix]=sub;
-      //sub->push(op);
+      sub->push(op);
     }
 
+
+    int flush(){
+      int nwaiting=0; 
+      for(auto p:subengines)
+	nwaiting+=p.second->flush();
+      return nwaiting; 
+    }
+
+    void release(Cnode* node){
+    }
+
+    void kill(Cnode* node){
+    }
+
+    void exec(){}
 
   };
 

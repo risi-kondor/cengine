@@ -10,6 +10,7 @@ namespace Cengine{
   class BasicCnodeEngine{
   public:
 
+    virtual Cnode* new_node(Coperator* op)=0;
     virtual void release(Cnode* node)=0;
     virtual void done(Cnode* node)=0;
     virtual void kill(Cnode* node)=0;
@@ -19,10 +20,26 @@ namespace Cengine{
   };
 
 
+  class Batcher{
+  public:
+
+    virtual ~Batcher(){}
+
+    virtual void push(Coperator* op)=0;
+    virtual void release(Cnode* node)=0;
+    virtual void kill(Cnode* node)=0;
+
+    virtual void exec()=0; 
+    virtual int flush()=0; 
+
+  };
+
+
   class Cnode{
   public:
 
     BasicCnodeEngine* engine=nullptr;
+    Batcher* batcher=nullptr; 
 
     Coperator* op=nullptr;
     Cobject* obj=nullptr;
@@ -55,14 +72,18 @@ namespace Cengine{
     void remove_blocker(Cnode* blocker){ // protected_by done_mx 
       nblockers--;
       if(nblockers==0){
-	engine->release(this);
+	if(batcher) batcher->release(this); 
+	else engine->release(this);
       }
     }
     
     void remove_dependent(Cnode* dependent){ // protected by done_mx
       if(dependents.find(dependent)==dependents.end()) {CoutLock lk; cout<<"Dependent not found"<<endl;}
       dependents.erase(dependent);
-      if(dependents.size()==0 && nhandles==0) engine->kill(this); 
+      if(dependents.size()==0 && nhandles==0){
+	if(batcher) batcher->kill(this);
+	else engine->kill(this);
+      }
     }
 
     //void assess(){ // may be called from master thread, not protected 
