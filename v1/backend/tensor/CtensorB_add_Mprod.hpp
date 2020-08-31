@@ -1,9 +1,8 @@
 #ifndef _CtensorB_add_Mprod_batcher
 #define _CtensorB_add_Mprod_batcher
 
-//#include "Cbatcher.hpp"
+#include "BatcherA.hpp"
 #include "ctensor_Mprod_signature.hpp"
-#include "ctensor_add_Mprod_batcher.hpp"
 
 
 namespace Cengine{
@@ -19,6 +18,10 @@ namespace Cengine{
     ctensor_add_Mprod_op(Cnode* R, Cnode* A, Cnode* B):
       Coperator(R,A,B){}
 
+    void set_batcher_id(const int i){_batcher_id=i;}
+
+    int batcher_id() const{return _batcher_id;}
+
     static string classname(){
       return "ctensor_add_Mprod";
     }
@@ -33,14 +36,18 @@ namespace Cengine{
     }
 
 
-  public:
+    virtual void batched_exec(const vector<Cnode*>& nodes ){
+      DEBUG_ENGINE({CoutLock lk; cout<<"    \e[1mRunning batched ctensor_add_Mprod\e[0m"<<endl;});
+      assert(nodes.size()>0);
+      BasicCnodeEngine* engine=nodes[0]->engine;
 
-    void set_batcher_id(const int i){
-      _batcher_id=i;
-    }
-    
-    int batcher_id() const{
-      return _batcher_id;
+      for(auto node:nodes){
+	Coperator* op=node->op; 
+	op->exec();
+	engine->done(node);
+      }
+
+      DEBUG_ENGINE({CoutLock lk; cout<<"    \e[1mDone.\e[0m"<<endl;});
     }
 
     ctensor_Mprod_signature signature() const{
@@ -48,8 +55,11 @@ namespace Cengine{
     }
 
     Batcher* spawn_batcher() const{
-      return new MetaBatcher<ctensor_add_Mprod_op,ctensor_Mprod_signature,ctensor_add_Mprod_batcher>(inputs[0]->engine);
+      return new MetaBatcher<ctensor_add_Mprod_op,ctensor_Mprod_signature,BatcherA<ctensor_add_Mprod_op> >(inputs[0]->engine);
     }
+
+
+  public:
 
     string str() const{
       return "ctensor_add_Mprod"+inp_str();
@@ -63,3 +73,6 @@ namespace Cengine{
 
 
 #endif
+
+
+//return new MetaBatcher<ctensor_add_Mprod_op,ctensor_Mprod_signature,ctensor_add_Mprod_batcher>(inputs[0]->engine);

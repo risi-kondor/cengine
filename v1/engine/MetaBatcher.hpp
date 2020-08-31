@@ -7,30 +7,6 @@
 namespace Cengine{
 
 
-  /*
-  class GenericMetaBatcher{
-  public:
-    
-    virtual ~GenericMetaBatcher(){}
-
-    virtual void push(Coperator* op)=0; 
-
-  };
-  */
-
-  /*
-  class Batcher{
-  public:
-
-    virtual ~Batcher(){}
-
-    virtual void push(Coperator* op)=0;
-    virtual void flush()=0; 
-
-  };
-  */
-
-
   template<typename OP, typename SUBINDEX, typename BATCHER>
   class MetaBatcher: public Batcher{
   public:
@@ -61,7 +37,7 @@ namespace Cengine{
 	return;
       }
 
-      BATCHER* sub=new BATCHER(engine,ix);
+      BATCHER* sub=new BATCHER(engine);
       subengines[ix]=sub;
       sub->push(op);
     }
