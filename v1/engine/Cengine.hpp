@@ -289,14 +289,14 @@ namespace Cengine{
 
 
     void flush(Cnode* node){
-      {CoutLock lk; cout<<"flush"<<endl;}
+      DEBUG_ENGINE({CoutLock lk; cout<<"flush"<<endl;})
       while(!node->computed){this_thread::sleep_for(chrono::milliseconds(13));} // TODO 
       return; 
      }
 
 
     void flush(){
-      {CoutLock lk; cout<<"flush"<<endl;}
+      DEBUG_ENGINE({CoutLock lk; cout<<"flush"<<endl;})
       //for(auto p:batchers) p->flush(); 
       while(true){
 	{

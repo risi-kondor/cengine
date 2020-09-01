@@ -1,18 +1,10 @@
 #include "Cengine_base.hpp"
 
-//#include "SO3_CGbank.hpp"
-//#include "SO3_SPHgen.hpp"
-//#include "Factorial.hpp"
-//#include "WignerMatrix.hpp"
 #include "Cengine.hpp"
-
 #include "CtensorB_add_Mprod.hpp"
 
 std::default_random_engine rndGen;
 mutex Cengine::CoutLock::mx;
-
-//vector<int> Cengine::factorial::fact;
-
 Cengine::Cengine* Cengine_engine=new Cengine::Cengine();
 
 template<> int Cengine::ctensor_add_Mprod_op<0,0>::_batcher_id=0; 

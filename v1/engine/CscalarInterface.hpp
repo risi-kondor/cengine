@@ -8,16 +8,16 @@
 #include "RscalarB_ops.hpp"
 #include "CscalarB_ops.hpp"
 
-extern Cengine::Cengine* Cengine_engine;
+extern ::Cengine::Cengine* Cengine_engine;
 
 
 namespace Cengine{
 
   namespace engine{
 
-    Chandle* rscalar_add(Chandle* r, Chandle* x){
-      return new_handle(Cengine_engine->enqueue(new rscalar_add_op(nodeof(r),nodeof(x))));
-    }
+    //Chandle* rscalar_add(Chandle* r, Chandle* x){
+    //return new_handle(Cengine_engine->enqueue(new rscalar_add_op(nodeof(r),nodeof(x))));
+    //}
 
 
 

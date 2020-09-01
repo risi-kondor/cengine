@@ -5,7 +5,7 @@
 #include "InterfaceBase.hpp"
 #include "RscalarB_ops.hpp"
 
-extern Cengine::Cengine* Cscalar_engine;
+extern ::Cengine::Cengine* Cscalar_engine;
 
 
 namespace Cengine{

@@ -4,7 +4,7 @@
 #include "Cengine.hpp"
 #include "SO3partB_ops.hpp"
 
-extern Cengine::Cengine* Cengine_engine;
+extern ::Cengine::Cengine* Cengine_engine;
 
 
 namespace Cengine{
