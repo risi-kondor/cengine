@@ -243,7 +243,8 @@ namespace Cengine{
 
   };
 
-  
+
+  /*
   class ctensor_add_Mprod_AT_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
   public:
 
@@ -262,8 +263,9 @@ namespace Cengine{
     }
 
   };
-  
+  */
 
+  /*
   class ctensor_add_Mprod_TA_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
   public:
 
@@ -282,11 +284,12 @@ namespace Cengine{
     }
 
   };
+  */
 
-
+  /*
   class ctensor_add_Mprod_AC_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
   public:
-
+  
     ctensor_add_Mprod_AC_op(Cnode* R, Cnode* A, Cnode* B):
       Coperator(R,A,B){}
 
@@ -302,8 +305,9 @@ namespace Cengine{
     }
 
   };
-  
+  */
 
+  /*
   class ctensor_add_Mprod_TC_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
   public:
 
@@ -322,8 +326,9 @@ namespace Cengine{
     }
 
   };
-  
+  */
 
+  /*
   class ctensor_add_Mprod_AH_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
   public:
 
@@ -341,8 +346,9 @@ namespace Cengine{
     }
 
   };
-  
+  */
 
+  /*
   class ctensor_add_Mprod_HA_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
   public:
 
@@ -360,7 +366,7 @@ namespace Cengine{
     }
 
   };
-  
+  */
 
 
 

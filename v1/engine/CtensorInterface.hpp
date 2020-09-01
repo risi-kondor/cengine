@@ -140,31 +140,31 @@ namespace Cengine{
 
 
     Chandle* ctensor_add_Mprod(Chandle* r, Chandle* A, Chandle* B){
-      return new_handle(Cengine_engine->enqueue(new ctensor_add_Mprod_op(nodeof(r),nodeof(A),nodeof(B))));
+      return new_handle(Cengine_engine->enqueue(new ctensor_add_Mprod_op<0,0>(nodeof(r),nodeof(A),nodeof(B))));
     }
 
     Chandle* ctensor_add_Mprod_AT(Chandle* r, Chandle* A, Chandle* B){
-      return new_handle(Cengine_engine->enqueue(new ctensor_add_Mprod_AT_op(nodeof(r),nodeof(A),nodeof(B))));
+      return new_handle(Cengine_engine->enqueue(new ctensor_add_Mprod_op<2,0>(nodeof(r),nodeof(A),nodeof(B))));
     }
 
     Chandle* ctensor_add_Mprod_TA(Chandle* r, Chandle* A, Chandle* B){
-      return new_handle(Cengine_engine->enqueue(new ctensor_add_Mprod_TA_op(nodeof(r),nodeof(A),nodeof(B))));
+      return new_handle(Cengine_engine->enqueue(new ctensor_add_Mprod_op<1,0>(nodeof(r),nodeof(A),nodeof(B))));
     }
 
     Chandle* ctensor_add_Mprod_AC(Chandle* r, Chandle* A, Chandle* B){
-      return new_handle(Cengine_engine->enqueue(new ctensor_add_Mprod_AC_op(nodeof(r),nodeof(A),nodeof(B))));
+      return new_handle(Cengine_engine->enqueue(new ctensor_add_Mprod_op<0,2>(nodeof(r),nodeof(A),nodeof(B))));
     }
 
     Chandle* ctensor_add_Mprod_TC(Chandle* r, Chandle* A, Chandle* B){
-      return new_handle(Cengine_engine->enqueue(new ctensor_add_Mprod_TC_op(nodeof(r),nodeof(A),nodeof(B))));
+      return new_handle(Cengine_engine->enqueue(new ctensor_add_Mprod_op<1,2>(nodeof(r),nodeof(A),nodeof(B))));
     }
 
     Chandle* ctensor_add_Mprod_AH(Chandle* r, Chandle* A, Chandle* B){
-      return new_handle(Cengine_engine->enqueue(new ctensor_add_Mprod_AH_op(nodeof(r),nodeof(A),nodeof(B))));
+      return new_handle(Cengine_engine->enqueue(new ctensor_add_Mprod_op<2,2>(nodeof(r),nodeof(A),nodeof(B))));
     }
 
     Chandle* ctensor_add_Mprod_HA(Chandle* r, Chandle* A, Chandle* B){
-      return new_handle(Cengine_engine->enqueue(new ctensor_add_Mprod_HA_op(nodeof(r),nodeof(A),nodeof(B))));
+      return new_handle(Cengine_engine->enqueue(new ctensor_add_Mprod_op<1,1>(nodeof(r),nodeof(A),nodeof(B))));
     }
 
 

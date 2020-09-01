@@ -2,7 +2,7 @@
 #define _CtensorBpack
 
 #include "CtensorB.hpp"
-
+#include "Cnode.hpp"
 
 namespace Cengine{
 
@@ -23,6 +23,16 @@ namespace Cengine{
 
     CtensorBpack(const CtensorB& x):
       dims(x.dims), nbu(x.nbu), device(x.device){}
+
+    CtensorBpack(const vector<Cnode*>& x, const int s){
+      const int N=x.size();
+      assert(N>0);
+      assert(dynamic_cast<CtensorB*>(x[0]->op->inputs[s]->obj));
+      pack.resize(N);
+      for(int i=0; i<N; i++)
+	pack[i]=dynamic_cast<CtensorB*>(x[i]->op->inputs[s]->obj);
+    }
+
 
     ~CtensorBpack(){
       if(parr) CUDA_SAFE(cudaFree(parr));
@@ -88,8 +98,8 @@ namespace Cengine{
       float* arr[N]; 
       float* arrc[N]; 
       for(int i=0; i<N; i++){
-	arr[i]=pack[i]->arr;
-	arrc[i]=pack[i]->arrc;
+	arr[i]=pack[i]->arrg;
+	arrc[i]=pack[i]->arrgc;
       }
       
       CUDA_SAFE(cudaMalloc((void ***)&parr, N*sizeof(float*)));

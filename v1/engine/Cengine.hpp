@@ -34,6 +34,7 @@ namespace Cengine{
     vector<Cworker*> workers;
     //vector<GenericMetaBatcher*> batchers;
     vector<Batcher*> batchers;
+    bool batching=true; 
     bool shutdown=false; 
 
     int nnodes=0;
@@ -126,7 +127,7 @@ namespace Cengine{
       }
 
       // Delegate to batched operator, if it exists 
-      if(dynamic_cast<BatchedOperator*>(op)){
+      if(dynamic_cast<BatchedOperator*>(op) && batching){
 	BatchedOperator* bop=dynamic_cast<BatchedOperator*>(op);
 	if(bop->batcher_id()==0){
 	  bop->set_batcher_id(++nbatchers);

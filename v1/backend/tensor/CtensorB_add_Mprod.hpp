@@ -1,6 +1,7 @@
 #ifndef _CtensorB_add_Mprod_batcher
 #define _CtensorB_add_Mprod_batcher
 
+#include "CtensorBpack.hpp"
 #include "BatcherA.hpp"
 #include "ctensor_Mprod_signature.hpp"
 
@@ -8,7 +9,7 @@
 namespace Cengine{
 
 
-
+  template<int Tsel, int Csel>
   class ctensor_add_Mprod_op: public Coperator, public CumulativeOperator, public InPlaceOperator, 
     public BatchedOperator{
   public:
@@ -23,7 +24,9 @@ namespace Cengine{
     int batcher_id() const{return _batcher_id;}
 
     static string classname(){
-      return "ctensor_add_Mprod";
+      if(Tsel==0) return "ctensor_add_Mprod<"+to_string(Csel)+">";
+      if(Tsel==1) return "ctensor_add_Mprod_TA<"+to_string(Csel)+">";
+      if(Tsel==2) return "ctensor_add_Mprod_AT<"+to_string(Csel)+">";
     }
     
 
@@ -32,7 +35,10 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      asCtensorB(owner).add_Mprod<0>(asCtensorB(inputs[1]),asCtensorB(inputs[2]));
+      CtensorB& obj=asCtensorB(owner); 
+      if(Tsel==0) obj.add_Mprod<0>(asCtensorB(inputs[1]),asCtensorB(inputs[2]));
+      if(Tsel==1) obj.add_Mprod_TA<Csel>(asCtensorB(inputs[1]),asCtensorB(inputs[2]));
+      if(Tsel==2) obj.add_Mprod_AT<Csel>(asCtensorB(inputs[1]),asCtensorB(inputs[2]));
     }
 
 
@@ -41,11 +47,24 @@ namespace Cengine{
       assert(nodes.size()>0);
       BasicCnodeEngine* engine=nodes[0]->engine;
 
-      for(auto node:nodes){
-	Coperator* op=node->op; 
-	op->exec();
-	engine->done(node);
-      }
+      CtensorBpack R(nodes,0);
+      CtensorBpack X(nodes,1);
+      CtensorBpack Y(nodes,2);
+
+      R.to_device(0);
+      X.to_device(0);
+      Y.to_device(0);
+      
+      if(Tsel==0) R.add_Mprod<Csel>(X,Y);
+      if(Tsel==1) R.add_Mprod_TA<Csel>(X,Y);
+      if(Tsel==2) R.add_Mprod_AT<Csel>(X,Y);
+
+      const int N=nodes.size();
+      for(int i=0; i<N; i++)
+	nodes[i]->op->owner->obj=R.pack[i];
+
+      for(int i=0; i<N; i++)
+	engine->done(nodes[i]);
 
       DEBUG_ENGINE({CoutLock lk; cout<<"    \e[1mDone.\e[0m"<<endl;});
     }
@@ -55,7 +74,7 @@ namespace Cengine{
     }
 
     Batcher* spawn_batcher() const{
-      return new MetaBatcher<ctensor_add_Mprod_op,ctensor_Mprod_signature,BatcherA<ctensor_add_Mprod_op> >(inputs[0]->engine);
+      return new MetaBatcher<ctensor_add_Mprod_op,ctensor_Mprod_signature,BatcherA<ctensor_add_Mprod_op<Tsel,Csel> > >(inputs[0]->engine);
     }
 
 
