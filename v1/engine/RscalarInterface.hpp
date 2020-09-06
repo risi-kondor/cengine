@@ -113,14 +113,14 @@ namespace Cengine{
 
     // ---- Output operations -------------------------------------------------------------------------
 
-
-    vector<float> rscalar_get(Chandle* hdl){
-      Cengine_engine->flush(hdl->node);
-      return asRscalarB(hdl->node->obj);
-    }
+  }
+  
+  vector<float> rscalar_get(Chandle* hdl){
+    Cengine_engine->flush(hdl->node);
+    return asRscalarB(hdl->node->obj);
+  }
   
 
-  }
 }
 
 

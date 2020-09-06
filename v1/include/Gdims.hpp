@@ -8,7 +8,7 @@
 
 namespace Cengine{
 
-    
+
   class Gdims: public vector<int>{
   public:
 
@@ -23,7 +23,7 @@ namespace Cengine{
     Gdims(const initializer_list<int>& x){
       for(auto p:x) if(p>=0) push_back(p);
     }
-    
+
     Gdims(const int i0): vector<int>(1){
       (*this)[0]=i0;
     }
@@ -71,18 +71,18 @@ namespace Cengine{
       if(n==-1) n=size()-beg;
       Gdims R;
       for(int i=0; i<n; i++)
-	R.push_back((*this)[beg+i]);
+	     R.push_back((*this)[beg+i]);
       return R;
     }
 
     Gdims append(const int i) const{
-      Gdims R=*this; 
+      Gdims R=*this;
       if(i>=0) R.push_back(i);
       return R;
     }
 
     Gdims prepend(const int i) const{
-      Gdims R; 
+      Gdims R;
       if(i>=0) R.push_back(i);
       for(auto p:*this) R.push_back(p);
       return R;
@@ -140,7 +140,7 @@ namespace std{
   public:
     size_t operator()(const Cengine::Gdims& dims) const{
       size_t t=0;
-      for(int i=0; i<dims.size(); i++) t=(t^hash<int>()(dims[i]))<<1; 
+      for(int i=0; i<dims.size(); i++) t=(t^hash<int>()(dims[i]))<<1;
       return t;
     }
   };
@@ -149,4 +149,4 @@ namespace std{
 
 
 
-#endif 
+#endif

@@ -703,7 +703,7 @@ namespace Cengine{
 	FCG_UNIMPL(); 
       }
     }
-
+    
 
 
   public: // ---- Neural net notnlinearities -----------------------------------------------------------------

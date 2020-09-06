@@ -81,6 +81,9 @@ namespace Cengine{
     }
 
 
+  public: // ---- push templates 
+
+
     template<typename OP>
     Chandle* push(Chandle* h0){
       return new_handle(enqueue(new OP(nodeof(h0))));
@@ -95,6 +98,55 @@ namespace Cengine{
     Chandle* push(Chandle* h0, Chandle* h1, Chandle* h2){
       return new_handle(enqueue(new OP(nodeof(h0),nodeof(h1),nodeof(h2))));
     }
+
+
+    template<typename OP, typename ARG0>
+    Chandle* push(const ARG0 arg0){
+      return new_handle(enqueue(new OP(arg0)));
+    }
+
+    template<typename OP, typename ARG0>
+    Chandle* push(Chandle* h0, const ARG0 arg0){
+      return new_handle(enqueue(new OP(nodeof(h0),arg0)));
+    }
+
+    template<typename OP, typename ARG0>
+    Chandle* push(Chandle* h0, Chandle* h1, const ARG0 arg0){
+      return new_handle(enqueue(new OP(nodeof(h0),nodeof(h1),arg0)));
+    }
+
+    template<typename OP, typename ARG0>
+    Chandle* push(Chandle* h0, Chandle* h1, Chandle* h2, const ARG0 arg0){
+      return new_handle(enqueue(new OP(nodeof(h0),nodeof(h1),nodeof(h2),arg0)));
+    }
+
+
+    template<typename OP, typename ARG0, typename ARG1>
+    Chandle* push(const ARG0 arg0, const ARG1 arg1){
+      return new_handle(enqueue(new OP(arg0,arg1)));
+    }
+
+    template<typename OP, typename ARG0, typename ARG1>
+    Chandle* push(Chandle* h0, const ARG0 arg0, const ARG1 arg1){
+      return new_handle(enqueue(new OP(nodeof(h0), arg0,arg1)));
+    }
+
+    template<typename OP, typename ARG0, typename ARG1>
+    Chandle* push(Chandle* h0, Chandle* h1, const ARG0 arg0, const ARG1 arg1){
+      return new_handle(enqueue(new OP(nodeof(h0), nodeof(h1), arg0, arg1)));
+    }
+
+    template<typename OP, typename ARG0, typename ARG1>
+    Chandle* push(Chandle* h0, Chandle* h1, Chandle* h2, const ARG0 arg0, const ARG1 arg1){
+      return new_handle(enqueue(new OP(nodeof(h0), nodeof(h1), nodeof(h2), arg0, arg1)));
+    }
+
+
+    template<typename OP, typename ARG0, typename ARG1, typename ARG2>
+    Chandle* push(const ARG0 arg0, const ARG1 arg1, const ARG2 arg2){
+      return new_handle(enqueue(new OP(arg0,arg1,arg2)));
+    }
+
 
 
     Chandle* operator()(Coperator* op){
