@@ -437,11 +437,11 @@ inline void printv(const vector<TYPE>& x){
 
 
 #ifdef _WITH_CUDA
-#define CUDA_SAFE(err) __cudaSafeCall( err, __FILE__, __LINE__ )
-inline void __cudaSafeCall( cudaError err, const char *file, const int line ){
+#define CUDA_SAFE(err) __cudaSafeCall( err, __FILE__, __LINE__ );
+inline void __cudaSafeCall(cudaError err, const char *file, const int line){
   if(cudaSuccess!=err){
-    fprintf( stderr, "cudaSafeCall() failed at %s:%i : %s\n",file, line, cudaGetErrorString( err ) );
-    exit( -1 );}
+    fprintf(stderr,"cudaSafeCall() failed at %s:%i : %s\n",file,line,cudaGetErrorString(err));
+    exit(-1);}
   return;
 }
 #else 

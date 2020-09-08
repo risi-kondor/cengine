@@ -53,14 +53,14 @@ void add_Mprod(const CFtensor& x, const CFtensor& y, const int nx=1, const int n
     if (selector==2||selector==3) alpha2=-1.0;
     if (selector==1||selector==3) alpha3=-1.0;
 
-    CUBLAS_SAFE(cublasSgemm(GEnet_cublas,CUBLAS_OP_N,CUBLAS_OP_N,J,I,K,&alpha0,
-	y.arrg,J,x.arrg,K,&beta,arrg,J);); 
-    CUBLAS_SAFE(cublasSgemm(GEnet_cublas,CUBLAS_OP_N,CUBLAS_OP_N,J,I,K,&alpha1,
-	y.arrgc,J,x.arrgc,K,&beta,arrg,J);); 
-    CUBLAS_SAFE(cublasSgemm(GEnet_cublas,CUBLAS_OP_N,CUBLAS_OP_N,J,I,K,&alpha2,
-	y.arrgc,J,x.arrg,K,&beta,arrgc,J);); 
-    CUBLAS_SAFE(cublasSgemm(GEnet_cublas,CUBLAS_OP_N,CUBLAS_OP_N,J,I,K,&alpha3,
-	y.arrg,J,x.arrgc,K,&beta,arrgc,J);); 
+    CUBLAS_SAFE(cublasSgemm(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_N,J,I,K,&alpha0,
+	y.arrg,J,x.arrg,K,&beta,arrg,J)); 
+    CUBLAS_SAFE(cublasSgemm(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_N,J,I,K,&alpha1,
+	y.arrgc,J,x.arrgc,K,&beta,arrg,J)); 
+    CUBLAS_SAFE(cublasSgemm(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_N,J,I,K,&alpha2,
+	y.arrgc,J,x.arrg,K,&beta,arrgc,J)); 
+    CUBLAS_SAFE(cublasSgemm(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_N,J,I,K,&alpha3,
+	y.arrg,J,x.arrgc,K,&beta,arrgc,J)); 
   }
 
 }
@@ -120,14 +120,14 @@ void add_Mprod_AT(const CFtensor& x, const CFtensor& y, const int nx=1, const in
     if (selector==2||selector==3) alpha2=-1.0;
     if (selector==1||selector==3) alpha3=-1.0;
 
-    CUBLAS_SAFE(cublasSgemm(GEnet_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,K,&alpha0,
-	y.arrg,K,x.arrg,K,&beta,arrg,J);); 
-    CUBLAS_SAFE(cublasSgemm(GEnet_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,K,&alpha1,
-	y.arrgc,K,x.arrgc,K,&beta,arrg,J);); 
-    CUBLAS_SAFE(cublasSgemm(GEnet_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,K,&alpha2,
-	y.arrgc,K,x.arrg,K,&beta,arrgc,J);); 
-    CUBLAS_SAFE(cublasSgemm(GEnet_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,K,&alpha3,
-	y.arrg,K,x.arrgc,K,&beta,arrgc,J);); 
+    CUBLAS_SAFE(cublasSgemm(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,K,&alpha0,
+	y.arrg,K,x.arrg,K,&beta,arrg,J)); 
+    CUBLAS_SAFE(cublasSgemm(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,K,&alpha1,
+	y.arrgc,K,x.arrgc,K,&beta,arrg,J)); 
+    CUBLAS_SAFE(cublasSgemm(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,K,&alpha2,
+	y.arrgc,K,x.arrg,K,&beta,arrgc,J)); 
+    CUBLAS_SAFE(cublasSgemm(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,K,&alpha3,
+	y.arrg,K,x.arrgc,K,&beta,arrgc,J)); 
   }
 
 }
@@ -187,14 +187,14 @@ void add_Mprod_TA(const CFtensor& x, const CFtensor& y, const int nx=1, const in
     if (selector==2||selector==3) alpha2=-1.0;
     if (selector==1||selector==3) alpha3=-1.0;
 
-    CUBLAS_SAFE(cublasSgemm(GEnet_cublas,CUBLAS_OP_N,CUBLAS_OP_T,J,I,K,&alpha0,
-	y.arrg,J,x.arrg,I,&beta,arrg,J);); 
-    CUBLAS_SAFE(cublasSgemm(GEnet_cublas,CUBLAS_OP_N,CUBLAS_OP_T,J,I,K,&alpha1,
-	y.arrgc,J,x.arrgc,I,&beta,arrg,J);); 
-    CUBLAS_SAFE(cublasSgemm(GEnet_cublas,CUBLAS_OP_N,CUBLAS_OP_T,J,I,K,&alpha2,
-	y.arrgc,J,x.arrg,I,&beta,arrgc,J);); 
-    CUBLAS_SAFE(cublasSgemm(GEnet_cublas,CUBLAS_OP_N,CUBLAS_OP_T,J,I,K,&alpha3,
-	y.arrg,J,x.arrgc,I,&beta,arrgc,J);); 
+    CUBLAS_SAFE(cublasSgemm(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_T,J,I,K,&alpha0,
+	y.arrg,J,x.arrg,I,&beta,arrg,J)); 
+    CUBLAS_SAFE(cublasSgemm(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_T,J,I,K,&alpha1,
+	y.arrgc,J,x.arrgc,I,&beta,arrg,J)); 
+    CUBLAS_SAFE(cublasSgemm(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_T,J,I,K,&alpha2,
+	y.arrgc,J,x.arrg,I,&beta,arrgc,J)); 
+    CUBLAS_SAFE(cublasSgemm(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_T,J,I,K,&alpha3,
+	y.arrg,J,x.arrgc,I,&beta,arrgc,J)); 
   }
       
 }

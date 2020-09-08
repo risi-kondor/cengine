@@ -2,6 +2,7 @@
 #define _RscalarB
 
 #include "Cengine_base.hpp"
+#include "Cnode.hpp"
 
 extern default_random_engine rndGen;
 

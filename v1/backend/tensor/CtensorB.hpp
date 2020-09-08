@@ -2,6 +2,10 @@
 #define _CtensorB
 
 #include "CFtensor.hpp"
+#include "Cobject.hpp"
+#include "RscalarB.hpp"
+#include "CscalarB.hpp"
+
 
 namespace Cengine{
 

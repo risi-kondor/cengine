@@ -126,9 +126,9 @@ namespace Cengine{
 
   };
 
-  Gdims dims(const int i0) {return Gdims(i0);}
-  Gdims dims(const int i0, const int i1) {return Gdims(i0,i1);}
-  Gdims dims(const int i0, const int i1, const int i2) {return Gdims(i0,i1,i2);}
+  inline Gdims dims(const int i0) {return Gdims(i0);}
+  inline Gdims dims(const int i0, const int i1) {return Gdims(i0,i1);}
+  inline Gdims dims(const int i0, const int i1, const int i2) {return Gdims(i0,i1,i2);}
 
 }
 

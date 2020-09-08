@@ -11,12 +11,23 @@ void add_Mprod(const CtensorBpack& x, const CtensorBpack& y, const int nx=1, con
     x.to_device(0);
     y.to_device(0);
     for(int i=0; i<N; i++)
-      pack[i]->add_Mprod<selector>(*x.pack[i],*y.pack[i]);
+      pack[i]->add_Mprod<selector>(*x.pack[i],*y.pack[i],nx,ny);
     return; 
   }
 
   x.to_device(1);
   y.to_device(1);
+
+  const int xk=x.pack[0]->k;
+  const int yk=y.pack[0]->k;
+  const int k=pack[0]->k;
+
+  const int K=x.pack[0]->combined_size(xk-nx,xk);
+  assert(y.pack[0]->combined_size(0,ny)==K);
+
+  const int I=x.pack[0]->combined_size(0,xk-nx);
+  const int J=y.pack[0]->combined_size(ny,yk);
+  //assert(asize==I*J);
 
   float alpha0=1.0;
   float alpha1=1.0;
@@ -28,14 +39,14 @@ void add_Mprod(const CtensorBpack& x, const CtensorBpack& y, const int nx=1, con
   if (selector==2||selector==3) alpha2=-1.0;
   if (selector==1||selector==3) alpha3=-1.0;
 
-  CUBLAS_SAFE(cublasSgemmbatched(GEnet_cublas,CUBLAS_OP_N,CUBLAS_OP_N,J,I,K,&alpha0,
-      y.parr,J,x.parr,K,&beta,parr,J,N);); 
-  CUBLAS_SAFE(cublasSgemmBatched(GEnet_cublas,CUBLAS_OP_N,CUBLAS_OP_N,J,I,K,&alpha1,
-      y.parrc,J,x.parrc,K,&beta,parr,J,N);); 
-  CUBLAS_SAFE(cublasSgemmBatched(GEnet_cublas,CUBLAS_OP_N,CUBLAS_OP_N,J,I,K,&alpha2,
-      y.parrc,J,x.parr,K,&beta,parrc,J,N);); 
-  CUBLAS_SAFE(cublasSgemmBatched(GEnet_cublas,CUBLAS_OP_N,CUBLAS_OP_N,J,I,K,&alpha3,
-      y.parr,J,x.parrc,K,&beta,parrc,J,N);); 
+  CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_N,J,I,K,&alpha0,
+      const_cast<const float**>(y.parr),J,const_cast<const float**>(x.parr),K,&beta,parr,J,N)); 
+  CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_N,J,I,K,&alpha1,
+      const_cast<const float**>(y.parrc),J,const_cast<const float**>(x.parrc),K,&beta,parr,J,N)); 
+  CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_N,J,I,K,&alpha2,
+      const_cast<const float**>(y.parrc),J,const_cast<const float**>(x.parr),K,&beta,parrc,J,N)); 
+  CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_N,J,I,K,&alpha3,
+      const_cast<const float**>(y.parr),J,const_cast<const float**>(x.parrc),K,&beta,parrc,J,N)); 
 
 }
 
@@ -58,6 +69,17 @@ void add_Mprod_AT(const CtensorBpack& x, const CtensorBpack& y, const int nx=1, 
   x.to_device(1);
   y.to_device(1);
 
+  const int xk=x.pack[0]->k;
+  const int yk=y.pack[0]->k;
+  const int k=pack[0]->k;
+
+  const int K=x.pack[0]->combined_size(xk-nx,xk);
+  assert(y.pack[0]->combined_size(yk-ny,yk)==K);
+
+  const int I=x.pack[0]->combined_size(0,xk-nx);
+  const int J=y.pack[0]->combined_size(0,yk-ny);
+  //assert(asize==I*J);
+
   float alpha0=1.0;
   float alpha1=1.0;
   float alpha2=1.0;
@@ -68,14 +90,14 @@ void add_Mprod_AT(const CtensorBpack& x, const CtensorBpack& y, const int nx=1, 
   if (selector==2||selector==3) alpha2=-1.0;
   if (selector==1||selector==3) alpha3=-1.0;
 
-  CUBLAS_SAFE(cublasSgemmbatched(GEnet_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,K,&alpha0,
-      y.parr,J,x.parr,K,&beta,parr,J,N);); 
-  CUBLAS_SAFE(cublasSgemmBatched(GEnet_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,K,&alpha1,
-      y.parrc,J,x.parrc,K,&beta,parr,J,N);); 
-  CUBLAS_SAFE(cublasSgemmBatched(GEnet_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,K,&alpha2,
-      y.parrc,J,x.parr,K,&beta,parrc,J,N);); 
-  CUBLAS_SAFE(cublasSgemmBatched(GEnet_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,K,&alpha3,
-      y.parr,J,x.parrc,K,&beta,parrc,J,N);); 
+  CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,K,&alpha0,
+      const_cast<const float**>(y.parr),J,const_cast<const float**>(x.parr),K,&beta,parr,J,N)); 
+  CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,K,&alpha1,
+      const_cast<const float**>(y.parrc),J,const_cast<const float**>(x.parrc),K,&beta,parr,J,N)); 
+  CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,K,&alpha2,
+      const_cast<const float**>(y.parrc),J,const_cast<const float**>(x.parr),K,&beta,parrc,J,N)); 
+  CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,K,&alpha3,
+      const_cast<const float**>(y.parr),J,const_cast<const float**>(x.parrc),K,&beta,parrc,J,N)); 
 
 }
 
@@ -98,6 +120,17 @@ void add_Mprod_TA(const CtensorBpack& x, const CtensorBpack& y, const int nx=1, 
   x.to_device(1);
   y.to_device(1);
 
+  const int xk=x.pack[0]->k;
+  const int yk=y.pack[0]->k;
+  const int k=pack[0]->k;
+
+  const int K=x.pack[0]->combined_size(0,nx);
+  assert(y.pack[0]->combined_size(0,ny)==K);
+
+  const int I=x.pack[0]->combined_size(nx,xk);
+  const int J=y.pack[0]->combined_size(ny,yk);
+  //assert(asize==I*J);
+
   float alpha0=1.0;
   float alpha1=1.0;
   float alpha2=1.0;
@@ -108,13 +141,13 @@ void add_Mprod_TA(const CtensorBpack& x, const CtensorBpack& y, const int nx=1, 
   if (selector==2||selector==3) alpha2=-1.0;
   if (selector==1||selector==3) alpha3=-1.0;
 
-  CUBLAS_SAFE(cublasSgemmbatched(GEnet_cublas,CUBLAS_OP_N,CUBLAS_OP_T,J,I,K,&alpha0,
-      y.parr,J,x.parr,K,&beta,parr,J,N);); 
-  CUBLAS_SAFE(cublasSgemmBatched(GEnet_cublas,CUBLAS_OP_N,CUBLAS_OP_T,J,I,K,&alpha1,
-      y.parrc,J,x.parrc,K,&beta,parr,J,N);); 
-  CUBLAS_SAFE(cublasSgemmBatched(GEnet_cublas,CUBLAS_OP_N,CUBLAS_OP_T,J,I,K,&alpha2,
-      y.parrc,J,x.parr,K,&beta,parrc,J,N);); 
-  CUBLAS_SAFE(cublasSgemmBatched(GEnet_cublas,CUBLAS_OP_N,CUBLAS_OP_T,J,I,K,&alpha3,
-      y.parr,J,x.parrc,K,&beta,parrc,J,N);); 
+  CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_T,J,I,K,&alpha0,
+      const_cast<const float**>(y.parr),J,const_cast<const float**>(x.parr),K,&beta,parr,J,N)); 
+  CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_T,J,I,K,&alpha1,
+      const_cast<const float**>(y.parrc),J,const_cast<const float**>(x.parrc),K,&beta,parr,J,N)); 
+  CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_T,J,I,K,&alpha2,
+      const_cast<const float**>(y.parrc),J,const_cast<const float**>(x.parr),K,&beta,parrc,J,N)); 
+  CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_T,J,I,K,&alpha3,
+      const_cast<const float**>(y.parr),J,const_cast<const float**>(x.parrc),K,&beta,parrc,J,N)); 
 
 }

@@ -7,6 +7,7 @@
 #endif 
 
 #ifdef _WITH_CUBLAS
+#include <cublas_v2.h>
 extern cublasHandle_t Cengine_cublas;
 #endif 
 
@@ -397,8 +398,8 @@ namespace Cengine{
       }
       CFtensor R(*this,nowarn);
       const float alpha = 1.0;
-      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrg, 1, R.arrg, 1););
-      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrgc, 1, R.arrgc, 1););
+      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrg, 1, R.arrg, 1));
+      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrgc, 1, R.arrgc, 1));
       return R;
     }
 
@@ -414,8 +415,8 @@ namespace Cengine{
       }
       CFtensor R(*this,nowarn);
       const float alpha = -1.0;
-      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrg, 1, R.arrg, 1););
-      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrgc, 1, R.arrgc, 1););
+      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrg, 1, R.arrg, 1));
+      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrgc, 1, R.arrgc, 1));
       return R;
     }
 
@@ -428,8 +429,8 @@ namespace Cengine{
 	return R;
       }
       CFtensor R(dims,fill::zero,device);
-      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &c, arrg, 1, R.arrg, 1););
-      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &c, arrgc, 1, R.arrgc, 1););
+      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &c, arrg, 1, R.arrg, 1));
+      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &c, arrgc, 1, R.arrgc, 1));
       return R;
     }
 
@@ -506,8 +507,8 @@ namespace Cengine{
       CFtensor R(dims,fill::zero,device);
       const float alpha = 1.0;
       const float malpha = -1.0;
-      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, arrg, 1, R.arrg, 1););
-      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &malpha, arrgc, 1, R.arrgc, 1););
+      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, arrg, 1, R.arrg, 1));
+      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &malpha, arrgc, 1, R.arrgc, 1));
       return R;
     }
 
@@ -527,9 +528,9 @@ namespace Cengine{
       const float alpha = 1.0;
       const float beta = 0.0;
       CUBLAS_SAFE(cublasSgeam(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,
-	  &alpha,arrg,I,&beta,R.arrg,J,R.arrg,J););
+	  &alpha,arrg,I,&beta,R.arrg,J,R.arrg,J));
       CUBLAS_SAFE(cublasSgeam(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,
-	  &alpha,arrgc,I,&beta,R.arrgc,J,R.arrgc,J););
+	  &alpha,arrgc,I,&beta,R.arrgc,J,R.arrgc,J));
       return R;
     }
 
@@ -551,9 +552,9 @@ namespace Cengine{
       const float malpha = -1.0;
       const float beta = 0.0;
       CUBLAS_SAFE(cublasSgeam(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,
-	  &alpha,arrg,I,&beta,R.arrg,J,R.arrg,J););
+	  &alpha,arrg,I,&beta,R.arrg,J,R.arrg,J));
       CUBLAS_SAFE(cublasSgeam(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,
-	  &malpha,arrgc,I,&beta,R.arrgc,J,R.arrgc,J););
+	  &malpha,arrgc,I,&beta,R.arrgc,J,R.arrgc,J));
       return R;
     }
 
@@ -733,8 +734,8 @@ namespace Cengine{
 	return; 
       }
       const float alpha = 1.0;
-      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrg, 1, arrg, 1););
-      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrgc, 1, arrgc, 1););
+      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrg, 1, arrg, 1));
+      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrgc, 1, arrgc, 1));
     }
 
 
@@ -746,8 +747,8 @@ namespace Cengine{
 	return; 
       }
       const float alpha = -1.0;
-      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrg, 1, arrg, 1););
-      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrgc, 1, arrgc, 1););
+      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrg, 1, arrg, 1));
+      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrgc, 1, arrgc, 1));
     }
 
     void operator*=(const float x){

@@ -8,8 +8,8 @@ void add(const CFtensor& x){
     return; 
   }
   const float alpha = 1.0;
-  CUBLAS_SAFE(cublasSaxpy(GEnet_cublas, asize, &alpha, x.arrg, 1, arrg, 1););
-  CUBLAS_SAFE(cublasSaxpy(GEnet_cublas, asize, &alpha, x.arrgc, 1, arrgc, 1););
+  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrg, 1, arrg, 1));
+  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrgc, 1, arrgc, 1));
 }
 
 
@@ -22,8 +22,8 @@ void add_conj(const CFtensor& x){
   }
   const float alpha = 1.0;
   const float malpha = -1.0;
-  CUBLAS_SAFE(cublasSaxpy(GEnet_cublas, asize, &alpha, x.arrg, 1, arrg, 1););
-  CUBLAS_SAFE(cublasSaxpy(GEnet_cublas, asize, &malpha, x.arrgc, 1, arrgc, 1););
+  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrg, 1, arrg, 1));
+  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &malpha, x.arrgc, 1, arrgc, 1));
 }
 
 
@@ -41,10 +41,10 @@ void add_transp(const CFtensor& x, const int n=1) const{
   }
   const float alpha = 1.0;
   const float beta = 1.0;
-  CUBLAS_SAFE(cublasSgeam(GEnet_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,
-      &alpha,x.arrg,I,&beta,arrg,J,arrg,J););
-  CUBLAS_SAFE(cublasSgeam(GEnet_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,
-      &alpha,x.arrgc,I,&beta,arrgc,J,arrgc,J););
+  CUBLAS_SAFE(cublasSgeam(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,
+      &alpha,x.arrg,I,&beta,arrg,J,arrg,J));
+  CUBLAS_SAFE(cublasSgeam(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,
+      &alpha,x.arrgc,I,&beta,arrgc,J,arrgc,J));
 }
 
 
@@ -63,10 +63,10 @@ void add_herm(const CFtensor& x, const int n=1) const{
   const float alpha = 1.0;
   const float malpha = -1.0;
   const float beta = 1.0;
-  CUBLAS_SAFE(cublasSgeam(GEnet_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,
-      &alpha,x.arrg,I,&beta,arrg,J,arrg,J););
-  CUBLAS_SAFE(cublasSgeam(GEnet_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,
-      &malpha,x.arrgc,I,&beta,arrgc,J,arrgc,J););
+  CUBLAS_SAFE(cublasSgeam(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,
+      &alpha,x.arrg,I,&beta,arrg,J,arrg,J));
+  CUBLAS_SAFE(cublasSgeam(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,
+      &malpha,x.arrgc,I,&beta,arrgc,J,arrgc,J));
 }
 
 
@@ -81,8 +81,8 @@ void add(const CFtensor& x, const float c){
     for(int i=0; i<asize; i++) arrc[i]+=x.arrc[i]*c;
     return;
   }
-  CUBLAS_SAFE(cublasSaxpy(GEnet_cublas, asize, &c, x.arrg, 1, arrg, 1););
-  CUBLAS_SAFE(cublasSaxpy(GEnet_cublas, asize, &c, x.arrgc, 1, arrgc, 1););
+  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &c, x.arrg, 1, arrg, 1));
+  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &c, x.arrgc, 1, arrgc, 1));
 }
 
 void add(const CFtensor& x, const complex<float> c){
@@ -95,10 +95,10 @@ void add(const CFtensor& x, const complex<float> c){
     return;
   }
   const float mci=-ci; 
-  CUBLAS_SAFE(cublasSaxpy(GEnet_cublas, asize, &cr, x.arrg, 1, arrg, 1););
-  CUBLAS_SAFE(cublasSaxpy(GEnet_cublas, asize, &mci, x.arrgc, 1, arrg, 1););
-  CUBLAS_SAFE(cublasSaxpy(GEnet_cublas, asize, &ci, x.arrg, 1, arrgc, 1););
-  CUBLAS_SAFE(cublasSaxpy(GEnet_cublas, asize, &cr, x.arrgc, 1, arrgc, 1););
+  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &cr, x.arrg, 1, arrg, 1));
+  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &mci, x.arrgc, 1, arrg, 1));
+  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &ci, x.arrg, 1, arrgc, 1));
+  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &cr, x.arrgc, 1, arrgc, 1));
 }
 
 void add_conj(const CFtensor& x, const complex<float> c){
@@ -111,10 +111,10 @@ void add_conj(const CFtensor& x, const complex<float> c){
     return;
   }
   const float mci=-ci; 
-  CUBLAS_SAFE(cublasSaxpy(GEnet_cublas, asize, &cr, x.arrg, 1, arrg, 1););
-  CUBLAS_SAFE(cublasSaxpy(GEnet_cublas, asize, &ci, x.arrgc, 1, arrg, 1););
-  CUBLAS_SAFE(cublasSaxpy(GEnet_cublas, asize, &mci, x.arrg, 1, arrgc, 1););
-  CUBLAS_SAFE(cublasSaxpy(GEnet_cublas, asize, &cr, x.arrgc, 1, arrgc, 1););
+  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &cr, x.arrg, 1, arrg, 1));
+  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &ci, x.arrgc, 1, arrg, 1));
+  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &mci, x.arrg, 1, arrgc, 1));
+  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &cr, x.arrgc, 1, arrgc, 1));
 }
 
 
@@ -129,8 +129,8 @@ void subtract(const CFtensor& x){
     return;
   }
   const float c=-1.0; 
-  CUBLAS_SAFE(cublasSaxpy(GEnet_cublas, asize, &c, x.arrg, 1, arrg, 1););
-  CUBLAS_SAFE(cublasSaxpy(GEnet_cublas, asize, &c, x.arrgc, 1, arrgc, 1););
+  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &c, x.arrg, 1, arrg, 1));
+  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &c, x.arrgc, 1, arrgc, 1));
 }
 
 void subtract(const CFtensor& x, const float c){
@@ -140,8 +140,8 @@ void subtract(const CFtensor& x, const float c){
     for(int i=0; i<asize; i++) arrc[i]-=x.arrc[i]*c;
     return; 
   }
-  CUBLAS_SAFE(cublasSaxpy(GEnet_cublas, asize, &c, x.arrg, 1, arrg, 1););
-  CUBLAS_SAFE(cublasSaxpy(GEnet_cublas, asize, &c, x.arrgc, 1, arrgc, 1););
+  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &c, x.arrg, 1, arrg, 1));
+  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &c, x.arrgc, 1, arrgc, 1));
 }
 
 void subtract(const CFtensor& x, const complex<float> c){
@@ -154,10 +154,10 @@ void subtract(const CFtensor& x, const complex<float> c){
   }
   const float mcr=-cr; 
   const float mci=-ci; 
-  CUBLAS_SAFE(cublasSaxpy(GEnet_cublas, asize, &mcr, x.arrg, 1, arrg, 1););
-  CUBLAS_SAFE(cublasSaxpy(GEnet_cublas, asize, &ci, x.arrgc, 1, arrg, 1););
-  CUBLAS_SAFE(cublasSaxpy(GEnet_cublas, asize, &mci, x.arrg, 1, arrgc, 1););
-  CUBLAS_SAFE(cublasSaxpy(GEnet_cublas, asize, &mcr, x.arrgc, 1, arrgc, 1););
+  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &mcr, x.arrg, 1, arrg, 1));
+  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &ci, x.arrgc, 1, arrg, 1));
+  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &mci, x.arrg, 1, arrgc, 1));
+  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &mcr, x.arrgc, 1, arrgc, 1));
 }
 
 void subtractc(const CFtensor& x, const complex<float> c){
@@ -171,10 +171,10 @@ void subtractc(const CFtensor& x, const complex<float> c){
   }
   const float mcr=-cr; 
   const float mci=-ci; 
-  CUBLAS_SAFE(cublasSaxpy(GEnet_cublas, asize, &mcr, x.arrg, 1, arrg, 1););
-  CUBLAS_SAFE(cublasSaxpy(GEnet_cublas, asize, &mci, x.arrgc, 1, arrg, 1););
-  CUBLAS_SAFE(cublasSaxpy(GEnet_cublas, asize, &ci, x.arrg, 1, arrgc, 1););
-  CUBLAS_SAFE(cublasSaxpy(GEnet_cublas, asize, &mcr, x.arrgc, 1, arrgc, 1););
+  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &mcr, x.arrg, 1, arrg, 1));
+  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &mci, x.arrgc, 1, arrg, 1));
+  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &ci, x.arrg, 1, arrgc, 1));
+  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &mcr, x.arrgc, 1, arrgc, 1));
 }
 
 
