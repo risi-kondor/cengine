@@ -2,6 +2,7 @@
 #define _Cengine_base
 
 #include <assert.h>
+#include <pthread.h>
 
 #include <mutex>
 #include <atomic>
@@ -13,6 +14,7 @@
 #include <thread>
 #include <array>
 #include <set>
+#include <algorithm>
 
 #ifdef _WITH_CUDA
 #include <cuda.h>
