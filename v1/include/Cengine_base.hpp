@@ -4,6 +4,7 @@
 #include <assert.h>
 
 #include <mutex>
+#include <atomic>
 #include <complex>
 #include <iostream>
 #include <unordered_map>
