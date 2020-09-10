@@ -141,10 +141,49 @@ namespace Cengine{
       return new_handle(enqueue(new OP(nodeof(h0), nodeof(h1), nodeof(h2), arg0, arg1)));
     }
 
+    // 3 args 
 
     template<typename OP, typename ARG0, typename ARG1, typename ARG2>
     Chandle* push(const ARG0 arg0, const ARG1 arg1, const ARG2 arg2){
       return new_handle(enqueue(new OP(arg0,arg1,arg2)));
+    }
+
+    template<typename OP, typename ARG0, typename ARG1, typename ARG2>
+    Chandle* push(Chandle* h0, const ARG0 arg0, const ARG1 arg1, const ARG2 arg2){
+      return new_handle(enqueue(new OP(nodeof(h0),arg0,arg1,arg2)));
+    }
+
+    template<typename OP, typename ARG0, typename ARG1, typename ARG2>
+    Chandle* push(Chandle* h0, Chandle* h1, const ARG0 arg0, const ARG1 arg1, const ARG2 arg2){
+      return new_handle(enqueue(new OP(nodeof(h0),nodeof(h1),arg0,arg1,arg2)));
+    }
+
+    template<typename OP, typename ARG0, typename ARG1, typename ARG2>
+    Chandle* push(Chandle* h0, Chandle* h1, Chandle* h2, const ARG0 arg0, const ARG1 arg1, const ARG2 arg2){
+      return new_handle(enqueue(new OP(nodeof(h0),nodeof(h1),nodeof(h2),arg0,arg1,arg2)));
+    }
+
+
+    // 4 args 
+
+    template<typename OP, typename ARG0, typename ARG1, typename ARG2, typename ARG3>
+    Chandle* push(const ARG0 arg0, const ARG1 arg1, const ARG2 arg2, const ARG3 arg3){
+      return new_handle(enqueue(new OP(arg0,arg1,arg2,arg3)));
+    }
+
+    template<typename OP, typename ARG0, typename ARG1, typename ARG2, typename ARG3>
+    Chandle* push(Chandle* h0, const ARG0 arg0, const ARG1 arg1, const ARG2 arg2, const ARG3 arg3){
+      return new_handle(enqueue(new OP(nodeof(h0),arg0,arg1,arg2,arg3)));
+    }
+
+    template<typename OP, typename ARG0, typename ARG1, typename ARG2, typename ARG3>
+    Chandle* push(Chandle* h0, Chandle* h1, const ARG0 arg0, const ARG1 arg1, const ARG2 arg2, const ARG3 arg3){
+      return new_handle(enqueue(new OP(nodeof(h0),nodeof(h1),arg0,arg1,arg2,arg3)));
+    }
+
+    template<typename OP, typename ARG0, typename ARG1, typename ARG2, typename ARG3>
+    Chandle* push(Chandle* h0, Chandle* h1, Chandle* h2, const ARG0 arg0, const ARG1 arg1, const ARG2 arg2, const ARG3 arg3){
+      return new_handle(enqueue(new OP(nodeof(h0),nodeof(h1),nodeof(h2),arg0,arg1,arg2,arg3)));
     }
 
 
@@ -341,9 +380,10 @@ namespace Cengine{
 
 
     void flush(Cnode* node){
-      DEBUG_ENGINE({CoutLock lk; cout<<"flush"<<endl;})
-      while(!node->computed){this_thread::sleep_for(chrono::milliseconds(13));} // TODO 
-      return; 
+      flush(); 
+      //DEBUG_ENGINE({CoutLock lk; cout<<"flush"<<endl;})
+      //while(!node->computed){this_thread::sleep_for(chrono::milliseconds(13));} // TODO 
+      //return; 
      }
 
 
@@ -351,19 +391,19 @@ namespace Cengine{
       DEBUG_ENGINE({CoutLock lk; cout<<"flush"<<endl;})
       //for(auto p:batchers) p->flush(); 
       while(true){
+	//#ifdef ENGINE_PRIORITY
+	//priority_guard<3> lock(done_pmx,2); 
+	//#else
+	//lock_guard<mutex> lock(done_mx);
+	//#endif
+	bool all_done=true;
+	for(auto p:batchers) 
+	  if(p->flush()>0) all_done=false; 
 	{
-#ifdef ENGINE_PRIORITY
-	  priority_guard<3> lock(done_pmx,2); 
-#else
-	  lock_guard<mutex> lock(done_mx);
-#endif
 	  lock_guard<mutex> lock2(ready_mx);
-	  bool all_done=true;
-	  for(auto p:batchers) 
-	    if(p->flush()>0) all_done=false; 
 	  if(ready.size()>0) all_done=false;
-	  if(all_done) break;
 	}
+	if(all_done) break;
 	this_thread::sleep_for(chrono::milliseconds(13));
       }
       {CoutLock lk; cout<<"flushed"<<endl;}

@@ -197,15 +197,42 @@ namespace Cengine{
     return static_cast<CtensorB&>(*x);
   }
 
+  inline CtensorB& asCtensorB(Cobject* x, const char* s){
+    if(!x){CoutLock lk; cerr<<"Cengine error ("<<s<<"): CtensorB does not exist"<<endl;}
+    assert(x); 
+    if(!dynamic_cast<CtensorB*>(x))
+      cerr<<"Cengine error: Cobject is of type "<<x->classname()<<" instead of CtensorB."<<endl;
+    assert(dynamic_cast<CtensorB*>(x));
+    return static_cast<CtensorB&>(*x);
+  }
+
   inline CtensorB& asCtensorB(Cnode* x){
-    assert(x->obj);
+    assert(x->obj); 
     if(!dynamic_cast<CtensorB*>(x->obj))
       cerr<<"Cengine error: Cobject is of type "<<x->obj->classname()<<" instead of CtensorB."<<endl;
     assert(dynamic_cast<CtensorB*>(x->obj));
     return static_cast<CtensorB&>(*x->obj);
   }
 
+  inline CtensorB& asCtensorB(Cnode* x, const char* s){
+    if(!x->obj){CoutLock lk; cerr<<"Cengine error ("<<s<<"): CtensorB does not exist"<<endl;}
+    assert(x->obj);
+    if(!dynamic_cast<CtensorB*>(x->obj))
+      cerr<<"Cengine error ("<<s<<"): Cobject is of type "<<x->obj->classname()<<" instead of CtensorB."<<endl;
+    assert(dynamic_cast<CtensorB*>(x->obj));
+    return static_cast<CtensorB&>(*x->obj);
+  }
+
   inline CtensorB& asCtensorB(Cnode& x){
+    assert(x.obj);
+    if(!dynamic_cast<CtensorB*>(x.obj))
+      cerr<<"Cengine error: Cobject is of type "<<x.obj->classname()<<" instead of CtensorB."<<endl;
+    assert(dynamic_cast<CtensorB*>(x.obj));
+    return static_cast<CtensorB&>(*x.obj);
+  }
+
+  inline CtensorB& asCtensorB(Cnode& x, const char* s){
+    if(!x.obj){CoutLock lk; cerr<<"Cengine error ("<<s<<"): CtensorB does not exist"<<endl;}
     assert(x.obj);
     if(!dynamic_cast<CtensorB*>(x.obj))
       cerr<<"Cengine error: Cobject is of type "<<x.obj->classname()<<" instead of CtensorB."<<endl;

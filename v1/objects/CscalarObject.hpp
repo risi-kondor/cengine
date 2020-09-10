@@ -27,53 +27,65 @@ namespace Cengine{
 
 
     CscalarObject(){
-      hdl=engine::new_cscalar(-1,0);
+      hdl=Cengine_engine->push<new_cscalar_op>(-1,0);
+      //hdl=engine::new_cscalar(-1,0);
     }
 
     CscalarObject(Chandle* _hdl): hdl(_hdl){}
 
     CscalarObject(const fill_raw& fill, const int device=0){
-      hdl=engine::new_cscalar(-1,device);
+      hdl=Cengine_engine->push<new_cscalar_op>(-1,device);
+      //hdl=engine::new_cscalar(-1,device);
     }
 
     CscalarObject(const fill_zero& fill, const int device=0){
-      hdl=engine::new_cscalar_zero(-1,device);
+      hdl=Cengine_engine->push<new_cscalar_zero_op>(-1,device);
+      //hdl=engine::new_cscalar_zero(-1,device);
     }
 
     CscalarObject(const fill_gaussian& fill, const int device=0){
-      hdl=engine::new_cscalar_gaussian(-1,device);
+      hdl=Cengine_engine->push<new_cscalar_gaussian_op>(-1,device);
+      //hdl=engine::new_cscalar_gaussian(-1,device);
     }
 
     CscalarObject(const complex<float> x, const int device=0){
-      hdl=engine::new_cscalar_set(x,-1,device);
+      hdl=Cengine_engine->push<new_cscalar_set_op>(-1,x,device);
+      //hdl=engine::new_cscalar_set(x,-1,device);
     }
 
     CscalarObject(const int x){
-      hdl=engine::new_cscalar_set(x,-1,0);
+      hdl=Cengine_engine->push<new_cscalar_set_op>(-1,x,0);
+      //hdl=engine::new_cscalar_set(x,-1,0);
     }
 
     CscalarObject(const float x){
-      hdl=engine::new_cscalar_set(x,-1,0);
+      hdl=Cengine_engine->push<new_cscalar_set_op>(-1,x);
+      //hdl=engine::new_cscalar_set(x,-1,0);
     }
 
     CscalarObject(const double x){
-      hdl=engine::new_cscalar_set(x,-1,0);
+      hdl=Cengine_engine->push<new_cscalar_set_op>(-1,x,0);
+      //hdl=engine::new_cscalar_set(x,-1,0);
     }
 
     CscalarObject(const float x, const int device){
-      hdl=engine::new_cscalar_set(x,-1,device);
+      hdl=Cengine_engine->push<new_cscalar_set_op>(-1,x,device);
+      //hdl=engine::new_cscalar_set(x,-1,device);
     }
 
     CscalarObject(const int nbd, const fill_raw& fill, const int device=0){
-      hdl=engine::new_cscalar(nbd,device);
+      hdl=Cengine_engine->push<new_cscalar_op>(-1,device);
+      //hdl=engine::new_cscalar(nbd,device);
     }
 
     CscalarObject(const int nbd, const fill_zero& fill, const int device=0){
-      hdl=engine::new_cscalar_zero(nbd,device);
+      hdl=Cengine_engine->push<new_cscalar_zero_op>(-1,device);
+      //hdl=engine::new_cscalar_zero(nbd,device);
     }
 
     CscalarObject(const int nbd, const fill_gaussian& fill, const int device=0){
-      hdl=engine::new_cscalar_gaussian(nbd,device);
+      hdl=Cengine_engine->push<new_cscalar_gaussian_op>(-1,device);
+      //hdl=engine::new_cscalar_gaussian(nbd,device);
     }
 
 
@@ -81,7 +93,8 @@ namespace Cengine{
 
 
     CscalarObject(const CscalarObject& x):
-      hdl(engine::cscalar_copy(x.hdl)){
+      hdl(Cengine_engine->push<cscalar_copy_op>(x.hdl)){
+      //hdl(engine::cscalar_copy(x.hdl)){
     }
       
     CscalarObject(CscalarObject&& x){
@@ -91,7 +104,8 @@ namespace Cengine{
 
     CscalarObject& operator=(const CscalarObject& x){
       delete hdl;
-      hdl=engine::cscalar_copy(x.hdl);
+      hdl=Cengine_engine->push<cscalar_copy_op>(x.hdl);
+      //hdl=engine::cscalar_copy(x.hdl);
       return *this;
     }
 
@@ -119,40 +133,51 @@ namespace Cengine{
     }
 
     complex<float> val() const{
-      return engine::cscalar_get(hdl)[0];
+      //return engine::cscalar_get(hdl)[0];
+      Cengine_engine->flush(hdl->node);
+      vector<complex<float> > v=asCscalarB(hdl->node->obj);
+      return v[0];
     }
 
     RscalarObject real() const{
-      return engine::cscalar_get_real(hdl);
+      //return engine::cscalar_get_real(hdl);
+      return Cengine_engine->push<cscalar_get_real_op>(hdl);
     }
 
     RscalarObject imag() const{
-      return engine::cscalar_get_imag(hdl);
+      //return engine::cscalar_get_imag(hdl);
+      return Cengine_engine->push<cscalar_get_imag_op>(hdl);
     }
 
     void add_real_to(RscalarObject& x){
-      Chandle* h=engine::cscalar_get_real(hdl);
+      //Chandle* h=engine::cscalar_get_real(hdl);
       //replace(x.hdl,engine::rscalar_add(x.hdl,h));
-      replace(x.hdl,engine::rscalar_add(x.hdl,h));
+      Chandle* h=Cengine_engine->push<cscalar_get_real_op>(hdl);
+      replace(x.hdl,Cengine_engine->push<rscalar_add_op>(x.hdl,h));
       delete h;
     }
 
     void add_imag_to(RscalarObject& x){
-      Chandle* h=engine::cscalar_get_imag(hdl);
-      replace(x.hdl,engine::rscalar_add(x.hdl,h));
+      //Chandle* h=engine::cscalar_get_imag(hdl);
+      //replace(x.hdl,engine::rscalar_add(x.hdl,h));
+      Chandle* h=Cengine_engine->push<cscalar_get_imag_op>(hdl);
+      replace(x.hdl,Cengine_engine->push<rscalar_add_op>(x.hdl,h));
       delete h;
     }
 
     void set_real(const RscalarObject& x){
-      replace(hdl,engine::cscalar_set_real(hdl,x.hdl));
+      //replace(hdl,engine::cscalar_set_real(hdl,x.hdl));
+      replace(hdl,Cengine_engine->push<cscalar_set_real_op>(hdl,x.hdl));
     }
 
     void set_imag(const RscalarObject& x){
-      replace(hdl,engine::cscalar_set_imag(hdl,x.hdl));
+      //replace(hdl,engine::cscalar_set_imag(hdl,x.hdl));
+      replace(hdl,Cengine_engine->push<cscalar_set_imag_op>(hdl,x.hdl));
     }
 
     void flush() const{
-      engine::cscalar_get(hdl);
+      //engine::cscalar_get(hdl);
+      Cengine_engine->flush(hdl->node);
     }
 
 
@@ -383,44 +408,4 @@ namespace Cengine{
 
 #endif
 
-
-
-  /*
-  inline CscalarObj& asCscalar(Dobject* x){
-    assert(x); 
-    if(!dynamic_cast<CscalarObj*>(x))
-      cerr<<"Cengine error: Dobject is of type "<<x->classname()<<" instead of CscalarObj."<<endl;
-    assert(dynamic_cast<CscalarObj*>(x));
-    return static_cast<CscalarObj&>(*x);
-  }
-
-  inline CscalarObj& asCscalar(Dobject& x){
-    if(!dynamic_cast<CscalarObj*>(&x))
-      cerr<<"Cengine error: Dobject is of type "<<x.classname()<<" instead of CscalarObj."<<endl;
-    assert(dynamic_cast<CscalarObj*>(&x));
-    return static_cast<CscalarObj&>(x);
-  }
-
-  inline const CscalarObj& asCscalar(const Dobject& x){
-    if(!dynamic_cast<const CscalarObj*>(&x))
-      cerr<<"Cengine error: Dobject is of type "<<x.classname()<<" instead of const CscalarObj."<<endl;
-    assert(dynamic_cast<const CscalarObj*>(&x));
-    return static_cast<const CscalarObj&>(x);
-  }
-
-  inline CscalarObj& asCscalar(Dnode* x){
-    assert(x->obj); 
-    if(!dynamic_cast<CscalarObj*>(x->obj))
-      cerr<<"Cengine error: Dobject is of type "<<x->obj->classname()<<" instead of CscalarObj."<<endl;
-    assert(dynamic_cast<CscalarObj*>(x->obj));
-    return static_cast<CscalarObj&>(*x->obj);
-  }
-
-  inline CscalarObj& asCscalar(Dnode& x){
-    if(!dynamic_cast<CscalarObj*>(x.obj))
-      cerr<<"Cengine error: Dobject is of type "<<x.obj->classname()<<" instead of CscalarObj."<<endl;
-    assert(dynamic_cast<CscalarObj*>(x.obj));
-    return static_cast<CscalarObj&>(*x.obj);
-  }
-  */
 

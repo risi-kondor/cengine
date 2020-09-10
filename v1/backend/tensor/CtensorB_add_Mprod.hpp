@@ -14,10 +14,16 @@ namespace Cengine{
     public BatchedOperator{
   public:
 
+    Gdims dims1;
+    Gdims dims2;
+
     static int _batcher_id;
 
-    ctensor_add_Mprod_op(Cnode* R, Cnode* A, Cnode* B):
-      Coperator(R,A,B){}
+    //ctensor_add_Mprod_op(Cnode* R, Cnode* A, Cnode* B):
+    //Coperator(R,A,B){}
+
+    ctensor_add_Mprod_op(Cnode* R, Cnode* A, Cnode* B, const Gdims& _dims1, const Gdims& _dims2):
+      Coperator(R,A,B), dims1(_dims1), dims2(_dims2){}
 
     void set_batcher_id(const int i){_batcher_id=i;}
 
@@ -35,10 +41,10 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      CtensorB& obj=asCtensorB(owner); 
-      if(Tsel==0) obj.add_Mprod<0>(asCtensorB(inputs[1]),asCtensorB(inputs[2]));
-      if(Tsel==1) obj.add_Mprod_TA<Csel>(asCtensorB(inputs[1]),asCtensorB(inputs[2]));
-      if(Tsel==2) obj.add_Mprod_AT<Csel>(asCtensorB(inputs[1]),asCtensorB(inputs[2]));
+      CtensorB& obj=asCtensorB(owner,__PRETTY_FUNCTION__); 
+      if(Tsel==0) obj.add_Mprod<0>(asCtensorB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2]));
+      if(Tsel==1) obj.add_Mprod_TA<Csel>(asCtensorB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
+      if(Tsel==2) obj.add_Mprod_AT<Csel>(asCtensorB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
     }
 
 
@@ -70,7 +76,9 @@ namespace Cengine{
     }
 
     ctensor_Mprod_signature signature() const{
-      return ctensor_Mprod_signature(asCtensorB(inputs[1]).dims,asCtensorB(inputs[2]).dims); 
+      return ctensor_Mprod_signature(dims1,dims2);
+      //return ctensor_Mprod_signature(asCtensorB(inputs[1],__PRETTY_FUNCTION__).dims,
+      //asCtensorB(inputs[2],__PRETTY_FUNCTION__).dims); 
     }
 
     Batcher* spawn_batcher() const{

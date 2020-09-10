@@ -25,7 +25,6 @@ namespace Cengine{
 
 
     RscalarObject(){
-      //hdl=engine::new_rscalar(-1,0);
       hdl=(*Cengine_engine)(new new_rscalar_op(-1,0));
     }
 
@@ -33,52 +32,42 @@ namespace Cengine{
 
 
     RscalarObject(const fill_raw& fill, const int device=0){
-      //hdl=engine::new_rscalar(-1,device);
       hdl=(*Cengine_engine)(new new_rscalar_op(-1,device));
     }
 
     RscalarObject(const fill_zero& fill, const int device=0){
-      //hdl=engine::new_rscalar_zero(-1,device);
       hdl=(*Cengine_engine)(new new_rscalar_zero_op(-1,device));
     }
 
     RscalarObject(const fill_gaussian& fill, const int device=0){
-      //hdl=engine::new_rscalar_gaussian(-1,device);
       hdl=(*Cengine_engine)(new new_rscalar_zero_op(-1,device));
     }
 
     RscalarObject(const int x){
-      //hdl=engine::new_rscalar_set(x,-1,0);
       hdl=(*Cengine_engine)(new new_rscalar_set_op(-1,x,0));
     }
 
     RscalarObject(const float x){
-      //hdl=engine::new_rscalar_set(x,-1,0);
       hdl=(*Cengine_engine)(new new_rscalar_set_op(-1,x,0));
     }
 
     RscalarObject(const double x){
-      //hdl=engine::new_rscalar_set(x,-1,0);
       hdl=(*Cengine_engine)(new new_rscalar_set_op(-1,x,0));
     }
 
     RscalarObject(const float x, const int device){
-      //hdl=engine::new_rscalar_set(x,-1,device);
       hdl=(*Cengine_engine)(new new_rscalar_set_op(-1,x,device));
     }
 
     RscalarObject(const int nbd, const fill_raw& fill, const int device=0){
-      //hdl=engine::new_rscalar(nbd,device);
       hdl=(*Cengine_engine)(new new_rscalar_op(nbd,device));
     }
 
     RscalarObject(const int nbd, const fill_zero& fill, const int device=0){
-      //hdl=engine::new_rscalar_zero(nbd,device);
       hdl=(*Cengine_engine)(new new_rscalar_zero_op(nbd,device));
     }
 
     RscalarObject(const int nbd, const fill_gaussian& fill, const int device=0){
-      //hdl=engine::new_rscalar_gaussian(nbd,device);
       hdl=(*Cengine_engine)(new new_rscalar_gaussian_op(nbd,device));
     }
 
@@ -88,7 +77,6 @@ namespace Cengine{
 
     RscalarObject(const RscalarObject& x):
       hdl((*Cengine_engine)(new rscalar_copy_op(nodeof(x.hdl)))){}
-	//hdl(engine::rscalar_copy(x.hdl)){}
       
     RscalarObject(RscalarObject&& x){
       hdl=x.hdl;
@@ -133,12 +121,10 @@ namespace Cengine{
 
 
     void clear(){
-      //replace(hdl,engine::rscalar_zero(hdl));
       replace(hdl,(*Cengine_engine)(new rscalar_set_zero_op(nodeof(hdl))));
     }
 
     void zero(){
-      //replace(hdl,engine::rscalar_zero(hdl));
       replace(hdl,(*Cengine_engine)(new rscalar_set_zero_op(nodeof(hdl))));
     }
 
@@ -155,7 +141,6 @@ namespace Cengine{
 
 
     void add(const RscalarObject& x){
-      //replace(hdl,(*Cengine_engine)(new rscalar_add_op(nodeof(hdl),nodeof(x.hdl))));
       replace(hdl,Cengine_engine->push<rscalar_add_op>(hdl,x.hdl));
     }
 
@@ -253,7 +238,6 @@ namespace Cengine{
     }
 
     string str(const string indent="") const{
-      //vector<float> R=(*Cengine_engine)(new engine::rscalar_get(nodeof(hdl)));
       Cengine_engine->flush(hdl->node);
       vector<float> R=asRscalarB(hdl->node->obj);
 

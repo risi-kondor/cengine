@@ -3,6 +3,7 @@
 
 #include <assert.h>
 
+#include <mutex>
 #include <complex>
 #include <iostream>
 #include <unordered_map>

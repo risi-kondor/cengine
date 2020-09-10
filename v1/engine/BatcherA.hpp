@@ -93,7 +93,7 @@ namespace Cengine{
     
     int flush(){
       DEBUG_ENGINE({CoutLock lk; cout<<"    \e[1mFlushing batcher.\e[0m"<<endl;});
-      exec();
+      if(ready.size()>0) exec();
       return waiting.size(); 
     }
 

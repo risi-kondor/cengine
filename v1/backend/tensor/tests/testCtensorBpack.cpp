@@ -1,16 +1,15 @@
-#include "GEnet_base.cpp"
+#include "Cengine_base.cpp"
 
-#include "CtensorFunctions.hpp"
+#include "CtensorObject.hpp"
 #include "CtensorBpack.hpp"
 
-using namespace GEnet;
+using namespace Cengine;
 
-typedef CscalarObj Cscalar;
-typedef CtensorObj Ctensor;
+typedef CscalarObject Cscalar;
+typedef CtensorObject Ctensor;
 
 
 int main(int argc, char** argv){
-  //GEnet_engine=new Cengine();
 
   CtensorB A({4,4},fill::identity);
   cout<<"A="<<endl<<A<<endl<<endl;
@@ -35,5 +34,4 @@ int main(int argc, char** argv){
 
   cout<<"C[22]="<<endl<<*Cpack.pack[22]<<endl<<endl;
 
-  //delete GEnet_engine; 
 }

@@ -259,31 +259,38 @@ namespace Cengine{
 
 
     void add_Mprod(const CtensorObject& x, const CtensorObject& y){
-      replace(hdl,engine::ctensor_add_Mprod(hdl,x.hdl,y.hdl));
+      replace(hdl,Cengine_engine->push<ctensor_add_Mprod_op<0,0> >(hdl,x.hdl,y.hdl,x.dims,y.dims));
+      //replace(hdl,engine::ctensor_add_Mprod(hdl,x.hdl,y.hdl));
     }
 
     void add_Mprod_AT(const CtensorObject& x, const CtensorObject& y){
-      replace(hdl,engine::ctensor_add_Mprod_AT(hdl,x.hdl,y.hdl));
+      replace(hdl,Cengine_engine->push<ctensor_add_Mprod_op<2,0> >(hdl,x.hdl,y.hdl,x.dims,y.dims));
+      //replace(hdl,engine::ctensor_add_Mprod_AT(hdl,x.hdl,y.hdl));
     }
 
     void add_Mprod_TA(const CtensorObject& x, const CtensorObject& y){
-      replace(hdl,engine::ctensor_add_Mprod_TA(hdl,x.hdl,y.hdl));
+      replace(hdl,Cengine_engine->push<ctensor_add_Mprod_op<1,0> >(hdl,x.hdl,y.hdl,x.dims,y.dims));
+      //replace(hdl,engine::ctensor_add_Mprod_TA(hdl,x.hdl,y.hdl));
     }
 
     void add_Mprod_AC(const CtensorObject& x, const CtensorObject& y){
-      replace(hdl,engine::ctensor_add_Mprod_AC(hdl,x.hdl,y.hdl));
+      replace(hdl,Cengine_engine->push<ctensor_add_Mprod_op<0,2> >(hdl,x.hdl,y.hdl,x.dims,y.dims));
+      //replace(hdl,engine::ctensor_add_Mprod_AC(hdl,x.hdl,y.hdl));
     }
 
     void add_Mprod_TC(const CtensorObject& x, const CtensorObject& y){
-      replace(hdl,engine::ctensor_add_Mprod_TC(hdl,x.hdl,y.hdl));
+      replace(hdl,Cengine_engine->push<ctensor_add_Mprod_op<1,2> >(hdl,x.hdl,y.hdl,x.dims,y.dims));
+      //replace(hdl,engine::ctensor_add_Mprod_TC(hdl,x.hdl,y.hdl));
     }
 
     void add_Mprod_AH(const CtensorObject& x, const CtensorObject& y){
-      replace(hdl,engine::ctensor_add_Mprod_AH(hdl,x.hdl,y.hdl));
+      replace(hdl,Cengine_engine->push<ctensor_add_Mprod_op<2,2> >(hdl,x.hdl,y.hdl,x.dims,y.dims));
+      //replace(hdl,engine::ctensor_add_Mprod_AH(hdl,x.hdl,y.hdl));
     }
 
     void add_Mprod_HA(const CtensorObject& x, const CtensorObject& y){
-      replace(hdl,engine::ctensor_add_Mprod_HA(hdl,x.hdl,y.hdl));
+      replace(hdl,Cengine_engine->push<ctensor_add_Mprod_op<1,1> >(hdl,x.hdl,y.hdl,x.dims,y.dims));
+      //replace(hdl,engine::ctensor_add_Mprod_HA(hdl,x.hdl,y.hdl));
     }
 
     

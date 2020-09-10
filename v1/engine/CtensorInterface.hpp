@@ -139,6 +139,7 @@ namespace Cengine{
     }
 
 
+    /*
     Chandle* ctensor_add_Mprod(Chandle* r, Chandle* A, Chandle* B){
       return new_handle(Cengine_engine->enqueue(new ctensor_add_Mprod_op<0,0>(nodeof(r),nodeof(A),nodeof(B))));
     }
@@ -166,6 +167,7 @@ namespace Cengine{
     Chandle* ctensor_add_Mprod_HA(Chandle* r, Chandle* A, Chandle* B){
       return new_handle(Cengine_engine->enqueue(new ctensor_add_Mprod_op<1,1>(nodeof(r),nodeof(A),nodeof(B))));
     }
+    */
 
 
     Chandle* ctensor_add_ReLU(Chandle* r, Chandle* x, const float c){
