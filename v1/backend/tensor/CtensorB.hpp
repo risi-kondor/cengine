@@ -189,6 +189,38 @@ namespace Cengine{
   };
 
 
+  //inline CtensorB& asCtensorB(Cobject* x){
+  //return downcast<CtensorB>(x,"");
+  //}
+
+  inline CtensorB& asCtensorB(Cobject* x, const char* s){
+    return downcast<CtensorB>(x,s);
+  }
+
+  //inline CtensorB& asCtensorB(Cnode* x){
+  //return downcast<CtensorB>(x,"");
+  //}
+
+  inline CtensorB& asCtensorB(Cnode* x, const char* s){
+    return downcast<CtensorB>(x,s);
+  }
+  
+  //inline CtensorB& asCtensorB(Cnode& x){
+  //return downcast<CtensorB>(x,"");
+  //}
+
+  inline CtensorB& asCtensorB(Cnode& x, const char* s){
+    return downcast<CtensorB>(x,s);
+  }
+
+
+
+
+}
+
+#endif
+
+  /*
   inline CtensorB& asCtensorB(Cobject* x){
     assert(x); 
     if(!dynamic_cast<CtensorB*>(x))
@@ -239,11 +271,4 @@ namespace Cengine{
     assert(dynamic_cast<CtensorB*>(x.obj));
     return static_cast<CtensorB&>(*x.obj);
   }
-
-
-
-
-}
-
-#endif
-
+  */

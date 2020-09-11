@@ -129,13 +129,13 @@ namespace Cengine{
 
 
     int getnbu() const{ // TODO 
-      return asCscalarB(hdl->node->obj).nbu;
+      return asCscalarB(hdl->node->obj,__PRETTY_FUNCTION__).nbu;
     }
 
     complex<float> val() const{
       //return engine::cscalar_get(hdl)[0];
       Cengine_engine->flush(hdl->node);
-      vector<complex<float> > v=asCscalarB(hdl->node->obj);
+      vector<complex<float> > v=asCscalarB(hdl->node->obj,__PRETTY_FUNCTION__);
       return v[0];
     }
 

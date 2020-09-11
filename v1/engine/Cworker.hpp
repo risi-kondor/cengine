@@ -15,6 +15,7 @@ namespace Cengine{
     Cengine* owner;
     int id;
     bool killflag=false; 
+    bool working=false; 
 
     thread th;
 

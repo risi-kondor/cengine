@@ -16,7 +16,7 @@ int main(int argc, char** argv){
   cout<<endl<<"A="<<endl<<engine::ctensor_get(hdl0)<<endl<<endl;
   cout<<endl<<"B="<<endl<<engine::ctensor_get(hdl1)<<endl<<endl;
 
-  Chandle* hdl2=engine::ctensor_add(hdl0,hdl1);
+  Chandle* hdl2=Cengine_engine->push<ctensor_add_op>(hdl0,hdl1);
   cout<<endl<<"A+B="<<endl<<engine::ctensor_get(hdl2)<<endl<<endl;
 
 }

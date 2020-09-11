@@ -114,7 +114,7 @@ namespace Cengine{
 
   public: // ---- Conversions -------------------------------------------------------------------------------
 
-    
+        
     operator vector<float>(){
       if(nbu==-1){return vector<float>(1,val);}
       vector<float> R(nbu);
@@ -291,6 +291,38 @@ namespace Cengine{
   };
 
 
+  //inline RscalarB& asRscalarB(Cobject* x){
+  //return downcast<RscalarB>(x,"");
+  //}
+
+  inline RscalarB& asRscalarB(Cobject* x, const char* s){
+    return downcast<RscalarB>(x,s);
+  }
+
+  //inline RscalarB& asRscalarB(Cnode* x){
+  //return downcast<RscalarB>(x,"");
+  //}
+
+  inline RscalarB& asRscalarB(Cnode* x, const char* s){
+    return downcast<RscalarB>(x,s);
+  }
+  
+  //inline RscalarB& asRscalarB(Cnode& x){
+  //return downcast<RscalarB>(x,"");
+  //}
+
+  inline RscalarB& asRscalarB(Cnode& x, const char* s){
+    return downcast<RscalarB>(x,s);
+  }
+  
+
+}
+
+#endif
+
+
+
+  /*
   inline RscalarB& asRscalarB(Cobject* x){
     assert(x); 
     if(!dynamic_cast<RscalarB*>(x))
@@ -314,11 +346,4 @@ namespace Cengine{
     assert(dynamic_cast<RscalarB*>(x.obj));
     return static_cast<RscalarB&>(*x.obj);
   }
-
-
-
-
-}
-
-#endif
-
+  */

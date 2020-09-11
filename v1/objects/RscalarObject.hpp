@@ -106,13 +106,13 @@ namespace Cengine{
 
 
     int getnbu() const{ // TODO make sure it exists!! 
-      return asRscalarB(hdl->node->obj).nbu;
+      return asRscalarB(hdl->node->obj,__PRETTY_FUNCTION__).nbu;
     }
 
     float val() const{
       //return engine::rscalar_get(hdl)[0];
       Cengine_engine->flush(hdl->node);
-      vector<float> R=asRscalarB(hdl->node->obj);
+      vector<float> R=asRscalarB(hdl->node->obj,__PRETTY_FUNCTION__);
       return R[0];
     }
 
@@ -239,7 +239,7 @@ namespace Cengine{
 
     string str(const string indent="") const{
       Cengine_engine->flush(hdl->node);
-      vector<float> R=asRscalarB(hdl->node->obj);
+      vector<float> R=asRscalarB(hdl->node->obj,__PRETTY_FUNCTION__);
 
       ostringstream oss;
       oss<<"[ ";

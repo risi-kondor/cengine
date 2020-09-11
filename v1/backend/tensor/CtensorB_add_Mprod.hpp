@@ -42,7 +42,7 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       CtensorB& obj=asCtensorB(owner,__PRETTY_FUNCTION__); 
-      if(Tsel==0) obj.add_Mprod<0>(asCtensorB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2]));
+      if(Tsel==0) obj.add_Mprod<0>(asCtensorB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
       if(Tsel==1) obj.add_Mprod_TA<Csel>(asCtensorB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
       if(Tsel==2) obj.add_Mprod_AT<Csel>(asCtensorB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
     }

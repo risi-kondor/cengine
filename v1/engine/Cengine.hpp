@@ -86,81 +86,81 @@ namespace Cengine{
 
     template<typename OP>
     Chandle* push(Chandle* h0){
-      return new_handle(enqueue(new OP(nodeof(h0))));
+      return new_handle(enqueue_for_handle(new OP(nodeof(h0))));
     }
 
     template<typename OP>
     Chandle* push(Chandle* h0, Chandle* h1){
-      return new_handle(enqueue(new OP(nodeof(h0),nodeof(h1))));
+      return new_handle(enqueue_for_handle(new OP(nodeof(h0),nodeof(h1))));
     }
 
     template<typename OP>
     Chandle* push(Chandle* h0, Chandle* h1, Chandle* h2){
-      return new_handle(enqueue(new OP(nodeof(h0),nodeof(h1),nodeof(h2))));
+      return new_handle(enqueue_for_handle(new OP(nodeof(h0),nodeof(h1),nodeof(h2))));
     }
 
 
     template<typename OP, typename ARG0>
     Chandle* push(const ARG0 arg0){
-      return new_handle(enqueue(new OP(arg0)));
+      return new_handle(enqueue_for_handle(new OP(arg0)));
     }
 
     template<typename OP, typename ARG0>
     Chandle* push(Chandle* h0, const ARG0 arg0){
-      return new_handle(enqueue(new OP(nodeof(h0),arg0)));
+      return new_handle(enqueue_for_handle(new OP(nodeof(h0),arg0)));
     }
 
     template<typename OP, typename ARG0>
     Chandle* push(Chandle* h0, Chandle* h1, const ARG0 arg0){
-      return new_handle(enqueue(new OP(nodeof(h0),nodeof(h1),arg0)));
+      return new_handle(enqueue_for_handle(new OP(nodeof(h0),nodeof(h1),arg0)));
     }
 
     template<typename OP, typename ARG0>
     Chandle* push(Chandle* h0, Chandle* h1, Chandle* h2, const ARG0 arg0){
-      return new_handle(enqueue(new OP(nodeof(h0),nodeof(h1),nodeof(h2),arg0)));
+      return new_handle(enqueue_for_handle(new OP(nodeof(h0),nodeof(h1),nodeof(h2),arg0)));
     }
 
 
     template<typename OP, typename ARG0, typename ARG1>
     Chandle* push(const ARG0 arg0, const ARG1 arg1){
-      return new_handle(enqueue(new OP(arg0,arg1)));
+      return new_handle(enqueue_for_handle(new OP(arg0,arg1)));
     }
 
     template<typename OP, typename ARG0, typename ARG1>
     Chandle* push(Chandle* h0, const ARG0 arg0, const ARG1 arg1){
-      return new_handle(enqueue(new OP(nodeof(h0), arg0,arg1)));
+      return new_handle(enqueue_for_handle(new OP(nodeof(h0), arg0,arg1)));
     }
 
     template<typename OP, typename ARG0, typename ARG1>
     Chandle* push(Chandle* h0, Chandle* h1, const ARG0 arg0, const ARG1 arg1){
-      return new_handle(enqueue(new OP(nodeof(h0), nodeof(h1), arg0, arg1)));
+      return new_handle(enqueue_for_handle(new OP(nodeof(h0), nodeof(h1), arg0, arg1)));
     }
 
     template<typename OP, typename ARG0, typename ARG1>
     Chandle* push(Chandle* h0, Chandle* h1, Chandle* h2, const ARG0 arg0, const ARG1 arg1){
-      return new_handle(enqueue(new OP(nodeof(h0), nodeof(h1), nodeof(h2), arg0, arg1)));
+      return new_handle(enqueue_for_handle(new OP(nodeof(h0), nodeof(h1), nodeof(h2), arg0, arg1)));
     }
 
     // 3 args 
 
     template<typename OP, typename ARG0, typename ARG1, typename ARG2>
     Chandle* push(const ARG0 arg0, const ARG1 arg1, const ARG2 arg2){
-      return new_handle(enqueue(new OP(arg0,arg1,arg2)));
+      return new_handle(enqueue_for_handle(new OP(arg0,arg1,arg2)));
     }
 
     template<typename OP, typename ARG0, typename ARG1, typename ARG2>
     Chandle* push(Chandle* h0, const ARG0 arg0, const ARG1 arg1, const ARG2 arg2){
-      return new_handle(enqueue(new OP(nodeof(h0),arg0,arg1,arg2)));
+      return new_handle(enqueue_for_handle(new OP(nodeof(h0),arg0,arg1,arg2)));
     }
 
     template<typename OP, typename ARG0, typename ARG1, typename ARG2>
     Chandle* push(Chandle* h0, Chandle* h1, const ARG0 arg0, const ARG1 arg1, const ARG2 arg2){
-      return new_handle(enqueue(new OP(nodeof(h0),nodeof(h1),arg0,arg1,arg2)));
+      return new_handle(enqueue_for_handle(new OP(nodeof(h0),nodeof(h1),arg0,arg1,arg2)));
     }
 
     template<typename OP, typename ARG0, typename ARG1, typename ARG2>
     Chandle* push(Chandle* h0, Chandle* h1, Chandle* h2, const ARG0 arg0, const ARG1 arg1, const ARG2 arg2){
-      return new_handle(enqueue(new OP(nodeof(h0),nodeof(h1),nodeof(h2),arg0,arg1,arg2)));
+      return new_handle(enqueue_for_handle(new OP(nodeof(h0),nodeof(h1),nodeof(h2),arg0,arg1,arg2)));
     }
 
 
@@ -168,28 +168,28 @@ namespace Cengine{
 
     template<typename OP, typename ARG0, typename ARG1, typename ARG2, typename ARG3>
     Chandle* push(const ARG0 arg0, const ARG1 arg1, const ARG2 arg2, const ARG3 arg3){
-      return new_handle(enqueue(new OP(arg0,arg1,arg2,arg3)));
+      return new_handle(enqueue_for_handle(new OP(arg0,arg1,arg2,arg3)));
     }
 
     template<typename OP, typename ARG0, typename ARG1, typename ARG2, typename ARG3>
     Chandle* push(Chandle* h0, const ARG0 arg0, const ARG1 arg1, const ARG2 arg2, const ARG3 arg3){
-      return new_handle(enqueue(new OP(nodeof(h0),arg0,arg1,arg2,arg3)));
+      return new_handle(enqueue_for_handle(new OP(nodeof(h0),arg0,arg1,arg2,arg3)));
     }
 
     template<typename OP, typename ARG0, typename ARG1, typename ARG2, typename ARG3>
     Chandle* push(Chandle* h0, Chandle* h1, const ARG0 arg0, const ARG1 arg1, const ARG2 arg2, const ARG3 arg3){
-      return new_handle(enqueue(new OP(nodeof(h0),nodeof(h1),arg0,arg1,arg2,arg3)));
+      return new_handle(enqueue_for_handle(new OP(nodeof(h0),nodeof(h1),arg0,arg1,arg2,arg3)));
     }
 
     template<typename OP, typename ARG0, typename ARG1, typename ARG2, typename ARG3>
     Chandle* push(Chandle* h0, Chandle* h1, Chandle* h2, const ARG0 arg0, const ARG1 arg1, const ARG2 arg2, const ARG3 arg3){
-      return new_handle(enqueue(new OP(nodeof(h0),nodeof(h1),nodeof(h2),arg0,arg1,arg2,arg3)));
+      return new_handle(enqueue_for_handle(new OP(nodeof(h0),nodeof(h1),nodeof(h2),arg0,arg1,arg2,arg3)));
     }
 
 
 
     Chandle* operator()(Coperator* op){
-      return new_handle(enqueue(op));
+      return new_handle(enqueue_for_handle(op));
     }
 
 
@@ -200,6 +200,18 @@ namespace Cengine{
       lock_guard<mutex> lock(done_mx); 
 #endif
       return enqueue_sub(op);
+    }
+
+
+    Cnode* enqueue_for_handle(Coperator* op){ // Protected by done_mx
+#ifdef ENGINE_PRIORITY
+      priority_guard<3> lock(done_pmx,0);
+#else
+      lock_guard<mutex> lock(done_mx); 
+#endif
+      Cnode* r=enqueue_sub(op);
+      r->nhandles=1;
+      return r;
     }
 
     
@@ -399,12 +411,20 @@ namespace Cengine{
 	bool all_done=true;
 	for(auto p:batchers) 
 	  if(p->flush()>0) all_done=false; 
-	{
+	if(waiting.size()>0) all_done=false;
+	else{
 	  lock_guard<mutex> lock2(ready_mx);
 	  if(ready.size()>0) all_done=false;
 	}
 	if(all_done) break;
 	this_thread::sleep_for(chrono::milliseconds(13));
+      }
+      while(true){
+	bool all_done=true;
+	for(auto p:workers) 
+	  if(p->working) all_done=false;
+	if(all_done) break;
+	this_thread::sleep_for(chrono::milliseconds(13));	
       }
       {CoutLock lk; cout<<"flushed"<<endl;}
       return; 
@@ -416,7 +436,7 @@ namespace Cengine{
  
     Chandle* new_handle(Cnode* node){
      Chandle* hdl=new Chandle(node);
-     hdl->id=nhandles++;
+     hdl->id=nhandles-1; //++;
      //handles.insert(hdl);
      //DEBUG_ENGINE({CoutLock lk; cout<<"    New handle "<<hdl->ident()<<" ["<<hdl->node->ident()<<"]"<<endl;}); 
      return hdl;
@@ -447,8 +467,9 @@ namespace Cengine{
   public: // ---- Backend ------------------------------------------------------------------------------------
 
 
-    Coperator* get_task(){ // visited by workers
+    Coperator* get_task(Cworker* worker){ // visited by workers
       Coperator* op; 
+      worker->working=false; 
       unique_lock<mutex> lock(get_task_mx);
       get_task_cv.wait(lock,[this](){return ready.size()>0 || shutdown;});
       {
@@ -459,6 +480,7 @@ namespace Cengine{
 #endif
 	lock_guard<mutex> lock2(ready_mx);
 	if(ready.size()==0) return nullptr;
+	worker->working=true;
 	op=ready.front()->op;
 	ready.pop_front();
 	op->owner->working=true; 
@@ -475,7 +497,7 @@ namespace Cengine{
   inline void Cworker::run(){
     while(!owner->shutdown){
       //this_thread::sleep_for(chrono::milliseconds(10));
-      Coperator* op=owner->get_task();
+      Coperator* op=owner->get_task(this);
       if(op){
 	DEBUG_ENGINE({CoutLock lk; 
 	    cout<<"    \e[1mWorker "<<id<<":\e[0m  "<<op->owner->ident()<<" <- "<<op->str()<<endl;});

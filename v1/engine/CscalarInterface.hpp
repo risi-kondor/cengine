@@ -183,7 +183,7 @@ namespace Cengine{
 
     vector<complex<float> > cscalar_get(Chandle* hdl){
       Cengine_engine->flush(hdl->node);
-      return asCscalarB(hdl->node->obj);
+      return asCscalarB(hdl->node->obj,__PRETTY_FUNCTION__);
     }
   
 

@@ -429,6 +429,11 @@ inline void printv(const vector<TYPE>& x){
 }
 
 
+//#include "Cobject.hpp"
+//namespace Cengine{
+//class Cnode; 
+//}
+
 
 // ---- CUDA STUFF ------------------------------------------------------------------------------------------
 

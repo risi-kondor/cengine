@@ -107,6 +107,39 @@ namespace Cengine{
   }
 
 
+  template<typename TYPE>
+  inline TYPE& downcast(Cnode* x, const char* s){
+    if(!x){
+      CoutLock lk; cerr<<"\e[1mCengine error\e[0m ("<<s<<"): node does not exist"<<endl;
+      exit(-1);
+    }
+    if(!x->obj){
+      CoutLock lk; cerr<<"\e[1mCengine error\e[0m ("<<s<<"): object does not exist"<<endl;
+      exit(-1);
+    }
+    if(!dynamic_cast<TYPE*>(x->obj)){
+      CoutLock lk; 
+      cerr<<"\e[1mCengine error\e[0m ("<<s<<"): Cobject is of type "<<x->obj->classname()<<" instead of TYPE."<<endl;
+      exit(-1);
+    }
+    return static_cast<TYPE&>(*x->obj);
+  }
+
+
+  template<typename TYPE>
+  inline TYPE& downcast(Cnode& x, const char* s){
+    if(!x.obj){
+      CoutLock lk; cerr<<"\e[1mCengine error\e[0m ("<<s<<"): object does not exist"<<endl;
+      exit(-1);
+    }
+    if(!dynamic_cast<TYPE*>(x.obj)){
+      CoutLock lk; 
+      cerr<<"\e[1mCengine error\e[0m ("<<s<<"): Cobject is of type "<<x.obj->classname()<<" instead of TYPE."<<endl;
+      exit(-1);
+    }
+    return static_cast<TYPE&>(*x.obj);
+  }
+
 }
 
 

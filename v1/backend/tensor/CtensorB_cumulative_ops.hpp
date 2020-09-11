@@ -17,8 +17,7 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       // inputs[0]->is_view=true; taken care of in engine 
-      asCtensorB(owner).add(asCtensorB(inputs[1]));
-      //owner->computed=true; 
+      asCtensorB(owner,__PRETTY_FUNCTION__).add(asCtensorB(inputs[1],__PRETTY_FUNCTION__));
     }
 
     string str() const{
@@ -38,8 +37,7 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      asCtensorB(owner).add_conj(asCtensorB(inputs[1]));
-      //owner->computed=true; 
+      asCtensorB(owner,__PRETTY_FUNCTION__).add_conj(asCtensorB(inputs[1],__PRETTY_FUNCTION__));
     }
 
     string str() const{
@@ -59,7 +57,7 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      asCtensorB(owner).add_transp(asCtensorB(inputs[1]));
+      asCtensorB(owner,__PRETTY_FUNCTION__).add_transp(asCtensorB(inputs[1],__PRETTY_FUNCTION__));
       //owner->computed=true; 
     }
 
@@ -80,7 +78,7 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      asCtensorB(owner).add_herm(asCtensorB(inputs[1]));
+      asCtensorB(owner,__PRETTY_FUNCTION__).add_herm(asCtensorB(inputs[1],__PRETTY_FUNCTION__));
       //owner->computed=true; 
     }
 
@@ -104,7 +102,7 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      asCtensorB(owner).subtract(asCtensorB(inputs[1]));
+      asCtensorB(owner,__PRETTY_FUNCTION__).subtract(asCtensorB(inputs[1],__PRETTY_FUNCTION__));
       //owner->computed=true; 
     }
 
@@ -129,7 +127,7 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      asCtensorB(owner).add(asCtensorB(inputs[1]),c);
+      asCtensorB(owner,__PRETTY_FUNCTION__).add(asCtensorB(inputs[1],__PRETTY_FUNCTION__),c);
       //owner->computed=true; 
     }
 
@@ -151,7 +149,7 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      asCtensorB(owner).add(asCtensorB(inputs[1]),c);
+      asCtensorB(owner,__PRETTY_FUNCTION__).add(asCtensorB(inputs[1],__PRETTY_FUNCTION__),c);
       //owner->computed=true; 
     }
 
@@ -171,7 +169,7 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      asCtensorB(owner).add_prod(asRscalarB(inputs[1]),asCtensorB(inputs[2]));
+      asCtensorB(owner,__PRETTY_FUNCTION__).add_prod(asRscalarB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
       //owner->computed=true; 
     }
 
@@ -193,7 +191,7 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      asCtensorB(owner).add_prod(asCscalarB(inputs[1]),asCtensorB(inputs[2]));
+      asCtensorB(owner,__PRETTY_FUNCTION__).add_prod(asCscalarB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
       //owner->computed=true; 
     }
 
@@ -213,7 +211,7 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      asCtensorB(owner).add_prod_cconj(asCscalarB(inputs[1]),asCtensorB(inputs[2]));
+      asCtensorB(owner,__PRETTY_FUNCTION__).add_prod_cconj(asCscalarB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
       //owner->computed=true; 
     }
 
@@ -233,7 +231,7 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      asCtensorB(owner).add_prod_c_times_conj(asCscalarB(inputs[1]),asCtensorB(inputs[2]));
+      asCtensorB(owner,__PRETTY_FUNCTION__).add_prod_c_times_conj(asCscalarB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
       //owner->computed=true; 
     }
 
@@ -254,7 +252,7 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      asCtensorB(owner).add_Mprod_AT<0>(asCtensorB(inputs[1]),asCtensorB(inputs[2]));
+      asCtensorB(owner).add_Mprod_AT<0>(asCtensorB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
       //owner->computed=true; 
     }
 
@@ -275,7 +273,7 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      asCtensorB(owner).add_Mprod_TA<0>(asCtensorB(inputs[1]),asCtensorB(inputs[2]));
+      asCtensorB(owner).add_Mprod_TA<0>(asCtensorB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
       //owner->computed=true; 
     }
 
@@ -296,7 +294,7 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      asCtensorB(owner).add_Mprod<2>(asCtensorB(inputs[1]),asCtensorB(inputs[2]));
+      asCtensorB(owner).add_Mprod<2>(asCtensorB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
       //owner->computed=true; 
     }
 
@@ -317,7 +315,7 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      asCtensorB(owner).add_Mprod_TA<2>(asCtensorB(inputs[1]),asCtensorB(inputs[2]));
+      asCtensorB(owner).add_Mprod_TA<2>(asCtensorB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
       //owner->computed=true; 
     }
 
@@ -338,7 +336,7 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      asCtensorB(owner).add_Mprod_AT<2>(asCtensorB(inputs[1]),asCtensorB(inputs[2]));
+      asCtensorB(owner).add_Mprod_AT<2>(asCtensorB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
     }
 
     string str() const{
@@ -358,7 +356,7 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      asCtensorB(owner).add_Mprod_TA<1>(asCtensorB(inputs[1]),asCtensorB(inputs[2]));
+      asCtensorB(owner).add_Mprod_TA<1>(asCtensorB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
     }
 
     string str() const{
@@ -386,8 +384,7 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      asCtensorB(owner).add_LeakyReLU(asCtensorB(inputs[1]),c);
-      //owner->computed=true; 
+      asCtensorB(owner,__PRETTY_FUNCTION__).add_LeakyReLU(asCtensorB(inputs[1],__PRETTY_FUNCTION__),c);
     }
 
     string str() const{
@@ -408,8 +405,7 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      asCtensorB(owner).add_LeakyReLU_back(asCtensorB(inputs[1]),asCtensorB(inputs[2]),c);
-      //owner->computed=true; 
+      asCtensorB(owner,__PRETTY_FUNCTION__).add_LeakyReLU_back(asCtensorB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__),c);
     }
 
     string str() const{
@@ -428,8 +424,7 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      asCtensorB(inputs[1]).add_inp_into(asCscalarB(owner),asCtensorB(inputs[2]));
-      //owner->computed=true; 
+      asCtensorB(inputs[1],__PRETTY_FUNCTION__).add_inp_into(asCscalarB(owner,__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
     }
 
     string str() const{

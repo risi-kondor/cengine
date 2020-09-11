@@ -182,7 +182,7 @@ namespace Cengine{
 
     virtual void exec(){
       assert(!owner->obj);
-      owner->obj=new CtensorB(asCtensorB(inputs[0]),nowarn);
+      owner->obj=new CtensorB(asCtensorB(inputs[0],__PRETTY_FUNCTION__),nowarn);
       //owner->computed=true; 
     }
 

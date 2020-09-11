@@ -190,7 +190,8 @@ namespace Cengine{
 
     Gtensor<complex<float> > ctensor_get(Chandle* hdl){
       Cengine_engine->flush(hdl->node);
-      return asCtensorB(hdl->node->obj);
+      cout<<hdl->node->nhandles<<endl; 
+      return asCtensorB(hdl->node->obj,__PRETTY_FUNCTION__);
     }
 
   }
