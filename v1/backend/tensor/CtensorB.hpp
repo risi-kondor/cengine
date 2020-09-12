@@ -213,7 +213,7 @@ namespace Cengine{
     return downcast<CtensorB>(x,s);
   }
 
-
+#define CTENSORB(x) asCtensorB(x,__PRETTY_FUNCTION__) 
 
 
 }

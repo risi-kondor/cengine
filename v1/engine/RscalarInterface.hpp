@@ -117,7 +117,7 @@ namespace Cengine{
   
   vector<float> rscalar_get(Chandle* hdl){
     Cengine_engine->flush(hdl->node);
-    return asRscalarB(hdl->node->obj);
+    return asRscalarB(hdl->node->obj,__PRETTY_FUNCTION__);
   }
   
 

@@ -390,6 +390,9 @@ namespace Cengine{
 
 }
 
+#define CSCALARB(x) asCscalarB(x,__PRETTY_FUNCTION__) 
+
+
 #endif
 
    //assert(x->obj);
