@@ -4,6 +4,7 @@
 #include "Batcher.hpp"
 #include "Cnode.hpp"
 
+//#include "SO3partObj.hpp"
 
 namespace Cengine{
 
@@ -41,7 +42,8 @@ namespace Cengine{
     bool working=false; 
 
     BatcherA(BasicCnodeEngine* _engine):
-      engine(_engine){}
+      engine(_engine){
+    }
 
     ~BatcherA(){}
 
@@ -84,7 +86,7 @@ namespace Cengine{
 
     
     void exec(){
-      working=true; 
+      working=true;
       Cnode* node=engine->new_node(new exec_batcher_op<OP>(ready));
       engine->release(node);
       ready.clear();

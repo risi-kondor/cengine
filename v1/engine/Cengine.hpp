@@ -409,8 +409,9 @@ namespace Cengine{
 	//lock_guard<mutex> lock(done_mx);
 	//#endif
 	bool all_done=true;
-	for(auto p:batchers) 
+	for(auto p:batchers){
 	  if(p->flush()>0) all_done=false; 
+	}
 	if(waiting.size()>0) all_done=false;
 	else{
 	  lock_guard<mutex> lock2(ready_mx);
@@ -421,8 +422,9 @@ namespace Cengine{
       }
       while(true){
 	bool all_done=true;
-	for(auto p:workers) 
+	for(auto p:workers){
 	  if(p->working) all_done=false;
+	}
 	if(all_done) break;
 	this_thread::sleep_for(chrono::milliseconds(13));	
       }
