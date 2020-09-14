@@ -163,24 +163,6 @@ namespace Cengine{
   public: // ---- I/O ----------------------------------------------------------------------------------------
 
 
-    /*
-    CtensorB(const string filename, const device_id& dev=0):
-      CFtensor(filename,dev){}
-
-    int save(const string filename) const{
-      CFtensor::save(filename);
-      return 0;
-    }
-
-    CtensorB(Bifstream& ifs): 
-      CFtensor(ifs){
-    }
-
-    void serialize(Bofstream& ofs){
-      CFtensor::serialize(ofs);
-    }
-    */
-
     string str(const string indent="") const{
       stringstream oss;
       return oss.str();
@@ -189,32 +171,20 @@ namespace Cengine{
   };
 
 
-  //inline CtensorB& asCtensorB(Cobject* x){
-  //return downcast<CtensorB>(x,"");
-  //}
-
   inline CtensorB& asCtensorB(Cobject* x, const char* s){
     return downcast<CtensorB>(x,s);
   }
-
-  //inline CtensorB& asCtensorB(Cnode* x){
-  //return downcast<CtensorB>(x,"");
-  //}
 
   inline CtensorB& asCtensorB(Cnode* x, const char* s){
     return downcast<CtensorB>(x,s);
   }
   
-  //inline CtensorB& asCtensorB(Cnode& x){
-  //return downcast<CtensorB>(x,"");
-  //}
-
   inline CtensorB& asCtensorB(Cnode& x, const char* s){
     return downcast<CtensorB>(x,s);
   }
 
-#define CTENSORB(x) asCtensorB(x,__PRETTY_FUNCTION__) 
 
+#define CTENSORB(x) asCtensorB(x,__PRETTY_FUNCTION__) 
 
 }
 
@@ -272,3 +242,33 @@ namespace Cengine{
     return static_cast<CtensorB&>(*x.obj);
   }
   */
+    /*
+    CtensorB(const string filename, const device_id& dev=0):
+      CFtensor(filename,dev){}
+
+    int save(const string filename) const{
+      CFtensor::save(filename);
+      return 0;
+    }
+
+    CtensorB(Bifstream& ifs): 
+      CFtensor(ifs){
+    }
+
+    void serialize(Bofstream& ofs){
+      CFtensor::serialize(ofs);
+    }
+    */
+
+  //inline CtensorB& asCtensorB(Cobject* x){
+  //return downcast<CtensorB>(x,"");
+  //}
+
+  //inline CtensorB& asCtensorB(Cnode* x){
+  //return downcast<CtensorB>(x,"");
+  //}
+
+  //inline CtensorB& asCtensorB(Cnode& x){
+  //return downcast<CtensorB>(x,"");
+  //}
+

@@ -30,10 +30,10 @@ void add_Mprod(const CFtensor& x, const CFtensor& y, const int nx=1, const int n
 	  float xi=x.arrc[qx];
 	  float yr=y.arr[qy];
 	  float yi=y.arrc[qy];
-	  if constexpr(selector==0) {tr+=xr*yr-xi*yi; ti+=xr*yi+xi*yr;}
-	  if constexpr(selector==1) {tr+=xr*yr+xi*yi; ti+=xr*yi-xi*yr;}
-	  if constexpr(selector==2) {tr+=xr*yr+xi*yi; ti+=(-xr*yi)+xi*yr;}
-	  if constexpr(selector==3) {tr+=xr*yr-xi*yi; ti-=xr*yi+xi*yr;}
+	  if (selector==0) {tr+=xr*yr-xi*yi; ti+=xr*yi+xi*yr;}
+	  if (selector==1) {tr+=xr*yr+xi*yi; ti+=xr*yi-xi*yr;}
+	  if (selector==2) {tr+=xr*yr+xi*yi; ti+=(-xr*yi)+xi*yr;}
+	  if (selector==3) {tr+=xr*yr-xi*yi; ti-=xr*yi+xi*yr;}
 	}
 	int qr=i*istrider+j;
 	arr[qr]+=tr;
@@ -96,10 +96,10 @@ void add_Mprod_AT(const CFtensor& x, const CFtensor& y, const int nx=1, const in
 	  float xi=x.arrc[qx];
 	  float yr=y.arr[qy];
 	  float yi=y.arrc[qy];
-	  if constexpr(selector==0) {tr+=xr*yr-xi*yi; ti+=xr*yi+xi*yr;}
-	  if constexpr(selector==1) {tr+=xr*yr+xi*yi; ti+=xr*yi-xi*yr;}
-	  if constexpr(selector==2) {tr+=xr*yr+xi*yi; ti+=(-xr*yi)+xi*yr;}
-	  if constexpr(selector==3) {tr+=xr*yr-xi*yi; ti-=xr*yi+xi*yr;}
+	  if (selector==0) {tr+=xr*yr-xi*yi; ti+=xr*yi+xi*yr;}
+	  if (selector==1) {tr+=xr*yr+xi*yi; ti+=xr*yi-xi*yr;}
+	  if (selector==2) {tr+=xr*yr+xi*yi; ti+=(-xr*yi)+xi*yr;}
+	  if (selector==3) {tr+=xr*yr-xi*yi; ti-=xr*yi+xi*yr;}
 	}
 	int qr=i*istrider+j;
 	arr[qr]+=tr;
@@ -163,10 +163,10 @@ void add_Mprod_TA(const CFtensor& x, const CFtensor& y, const int nx=1, const in
 	  float xi=x.arrc[qx];
 	  float yr=y.arr[qy];
 	  float yi=y.arrc[qy];
-	  if constexpr(selector==0) {tr+=xr*yr-xi*yi; ti+=xr*yi+xi*yr;}
-	  if constexpr(selector==1) {tr+=xr*yr+xi*yi; ti+=xr*yi-xi*yr;}
-	  if constexpr(selector==2) {tr+=xr*yr+xi*yi; ti+=(-xr*yi)+xi*yr;}
-	  if constexpr(selector==3) {tr+=xr*yr-xi*yi; ti-=xr*yi+xi*yr;}
+	  if (selector==0) {tr+=xr*yr-xi*yi; ti+=xr*yi+xi*yr;}
+	  if (selector==1) {tr+=xr*yr+xi*yi; ti+=xr*yi-xi*yr;}
+	  if (selector==2) {tr+=xr*yr+xi*yi; ti+=(-xr*yi)+xi*yr;}
+	  if (selector==3) {tr+=xr*yr-xi*yi; ti-=xr*yi+xi*yr;}
 	}
 	int qr=i*istrider+j;
 	arr[qr]+=tr;
@@ -199,17 +199,3 @@ void add_Mprod_TA(const CFtensor& x, const CFtensor& y, const int nx=1, const in
       
 }
 
-
-
-  /*
-  const int B=x.combined_size(0,nb);
-  assert(y.combined_size(0,nb)==B);
-  assert(combined_size(0,nb)==B);
-  
-  const int K=x.combined_size(x.k-nx,x.k);
-  assert(y.combined_size(nb,nb+ny)==K);
-
-  const int I=x.combined_size(nb,x.k-nx);
-  const int J=y.combined_size(nb+ny,y.k);
-  assert(combined_size(nb,k)==I*J);
-  */

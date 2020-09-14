@@ -4,7 +4,6 @@
 #include "Batcher.hpp"
 #include "Cnode.hpp"
 
-//#include "SO3partObj.hpp"
 
 namespace Cengine{
 
@@ -28,7 +27,6 @@ namespace Cengine{
     }
 
   };
-
 
 
   template<typename OP>

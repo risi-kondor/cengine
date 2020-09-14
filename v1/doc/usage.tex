@@ -8,58 +8,80 @@ initializes a compute engine with 4 CPU threads.
 
 User level code does not have direct access to the data objects managed by the engine. 
 Rather, it issues commands to the engine via the engine's \ccode{push} method. 
-The \ccode{push} method then returns a handle, which can subsequently be used to reference the object 
-stored internally. For example, 
+The \ccode{push} method then returns a pointer to a handle, 
+which can subsequently be used to reference the object stored internally. For example, 
 
-\texttt{~~~Chandle A=engine.push<new\_ctensor\_gaussian>(\{3,3\});}
+\texttt{~~~Chandle* A=engine.push<new\_ctensor\_gaussian>(\{3,3\});}
 
 instructs the engine to create a new \m{3\times 3} complex matrix filled with random numbers 
 drawn IID from the standard normal distribution. Issuing the command 
 
-\texttt{~~~Chandle B=engine.push<ctensor\_add>(A,A);}
+\texttt{~~~Chandle* B=engine.push<ctensor\_add>(A,A);}
 
 adds \ccode{A} to itself and stores the result in an object referenced by \ccode{B}. 
+
+\vspace{-10pt}
+\subsubsection*{Asynchronous execution}
 
 \Cengine{} follows the asynchronous, delayed execution model of computation. This means that most  
 commands are not executed immediately, but at some later moment in time, when,  
 depending on context, either a CPU thread becomes available, or a sufficient number of operations 
 of the same type have accumulated for execution on the GPU. 
-The order in which the operations are executed might also differ from the order that they 
+The order in which the operations are executed is generally not the same as the order that they 
 were issued to the engine. 
-However, the engine keeps track of dependencies between operations to ensure that the final result of 
-any computation is correct. 
+Therefore, the engine needs to keep track of dependencies between operations to ensure that the final result 
+is always correct. 
  
 %This means that by the time the second of the above commands is issued to the engine, the original 
 %matrix \ccode{A} will not have been constructed yet. Therefore the engine enqueues the second operation 
 %respecting its dependency on the 
 
-In contrast, a small set of commands are \emph{blocking}, which means that calling function will  
+The delayed execution model implies that the \ccode{Chandle} objects returned by the engine do not 
+point to the actual result of the computation, but only to where the result will eventually appear. 
+To correctly manage this, user level code will typically encapsulate \ccode{Cengine} calls in 
+a separate set of classes. For example, the user might define a \ccode{ComplexMatrix} class that includes 
+a member variable \ccode{hdl} to store the handle returned by engine. To implement in-place matrix addition, 
+the user may then add the member function 
+
+\boxedcode{
+ComplexMatrix\& ComplexMatrix::operator+(const ComplexMatrix\& B)\{\\
+\phantom{MMM}Chandle* t=engine.push<ctensor\_add>(hdl,B.hdl);\\
+\phantom{MMM}delete hdl;\\
+\phantom{MMM}hdl=t;\\
+\}
+}
+
+Of course eventually the result of the computation has to be extracted from the \ccode{Cengine}. 
+For this we use commands that are \emph{blocking}, meaning that the calling function will  
 wait until the result has actually been computed. For example, the command 
 
-\texttt{~~~Gtensor M=engine.push<ctensor\_get>(B)}
+\texttt{~~~Gtensor M=engine.push<ctensor\_get>(B);}
 
 returns the value of \ccode{B} in a user side tensor object \ccode{M}. This command requires 
 explicitly materializing \ccode{B}, therefore it only returns after all computations leading up to \ccode{B} 
 are complete and \ccode{B} has been computed as well. Calling 
 
-\texttt{~~~cengine::flush(B)}
+\texttt{~~~cengine::flush(B);}
 
 has a similar effect, while 
 
-\texttt{~~~cengine::flush()}
+\texttt{~~~cengine::flush();}
 
 flushes all pending operations.  
 
-\Cengine{} also automatically takes care of memory management. In particular, 
+\Cengine{} automatically takes care of memory management. In particular, 
 for any given backend object \ccode{T}, as soon as there are no operations pending that take \ccode{T} 
-as an argument and there are no user side handles pointing to \ccode{T} either, 
-\ccode{T} is scheduled for deletion. When the \ccode{Cengine::engine} object is shut down, all pending 
+as an argument and there are no user side handles pointing to \ccode{T}, 
+the object \ccode{T} is scheduled for deletion. 
+When the \ccode{Cengine::engine} object is shut down, all pending 
 operations are flushed and all backend objects are destroyed. 
 
 \section*{Operators}
+\addcontentsline{toc}{section}{Operators}
 
-Commands in \Cengine{} are actually operators and the template argument of \ccode{Cengine::push} 
-command is the name of the corresponding class. The abstract base class of all 
+Commands in \Cengine{} are implemented as operators (in the sense of each command having a 
+corresponding class) and the template argument of \ccode{Cengine::push} 
+command is the name of the corresponding operator class. The abstract base class of all 
 operator classes is \ccode{Cengine::Coperator}.  
 For example, the internal definition of the \ccode{ctensor\_add\_op} operator in abbreviated form is 
 
@@ -84,16 +106,115 @@ For example, the internal definition of the \ccode{ctensor\_add\_op} operator in
 
 In each operator class, the \ccode{exec} method is responsible for carrying out the actual operation on 
 the operator's arguments. In the case of \ccode{ctensor\_add\_op} this is  
-just involves calling the backend object's method for tensor summation. 
+involves calling the backend object's method for tensor summation. 
 However, in user-defined operators, the \ccode{exec} method is often significantly more involved. 
 Adding a new operator to \Cengine{} just requires defining the corresponding operator class. 
 
 The concrete data object that \ccode{ctensor\_add\_op} operates on is of type \ccode{Censing::CtensorB}, 
 which is the backend container for \ccode{ctensor} objects. 
-The built-in \ccode{rscalar, scalar} and \ccode{ctensor}, extended by user defined operators, 
-are sufficient for many purposes. However, new backend object classes are also easy to add, 
+The built-in \ccode{rscalar, scalar} and \ccode{ctensor} classes, if extended by user defined operators, 
+are already sufficient for many purposes. 
+However, there is nothing stopping the user from adding new backend classes, simply 
+%new backend object classes are also easy to add, 
 by subclassing the \ccode{Cengine::Cobject} abstract class. 
+%Adding new backend classes and new operators does not require any 
+\Cengine{} can manage any type of user defined backend object, as long as its class is derived from 
+\ccode{Cengine::Cobject}, and any type of user defined operator, as long as it is derived from 
+\ccode{Cengine::Coperator}. 
+Adding new objects and operators does not require making any changes to \Cengine{} itself.  
+
+\clearpage
+\section*{Batched operators}
+\addcontentsline{toc}{section}{Batched operators}
+
+Batching refers to the process of executing multiple instances of the same operation together, in parallel. 
+Batching is particularly important for GPU computations, since GPU threads in general are not independent: 
+on NVIDIA architectures, for example, all threads running on the same multiprocessor must essentially 
+be executing the same set of instructions at any given time. Some types of computations, such as 
+solving a systems of partial differential equations on a regular grid are relatively well suited to this 
+paradigm, since each thread can take care of a single grid point.
+
+Many other types of computations however are much less structured. 
+In a graph neural network, for example, the actual operation performed at each node depends 
+on the number of neighbors. In principle, it is possible to write code that 
+separately parallelizes over all nodes 
+with just one neighbor, all nodes with two neighbors, and so on, 
+but in practice such low level multithreading is very laborious and highly error prone. 
+%at such a low level of detail quickly becomes untenable. 
+
+One solution that has emerged is \emph{dynamic batching}, which refers to accumulating operations of each 
+type and executing them together in batch on the GPU, when a certain number of the same type have accumulated. 
+Taking dynamic batching too far can lead to situations where a large number of batched operations 
+are waiting on each other and none of the batches is getting executed. 
+Therefore, in general, it is best to only batch a relatively small set of frequent operations that are 
+expensive enough to be performance critical, but not so expensive that individually (without batching) 
+a single instance of the operation could itself saturate most of the GPU's processing power. 
+As an exmple, basic matrix operations, such as matrix/scalar and matrix/matrix products are good candidates 
+for batching. Accessing individual components of matrices, however, is not an operation that would 
+likely benefit from dynamic batching. 
+
+\Cengine{} will attempt to dynamically batch any operator derived from the \ccode{BatchedOperator} class. 
+In addition to the \ccode{exec()} method, batched operators must also have a \ccode{batched\_exec} method, 
+which takes a \emph{vector} of pointers to compute graph nodes as its argument, and executes 
+each node in parallel. For each batched operator class, say \ccode{UserOp1}, the engine must internally 
+create a separate object of class \ccode{BatcherA<UserOp1>} to manage the batching process. 
+For the engine to be able to 
+keep track of the correspondence between operators and corresponding batchers, each batched operator 
+class must have a static integer \ccode{batcher\_id} variable. 
+
+\subsubsection*{Meta-batchers}
+
+Many batched operators require separate batchers for each setting of their parameters. For example, 
+in order to batch matrix multiplication, we need separate batchers for each combination of input matrix 
+dimensions. \Cengine{} makes it easy to implement such \emph{multi-batched} operators by introducing batcher 
+signatures and the \ccode{MetaBatcher} class. 
+
+Any multi-batched class must have a corresponding signature type. For example the signature class of the 
+matrix multiplication operator is \ccode{Mprod\_signature}, 
+and it just stores the dimensions of the two matrices to be multiplied and 
+some flags to signify if either matrix is transposed. The matrix multiplication operator 
+\ccode{ctensor\_Mprod\_op} must then have a \ccode{signature()} method that returns the signature object 
+corresponding to the given pair of matrices to be multiplied. 
+The engine will create a separate batcher object for each distinct signature. 
+
+The purpose of the \ccode{MetaBatcher} class (for matrix multiplication) is to 
+route individual matrix products to their corresponding batcher.  
+All that the operator class needs to do is to define the signature class and provide a 
+\ccode{spawn\_batcher()} method that creates the appropriate templated \ccode{MetaBatcher} object. 
+In the case of our example the type of this (in slightly abbreviated form) is 
+
+\texttt{MetaBatcher<ctensor\_add\_Mprod\_op,Mprod\_signature,BatcherA<ctensor\_add\_Mprod\_op> >}.
 
 
+\section*{Built-in types}
+\addcontentsline{toc}{section}{Built-in types}
 
- 
+While \Cengine{} is primarily designed to be used with user-defined data classes and operators, it has a 
+a small collection of simple built-in types corresponding to real and complex scalars/tensors to 
+seed this process:
+
+\texttt{\phantom{MM}rscalar\\\phantom{MM}cscalar\\\phantom{MM}ctensor
+}.
+
+To match the GPU, each of these classes is implemented in single precision arithmetic (\ccode{float}). 
+The corresponding back-end classes are \ccode{RscalarB, CscalarB} and \ccode{CtensorB}. 
+Each of these types is equipped with a minimal set of arithmetic and linear algebra operators. 
+
+
+\subsubsection*{Data layout and GPU functionality}
+
+Similarly to popular libraries such as \ccode{PyTorch} and \ccode{TensorFlow}, \Cengine{}'s built in 
+objects can be flexibly moved back and forth between the host and the GPUs. 
+This is done by the \ccode{to\_device(d)} commend, where \ccode{d} is the identifier of the GPU, or 
+\ccode{0} in case that the object is to be moved back to the host. 
+
+In general, each arithmetic operation is implemented twice: once for the CPU in straight-line \cpp{} 
+and once for the GPU. Whenever possible that latter is done with CUBLAS calls, but in certain 
+cases it requires custom CUDA kernels. 
+Whether a given operation is executed on the CPU or GPU depends on where its arguments are: in general, 
+\Cengine{} will move all input objects to the same device as where the first input argument resides 
+and perform the operation on that device.
+
+The storage layout of the built in classes is optimized for GPU computation. In particular, 
+matrix/tensor objects are padded to multiples of 32 \ccode{float}s, and complex tensor are stored 
+with their real and imaginary parts separate. \Cengine{} uses a row-major storage format.   

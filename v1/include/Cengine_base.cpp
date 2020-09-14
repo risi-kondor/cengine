@@ -1,7 +1,7 @@
 #include "Cengine_base.hpp"
 
 #include "Cengine.hpp"
-#include "CtensorB_add_Mprod.hpp"
+#include "CtensorB_add_Mprod_ops.hpp"
 
 std::default_random_engine rndGen;
 mutex Cengine::CoutLock::mx;

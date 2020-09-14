@@ -40,9 +40,6 @@ namespace Cengine{
   public: // ---- Constructors ------------------------------------------------------------------------------
 
 
-    //RscalarB(const Gscalar<complex<float>>& x):
-    //CGscalar(std::move(x)){}
-
 
   public: // ---- Filled constructors -----------------------------------------------------------------------
 
@@ -265,24 +262,6 @@ namespace Cengine{
   public: // ---- I/O ----------------------------------------------------------------------------------------
 
 
-    /*
-    RscalarB(const string filename, const device_id& dev=0):
-      CFscalar(filename,dev){}
-
-    int save(const string filename) const{
-      CFscalar::save(filename);
-      return 0;
-    }
-
-    RscalarB(Bifstream& ifs): 
-      CFscalar(ifs){
-    }
-
-    void serialize(Bofstream& ofs){
-      CFscalar::serialize(ofs);
-    }
-    */
-
     string str(const string indent="") const{
       stringstream oss;
       return oss.str();
@@ -291,32 +270,24 @@ namespace Cengine{
   };
 
 
-  //inline RscalarB& asRscalarB(Cobject* x){
-  //return downcast<RscalarB>(x,"");
-  //}
-
   inline RscalarB& asRscalarB(Cobject* x, const char* s){
     return downcast<RscalarB>(x,s);
   }
-
-  //inline RscalarB& asRscalarB(Cnode* x){
-  //return downcast<RscalarB>(x,"");
-  //}
 
   inline RscalarB& asRscalarB(Cnode* x, const char* s){
     return downcast<RscalarB>(x,s);
   }
   
-  //inline RscalarB& asRscalarB(Cnode& x){
-  //return downcast<RscalarB>(x,"");
-  //}
-
   inline RscalarB& asRscalarB(Cnode& x, const char* s){
     return downcast<RscalarB>(x,s);
   }
   
 
 }
+
+
+#define RSCALARB(x) asRscalarB(x,__PRETTY_FUNCTION__) 
+
 
 #endif
 
@@ -347,3 +318,29 @@ namespace Cengine{
     return static_cast<RscalarB&>(*x.obj);
   }
   */
+    /*
+    RscalarB(const string filename, const device_id& dev=0):
+      CFscalar(filename,dev){}
+
+    int save(const string filename) const{
+      CFscalar::save(filename);
+      return 0;
+    }
+
+    RscalarB(Bifstream& ifs): 
+      CFscalar(ifs){
+    }
+
+    void serialize(Bofstream& ofs){
+      CFscalar::serialize(ofs);
+    }
+    */
+
+  //inline RscalarB& asRscalarB(Cnode* x){
+  //return downcast<RscalarB>(x,"");
+  //}
+
+  //inline RscalarB& asRscalarB(Cnode& x){
+  //return downcast<RscalarB>(x,"");
+  //}
+

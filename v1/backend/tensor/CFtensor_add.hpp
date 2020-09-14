@@ -1,5 +1,4 @@
 
-
 void add(const CFtensor& x){
   assert(asize==x.asize);
   if(device==0){
@@ -68,7 +67,6 @@ void add_herm(const CFtensor& x, const int n=1) const{
   CUBLAS_SAFE(cublasSgeam(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,
       &malpha,x.arrgc,I,&beta,arrgc,J,arrgc,J));
 }
-
 
 
 // ---- With constants -----------------------------------------------------------------------------------

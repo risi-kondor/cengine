@@ -16,13 +16,11 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      // inputs[0]->is_view=true; taken care of in engine 
       asCtensorB(owner,__PRETTY_FUNCTION__).add(asCtensorB(inputs[1],__PRETTY_FUNCTION__));
     }
 
     string str() const{
       return "ctensor_add"+inp_str();
-      //return "ctensor_add("+inputs[0]->ident()+","+inputs[1]->ident()+")";
     }
     
   };
@@ -42,7 +40,6 @@ namespace Cengine{
 
     string str() const{
       return "ctensor_add_conj"+inp_str();
-      //return "ctensor_add_conj("+inputs[0]->ident()+","+inputs[1]->ident()+")";
     }
     
   };
@@ -58,12 +55,10 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       asCtensorB(owner,__PRETTY_FUNCTION__).add_transp(asCtensorB(inputs[1],__PRETTY_FUNCTION__));
-      //owner->computed=true; 
     }
 
     string str() const{
       return "ctensor_add_transp"+inp_str();
-      //return "ctensor_add_transp("+inputs[0]->ident()+","+inputs[1]->ident()+")";
     }
     
   };
@@ -79,12 +74,10 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       asCtensorB(owner,__PRETTY_FUNCTION__).add_herm(asCtensorB(inputs[1],__PRETTY_FUNCTION__));
-      //owner->computed=true; 
     }
 
     string str() const{
       return "ctensor_add_herm"+inp_str();
-      //return "ctensor_add_herm("+inputs[0]->ident()+","+inputs[1]->ident()+")";
     }
     
   };
@@ -103,7 +96,6 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       asCtensorB(owner,__PRETTY_FUNCTION__).subtract(asCtensorB(inputs[1],__PRETTY_FUNCTION__));
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -128,7 +120,6 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       asCtensorB(owner,__PRETTY_FUNCTION__).add(asCtensorB(inputs[1],__PRETTY_FUNCTION__),c);
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -150,7 +141,6 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       asCtensorB(owner,__PRETTY_FUNCTION__).add(asCtensorB(inputs[1],__PRETTY_FUNCTION__),c);
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -170,7 +160,6 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       asCtensorB(owner,__PRETTY_FUNCTION__).add_prod(asRscalarB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
-      //owner->computed=true; 
     }
 
     int batcher_id() const {return 100;}
@@ -192,7 +181,6 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       asCtensorB(owner,__PRETTY_FUNCTION__).add_prod(asCscalarB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -212,7 +200,6 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       asCtensorB(owner,__PRETTY_FUNCTION__).add_prod_cconj(asCscalarB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
-      //owner->computed=true; 
     }
 
     string str() const{

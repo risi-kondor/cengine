@@ -41,9 +41,6 @@ namespace Cengine{
   public: // ---- Constructors ------------------------------------------------------------------------------
 
 
-    //CscalarB(const Gscalar<complex<float>>& x):
-    //CGscalar(std::move(x)){}
-
 
   public: // ---- Filled constructors -----------------------------------------------------------------------
 
@@ -368,32 +365,34 @@ namespace Cengine{
   //return downcast<CscalarB>(x,"");
   //}
 
-  inline CscalarB& asCscalarB(Cobject* x, const char* s){
-    return downcast<CscalarB>(x,s);
-  }
-
   //inline CscalarB& asCscalarB(Cnode* x){
   //return downcast<CscalarB>(x,"");
   //}
+
+  //inline CscalarB& asCscalarB(Cnode& x){
+  //return downcast<CscalarB>(x,"");
+  //}
+
+  inline CscalarB& asCscalarB(Cobject* x, const char* s){
+    return downcast<CscalarB>(x,s);
+  }
 
   inline CscalarB& asCscalarB(Cnode* x, const char* s){
     return downcast<CscalarB>(x,s);
   }
   
-  //inline CscalarB& asCscalarB(Cnode& x){
-  //return downcast<CscalarB>(x,"");
-  //}
-
   inline CscalarB& asCscalarB(Cnode& x, const char* s){
     return downcast<CscalarB>(x,s);
   }
 
 }
 
+
 #define CSCALARB(x) asCscalarB(x,__PRETTY_FUNCTION__) 
 
 
 #endif
+
 
    //assert(x->obj);
     //if(!dynamic_cast<CscalarB*>(x->obj))

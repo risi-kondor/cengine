@@ -19,7 +19,6 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=asCtensorB(inputs[0],__PRETTY_FUNCTION__).conj();
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -38,7 +37,6 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=asCtensorB(inputs[0],__PRETTY_FUNCTION__).transp();
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -57,7 +55,6 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=asCtensorB(inputs[0],__PRETTY_FUNCTION__).herm();
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -107,7 +104,6 @@ namespace Cengine{
   };
 
 
-
   // ---- In-place operators  --------------------------------------------------------------------------------
 
   
@@ -121,7 +117,6 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       asCtensorB(owner,__PRETTY_FUNCTION__).zero();
-      //owner->computed=true; 
     }
 
     string str() const{

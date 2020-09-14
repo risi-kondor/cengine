@@ -3,7 +3,6 @@
 
 #include "CtensorB.hpp"
 
-
 namespace Cengine{
 
 
@@ -21,7 +20,6 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=new CtensorB(dims,nbu,fill::raw,device);
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -45,7 +43,6 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=new CtensorB(dims,nbu,fill::zero,device);
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -69,7 +66,6 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=new CtensorB(dims,nbu,fill::ones,device);
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -93,7 +89,6 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=new CtensorB(dims,nbu,fill::identity,device);
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -117,7 +112,6 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=new CtensorB(dims,nbu,fill::sequential,device);
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -141,7 +135,6 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=new CtensorB(dims,nbu,fill::gaussian,device);
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -183,7 +176,6 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=new CtensorB(asCtensorB(inputs[0],__PRETTY_FUNCTION__),nowarn);
-      //owner->computed=true; 
     }
 
     string str() const{

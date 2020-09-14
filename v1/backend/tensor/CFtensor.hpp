@@ -17,9 +17,7 @@ extern cublasHandle_t Cengine_cublas;
 #include "Gindex.hpp"
 #include "Gdims.hpp"
 #include "Gtensor.hpp"
-#include "CFtensorHelpers.hpp"
-
-#define constexpr 
+//#include "CFtensorHelpers.hpp"
 
 extern default_random_engine rndGen;
 
@@ -54,7 +52,7 @@ namespace Cengine{
       if(!is_view && arrg) CUDA_SAFE(cudaFree(arrg)); 
     }
 
-    string classname() const {return "PCCN::CFtensor";}
+    string classname() const {return "Cengine::CFtensor";}
 
 
   public: // ---- Constructors -------------------------------------------------------------------------------
@@ -581,8 +579,6 @@ namespace Cengine{
       return tr+ti;
     }
 
-    //template<typename TYPE>
-    //float norm2c() const {return norm2();}
 
     complex<float> inp(const CFtensor& x) const{
       assert(asize==x.asize);
@@ -609,10 +605,6 @@ namespace Cengine{
       return complex<float>(a-b,c+d);
     }
 
-    //complex<float> inpc(const CFtensor& x) const{
-    //return inp(x);
-    //}
-
     float diff2(const CFtensor& x) const{
       FCG_CPUONLY();
       assert(x.dims==dims);
@@ -623,9 +615,6 @@ namespace Cengine{
       return t;
     }
 
-    //template<typename TYPE>
-    //float diff2c(const CFtensor& x) const {return diff2(x);}
-      
     CFtensor odot(const CFtensor& x) const{
       FCG_CPUONLY();
       assert(dims==x.dims);
@@ -707,7 +696,7 @@ namespace Cengine{
     
 
 
-  public: // ---- Neural net notnlinearities -----------------------------------------------------------------
+  public: // ---- Neural net nonlinearities -----------------------------------------------------------------
 
 
     CFtensor ReLU() const{
@@ -737,7 +726,6 @@ namespace Cengine{
       CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrg, 1, arrg, 1));
       CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrgc, 1, arrgc, 1));
     }
-
 
     void operator-=(const CFtensor& x){
       assert(asize==x.asize);
@@ -942,7 +930,7 @@ namespace Cengine{
   };
   
 
-
+  /*
   inline Gdims CFtensorProductType::dims(const CFtensor& x, const CFtensor& y) const{
     Gdims d;
     d.resize(k);
@@ -978,7 +966,7 @@ namespace Cengine{
 
     return d;
   }
-
+  */
   
   
 }

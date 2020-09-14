@@ -9,7 +9,7 @@
 #include "CtensorB_constructor_ops.hpp"
 #include "CtensorB_cumulative_ops.hpp"
 #include "CtensorB_ops.hpp"
-#include "CtensorB_add_Mprod.hpp"
+#include "CtensorB_add_Mprod_ops.hpp"
 
 
 extern ::Cengine::Cengine* Cengine_engine;

@@ -19,7 +19,6 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=new RscalarB(nbu,fill::raw,device);
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -42,7 +41,6 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=new RscalarB(nbu,fill::zero,device);
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -65,7 +63,6 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=new RscalarB(nbu,fill::gaussian,device);
-      //owner->computed=true; 
     }
     
     string str() const{
@@ -89,7 +86,6 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=new RscalarB(nbu,c,device);
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -110,7 +106,6 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=new RscalarB(asRscalarB(inputs[0],__PRETTY_FUNCTION__));
-      //owner->computed=true; 
     }
     
     string str() const{
@@ -136,7 +131,6 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       asRscalarB(owner,__PRETTY_FUNCTION__).zero();
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -159,7 +153,6 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       asRscalarB(owner,__PRETTY_FUNCTION__).add(asRscalarB(inputs[1],__PRETTY_FUNCTION__));
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -181,7 +174,6 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       asRscalarB(owner,__PRETTY_FUNCTION__).add(asRscalarB(inputs[1],__PRETTY_FUNCTION__),c);
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -201,7 +193,6 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       asRscalarB(owner,__PRETTY_FUNCTION__).subtract(asRscalarB(inputs[1],__PRETTY_FUNCTION__));
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -220,7 +211,6 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       asRscalarB(owner,__PRETTY_FUNCTION__).add_prod(asRscalarB(inputs[1],__PRETTY_FUNCTION__),asRscalarB(inputs[2],__PRETTY_FUNCTION__));
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -240,7 +230,6 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       asRscalarB(owner,__PRETTY_FUNCTION__).add_div(asRscalarB(inputs[1],__PRETTY_FUNCTION__),asRscalarB(inputs[2],__PRETTY_FUNCTION__));
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -260,7 +249,6 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       asRscalarB(owner,__PRETTY_FUNCTION__).add_div_back0(asRscalarB(inputs[1],__PRETTY_FUNCTION__),asRscalarB(inputs[2],__PRETTY_FUNCTION__));
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -280,7 +268,6 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       asRscalarB(owner,__PRETTY_FUNCTION__).add_div_back1(asRscalarB(inputs[1],__PRETTY_FUNCTION__),asRscalarB(inputs[2],__PRETTY_FUNCTION__),asRscalarB(inputs[3],__PRETTY_FUNCTION__));
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -303,7 +290,6 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       asRscalarB(owner,__PRETTY_FUNCTION__).add_pow(asRscalarB(inputs[1],__PRETTY_FUNCTION__),p,c);
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -323,7 +309,6 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       asRscalarB(owner,__PRETTY_FUNCTION__).add_exp(asRscalarB(inputs[1],__PRETTY_FUNCTION__));
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -343,7 +328,6 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       asRscalarB(owner,__PRETTY_FUNCTION__).add_abs(asRscalarB(inputs[1],__PRETTY_FUNCTION__));
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -363,7 +347,6 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       asRscalarB(owner,__PRETTY_FUNCTION__).add_abs_back(asRscalarB(inputs[1],__PRETTY_FUNCTION__),asRscalarB(inputs[2],__PRETTY_FUNCTION__));
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -385,7 +368,6 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       asRscalarB(owner,__PRETTY_FUNCTION__).add_ReLU(asRscalarB(inputs[1],__PRETTY_FUNCTION__),c);
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -407,7 +389,6 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       asRscalarB(owner,__PRETTY_FUNCTION__).add_ReLU_back(asRscalarB(inputs[1],__PRETTY_FUNCTION__),asRscalarB(inputs[2],__PRETTY_FUNCTION__),c);
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -427,7 +408,6 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       asRscalarB(owner,__PRETTY_FUNCTION__).add_sigmoid(asRscalarB(inputs[1],__PRETTY_FUNCTION__));
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -447,7 +427,6 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       asRscalarB(owner,__PRETTY_FUNCTION__).add_sigmoid_back(asRscalarB(inputs[1],__PRETTY_FUNCTION__),asRscalarB(inputs[2],__PRETTY_FUNCTION__));
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -455,11 +434,6 @@ namespace Cengine{
     }
     
   };
-
-
-
-
-
 
 
 }

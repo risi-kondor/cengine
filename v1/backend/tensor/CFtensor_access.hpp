@@ -1,3 +1,5 @@
+  public: // k=1 special cases
+
     complex<float> operator()(const int i0) const{
       FCG_ASSERT(device==0,"CFtensor::operator() not implemented for GPU.\n");
       assert(k==1);

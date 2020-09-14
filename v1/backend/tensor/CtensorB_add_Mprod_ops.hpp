@@ -1,5 +1,5 @@
-#ifndef _CtensorB_add_Mprod_batcher
-#define _CtensorB_add_Mprod_batcher
+#ifndef _CtensorB_add_Mprod_ops
+#define _CtensorB_add_Mprod_ops
 
 #include "CtensorBpack.hpp"
 #include "BatcherA.hpp"
@@ -77,8 +77,6 @@ namespace Cengine{
 
     ctensor_Mprod_signature signature() const{
       return ctensor_Mprod_signature(dims1,dims2);
-      //return ctensor_Mprod_signature(asCtensorB(inputs[1],__PRETTY_FUNCTION__).dims,
-      //asCtensorB(inputs[2],__PRETTY_FUNCTION__).dims); 
     }
 
     Batcher* spawn_batcher() const{
@@ -98,6 +96,3 @@ namespace Cengine{
 
 
 #endif
-
-
-//return new MetaBatcher<ctensor_add_Mprod_op,ctensor_Mprod_signature,ctensor_add_Mprod_batcher>(inputs[0]->engine);
