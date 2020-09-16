@@ -32,55 +32,75 @@ namespace Cengine{
       dims(_dims), hdl(_hdl), nbu(_nbu){}
 
     CtensorObject(const Gdims& _dims): dims(_dims){
-      hdl=engine::new_ctensor(_dims,-1,0);
+      hdl=Cengine_engine->push<new_ctensor_op>(_dims,-1,0);
+      //hdl=engine::new_ctensor(_dims,-1,0);
     }
 
     CtensorObject(const Gdims& _dims, const fill_raw& fill, const int device=0): dims(_dims){
-      hdl=engine::new_ctensor(_dims,-1,device);
+      hdl=Cengine_engine->push<new_ctensor_op>(_dims,-1,device);
+      //hdl=engine::new_ctensor(_dims,-1,device);
     }
 
     CtensorObject(const Gdims& _dims, const fill_zero& fill, const int device=0): dims(_dims){
-      hdl=engine::new_ctensor_zero(_dims,-1,device);
+      hdl=Cengine_engine->push<new_ctensor_zero_op>(_dims,-1,device);
+      //hdl=engine::new_ctensor_zero(_dims,-1,device);
     }
 
     CtensorObject(const Gdims& _dims, const fill_identity& fill, const int device=0): dims(_dims){
-      hdl=engine::new_ctensor_identity(_dims,-1,device);
+      hdl=Cengine_engine->push<new_ctensor_identity_op>(_dims,-1,device);
+      //hdl=engine::new_ctensor_identity(_dims,-1,device);
     }
 
     CtensorObject(const Gdims& _dims, const fill_sequential& fill, const int device=0): dims(_dims){
-      hdl=engine::new_ctensor_sequential(_dims,-1,device);
+      hdl=Cengine_engine->push<new_ctensor_sequential_op>(_dims,-1,device);
+      //hdl=engine::new_ctensor_sequential(_dims,-1,device);
     }
 
     CtensorObject(const Gdims& _dims, const fill_gaussian& fill, const int device=0): dims(_dims){
-      hdl=engine::new_ctensor_gaussian(_dims,-1,device);
+      hdl=Cengine_engine->push<new_ctensor_gaussian_op>(_dims,-1,device);
+      //hdl=engine::new_ctensor_gaussian(_dims,-1,device);
     }
 
-    CtensorObject(const Gdims& _dims, const int nbd=-1, const int device=0): dims(_dims){
-      hdl=engine::new_ctensor(_dims,nbd,device);
+    CtensorObject(const Gdims& _dims, const int nbd=-1, const int device=0): 
+      dims(_dims), nbu(nbd){
+      hdl=Cengine_engine->push<new_ctensor_op>(_dims,nbd,device);
+      //hdl=engine::new_ctensor(_dims,nbd,device);
     }
 
-    CtensorObject(const Gdims& _dims, const int nbd, const fill_raw& fill, const int device=0): dims(_dims){
-      hdl=engine::new_ctensor(_dims,nbd,device);
+    CtensorObject(const Gdims& _dims, const int nbd, const fill_raw& fill, const int device=0): 
+      dims(_dims), nbu(nbd){
+      hdl=Cengine_engine->push<new_ctensor_op>(_dims,nbd,device);
+      //hdl=engine::new_ctensor(_dims,nbd,device);
     }
 
-    CtensorObject(const Gdims& _dims, const int nbd, const fill_zero& fill, const int device=0): dims(_dims){
-      hdl=engine::new_ctensor_zero(_dims,nbd,device);
+    CtensorObject(const Gdims& _dims, const int nbd, const fill_zero& fill, const int device=0): 
+      dims(_dims), nbu(nbd){
+      hdl=Cengine_engine->push<new_ctensor_zero_op>(_dims,nbd,device);
+      //hdl=engine::new_ctensor_zero(_dims,nbd,device);
     }
 
-    CtensorObject(const Gdims& _dims, const int nbd, const fill_ones& fill, const int device=0): dims(_dims){
-      hdl=engine::new_ctensor_ones(_dims,nbd,device);
+    CtensorObject(const Gdims& _dims, const int nbd, const fill_ones& fill, const int device=0): 
+      dims(_dims), nbu(nbd){
+      hdl=Cengine_engine->push<new_ctensor_ones_op>(_dims,nbd,device);
+      //hdl=engine::new_ctensor_ones(_dims,nbd,device);
     }
 
-    CtensorObject(const Gdims& _dims, const int nbd, const fill_identity& fill, const int device=0): dims(_dims){
-      hdl=engine::new_ctensor_identity(_dims,nbd,device);
+    CtensorObject(const Gdims& _dims, const int nbd, const fill_identity& fill, const int device=0): 
+      dims(_dims), nbu(nbd){
+      hdl=Cengine_engine->push<new_ctensor_identity_op>(_dims,nbd,device);
+      //hdl=engine::new_ctensor_identity(_dims,nbd,device);
     }
 
-    CtensorObject(const Gdims& _dims, const int nbd, const fill_sequential& fill, const int device=0): dims(_dims){
-      hdl=engine::new_ctensor_sequential(_dims,nbd,device);
+    CtensorObject(const Gdims& _dims, const int nbd, const fill_sequential& fill, const int device=0): 
+      dims(_dims), nbu(nbd){
+      hdl=Cengine_engine->push<new_ctensor_sequential_op>(_dims,nbd,device);
+      //hdl=engine::new_ctensor_sequential(_dims,nbd,device);
     }
 
-    CtensorObject(const Gdims& _dims, const int nbd, const fill_gaussian& fill, const int device=0): dims(_dims){
-      hdl=engine::new_ctensor_gaussian(_dims,nbd,device);
+    CtensorObject(const Gdims& _dims, const int nbd, const fill_gaussian& fill, const int device=0): 
+      dims(_dims), nbu(nbd){
+      hdl=Cengine_engine->push<new_ctensor_gaussian_op>(_dims,nbd,device);
+      //hdl=engine::new_ctensor_gaussian(_dims,nbd,device);
     }
 
 
@@ -88,20 +108,30 @@ namespace Cengine{
 
 
     CtensorObject(const CtensorObject& x):
-      hdl(engine::ctensor_copy(x.hdl)){}
+      dims(x.dims),
+      nbu(x.nbu),
+      hdl(Cengine_engine->push<ctensor_copy_op>(x.hdl)){}
+    //hdl(engine::ctensor_copy(x.hdl)){}
       
-    CtensorObject(CtensorObject&& x){
+    CtensorObject(CtensorObject&& x):
+      dims(std::move(x.dims)),
+      nbu(x.nbu){
       hdl=x.hdl;
       x.hdl=nullptr;
     }
 
     CtensorObject& operator=(const CtensorObject& x){
+      dims=x.dims;
+      nbu=x.nbu;
       delete hdl;
-      hdl=engine::ctensor_copy(x.hdl);
+      hdl=Cengine_engine->push<ctensor_copy_op>(x.hdl);
+      //hdl=engine::ctensor_copy(x.hdl);
       return *this;
     }
 
     CtensorObject& operator=(CtensorObject&& x){
+      dims=x.dims;
+      nbu=x.nbu;
       delete hdl;
       hdl=x.hdl;
       x.hdl=nullptr;
@@ -113,7 +143,7 @@ namespace Cengine{
     //}
 
     CtensorObject(CtensorObject& x, const view_flag& flag):
-      hdl(new_handle(x.hdl->node)){}
+      dims(x.dims), nbu(x.nbu), hdl(new_handle(x.hdl->node)){}
       
 
   public: // ---- Conversions --------------------------------------------------------------------------------
@@ -137,7 +167,8 @@ namespace Cengine{
 
     CtensorObject(const Gtensor<complex<float> >& x, const fill_tensor& dummy, const int _device=0): 
       dims(x.dims){
-      hdl=engine::new_ctensor_from_gtensor(x);
+      hdl=Cengine_engine->push<new_ctensor_from_gtensor_op>(x);
+      //hdl=engine::new_ctensor_from_gtensor(x);
     }
 
 
@@ -167,7 +198,7 @@ namespace Cengine{
     */
 
     void flush() const{
-      engine::ctensor_get(hdl);
+      ctensor_get(hdl);
     }
 
 
@@ -183,19 +214,36 @@ namespace Cengine{
 
 
     CtensorObject conj() const{
-      return CtensorObject(engine::ctensor_conj(hdl),dims);
+      return CtensorObject(Cengine_engine->push<ctensor_conj_op>(hdl),dims,nbu);
+      //return CtensorObject(engine::ctensor_conj(hdl),dims);
     }
 
     CtensorObject transp() const{
-      return CtensorObject(engine::ctensor_transp(hdl),dims);
+      return CtensorObject(Cengine_engine->push<ctensor_transp_op>(hdl),dims,nbu); //TODO
+      //return CtensorObject(engine::ctensor_transp(hdl),dims);
     }
 
     CtensorObject herm() const{
-      return CtensorObject(engine::ctensor_herm(hdl),dims);
+      return CtensorObject(Cengine_engine->push<ctensor_herm_op>(hdl),dims,nbu);
+      //return CtensorObject(engine::ctensor_herm(hdl),dims);
     }
 
     CtensorObject plus(const CtensorObject& x){
-      return CtensorObject(engine::ctensor_add(hdl,x.hdl),x.dims,nbu);
+      return CtensorObject(Cengine_engine->push<ctensor_add_op>(hdl,x.hdl),dims,nbu);
+    }
+
+    CscalarObject mix(const CscalarObject& x){
+      assert(dims.size()==2);
+      CscalarObject r(dims[0],fill::zero);
+      Cengine_engine->push<cscalar_mix_op>(r.hdl,hdl,x.hdl);
+      return r;
+    }
+
+    CtensorObject mix(const CtensorObject& x){
+      assert(dims.size()==2);
+      CtensorObject r(dims[0],fill::zero);
+      Cengine_engine->push<ctensor_mix_op>(r.hdl,hdl,x.hdl);
+      return r;
     }
 
 
@@ -260,37 +308,30 @@ namespace Cengine{
 
     void add_Mprod(const CtensorObject& x, const CtensorObject& y){
       replace(hdl,Cengine_engine->push<ctensor_add_Mprod_op<0,0> >(hdl,x.hdl,y.hdl,x.dims,y.dims));
-      //replace(hdl,engine::ctensor_add_Mprod(hdl,x.hdl,y.hdl));
     }
 
     void add_Mprod_AT(const CtensorObject& x, const CtensorObject& y){
       replace(hdl,Cengine_engine->push<ctensor_add_Mprod_op<2,0> >(hdl,x.hdl,y.hdl,x.dims,y.dims));
-      //replace(hdl,engine::ctensor_add_Mprod_AT(hdl,x.hdl,y.hdl));
     }
 
     void add_Mprod_TA(const CtensorObject& x, const CtensorObject& y){
       replace(hdl,Cengine_engine->push<ctensor_add_Mprod_op<1,0> >(hdl,x.hdl,y.hdl,x.dims,y.dims));
-      //replace(hdl,engine::ctensor_add_Mprod_TA(hdl,x.hdl,y.hdl));
     }
 
     void add_Mprod_AC(const CtensorObject& x, const CtensorObject& y){
       replace(hdl,Cengine_engine->push<ctensor_add_Mprod_op<0,2> >(hdl,x.hdl,y.hdl,x.dims,y.dims));
-      //replace(hdl,engine::ctensor_add_Mprod_AC(hdl,x.hdl,y.hdl));
     }
 
     void add_Mprod_TC(const CtensorObject& x, const CtensorObject& y){
       replace(hdl,Cengine_engine->push<ctensor_add_Mprod_op<1,2> >(hdl,x.hdl,y.hdl,x.dims,y.dims));
-      //replace(hdl,engine::ctensor_add_Mprod_TC(hdl,x.hdl,y.hdl));
     }
 
     void add_Mprod_AH(const CtensorObject& x, const CtensorObject& y){
       replace(hdl,Cengine_engine->push<ctensor_add_Mprod_op<2,2> >(hdl,x.hdl,y.hdl,x.dims,y.dims));
-      //replace(hdl,engine::ctensor_add_Mprod_AH(hdl,x.hdl,y.hdl));
     }
 
     void add_Mprod_HA(const CtensorObject& x, const CtensorObject& y){
       replace(hdl,Cengine_engine->push<ctensor_add_Mprod_op<1,1> >(hdl,x.hdl,y.hdl,x.dims,y.dims));
-      //replace(hdl,engine::ctensor_add_Mprod_HA(hdl,x.hdl,y.hdl));
     }
 
     
@@ -307,11 +348,11 @@ namespace Cengine{
 
 
     void inp_into(const CtensorObject& y, CscalarObject& R) const{
-      replace(R.hdl,engine::ctensor_add_inp(R.hdl,hdl,y.hdl));
+      replace(R.hdl,Cengine_engine->push<ctensor_add_inp_op>(R.hdl,hdl,y.hdl));
     }
 
     void norm2_into(CscalarObject& R) const{
-      replace(R.hdl,engine::ctensor_add_inp(R.hdl,hdl,hdl));
+      replace(R.hdl,Cengine_engine->push<ctensor_add_inp_op>(R.hdl,hdl,hdl));
     }
 
     void add_norm2_back(const CscalarObject& g, const CtensorObject& x){
@@ -376,7 +417,7 @@ namespace Cengine{
     }
 
     string str(const string indent="") const{
-      Gtensor<complex<float> > R=engine::ctensor_get(hdl);
+      Gtensor<complex<float> > R=ctensor_get(hdl);
       return R.str();
     }
 
@@ -434,60 +475,4 @@ namespace Cengine{
 
 #endif
 
-
-    //public: // ---- Filled constructors ------------------------------------------------------------------------
-  /*
-  inline CtensorObject& asCtensor(Dobject* x){
-    assert(x); 
-    if(!dynamic_cast<CtensorObject*>(x))
-      cerr<<"GEnet error: Dobject is of type "<<x->classname()<<" instead of CtensorObject."<<endl;
-    assert(dynamic_cast<CtensorObject*>(x));
-    return static_cast<CtensorObject&>(*x);
-  }
-
-  inline CtensorObject& asCtensor(Dobject& x){
-    if(!dynamic_cast<CtensorObject*>(&x))
-      cerr<<"GEnet error: Dobject is of type "<<x.classname()<<" instead of CtensorObject."<<endl;
-    assert(dynamic_cast<CtensorObject*>(&x));
-    return static_cast<CtensorObject&>(x);
-  }
-
-  inline CtensorObject& asCtensor(Dnode* x){
-    assert(x->obj); 
-    if(!dynamic_cast<CtensorObject*>(x->obj))
-      cerr<<"GEnet error: Dobject is of type "<<x->obj->classname()<<" instead of CtensorObject."<<endl;
-    assert(dynamic_cast<CtensorObject*>(x->obj));
-    return static_cast<CtensorObject&>(*x->obj);
-  }
-
-  inline CtensorObject& asCtensor(Dnode& x){
-    if(!dynamic_cast<CtensorObject*>(x.obj))
-      cerr<<"GEnet error: Dobject is of type "<<x.obj->classname()<<" instead of CtensorObject."<<endl;
-    assert(dynamic_cast<CtensorObject*>(x.obj));
-    return static_cast<CtensorObject&>(*x.obj);
-  }
-  */
-  /*
-  inline CtensorObject CtensorSeed::spawn(const fill_zero& fill){
-    //if(nch<0) return new SO3partB(l,n,fill::zero,device);
-    return CtensorObject(dims,nbu,fill::zero,device);
-    }
-  */
-
-  /*
-  class CtensorObject;
-
-  class CtensorSeed{
-  public:
-    
-    Gdims dims;
-    int nbu=-1;
-    int device; 
-
-    CtensorSeed(const Gdims& _dims, const int _nbu, const int _device=0):
-      dims(_dims), nbu(_nbu), device(_device){}
-
-    CtensorObject spawn(const fill_zero& fill);
-
-  };
-  */
+ 

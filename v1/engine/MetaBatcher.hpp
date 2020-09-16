@@ -17,7 +17,7 @@ namespace Cengine{
 
     MetaBatcher(BasicCnodeEngine* _engine): 
       engine(_engine){
-      {CoutLock lk; cout<<"New MetaBatcher for "<<OP::classname()<<endl;}
+      DEBUG_ENGINE({CoutLock lk; cout<<"New MetaBatcher for "<<OP::classname()<<endl;}) 
     }
 
     virtual ~MetaBatcher(){

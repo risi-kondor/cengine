@@ -1,9 +1,6 @@
 #ifndef _Cworker
 #define _Cworker
 
-#include <thread>
-
-
 namespace Cengine{
 
   class Cengine;

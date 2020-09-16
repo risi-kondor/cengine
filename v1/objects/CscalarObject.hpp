@@ -28,64 +28,52 @@ namespace Cengine{
 
     CscalarObject(){
       hdl=Cengine_engine->push<new_cscalar_op>(-1,0);
-      //hdl=engine::new_cscalar(-1,0);
     }
 
     CscalarObject(Chandle* _hdl): hdl(_hdl){}
 
     CscalarObject(const fill_raw& fill, const int device=0){
       hdl=Cengine_engine->push<new_cscalar_op>(-1,device);
-      //hdl=engine::new_cscalar(-1,device);
     }
 
     CscalarObject(const fill_zero& fill, const int device=0){
       hdl=Cengine_engine->push<new_cscalar_zero_op>(-1,device);
-      //hdl=engine::new_cscalar_zero(-1,device);
     }
 
     CscalarObject(const fill_gaussian& fill, const int device=0){
       hdl=Cengine_engine->push<new_cscalar_gaussian_op>(-1,device);
-      //hdl=engine::new_cscalar_gaussian(-1,device);
     }
 
     CscalarObject(const complex<float> x, const int device=0){
       hdl=Cengine_engine->push<new_cscalar_set_op>(-1,x,device);
-      //hdl=engine::new_cscalar_set(x,-1,device);
     }
 
     CscalarObject(const int x){
       hdl=Cengine_engine->push<new_cscalar_set_op>(-1,x,0);
-      //hdl=engine::new_cscalar_set(x,-1,0);
     }
 
     CscalarObject(const float x){
       hdl=Cengine_engine->push<new_cscalar_set_op>(-1,x);
-      //hdl=engine::new_cscalar_set(x,-1,0);
     }
 
     CscalarObject(const double x){
       hdl=Cengine_engine->push<new_cscalar_set_op>(-1,x,0);
-      //hdl=engine::new_cscalar_set(x,-1,0);
     }
 
     CscalarObject(const float x, const int device){
       hdl=Cengine_engine->push<new_cscalar_set_op>(-1,x,device);
-      //hdl=engine::new_cscalar_set(x,-1,device);
     }
 
-    CscalarObject(const int nbd, const fill_raw& fill, const int device=0){
-      hdl=Cengine_engine->push<new_cscalar_op>(-1,device);
-      //hdl=engine::new_cscalar(nbd,device);
+    CscalarObject(const int nbd, const fill_raw& fill, const int device=0): nbu(nbd){
+      hdl=Cengine_engine->push<new_cscalar_op>(nbd,device);
     }
 
-    CscalarObject(const int nbd, const fill_zero& fill, const int device=0){
-      hdl=Cengine_engine->push<new_cscalar_zero_op>(-1,device);
-      //hdl=engine::new_cscalar_zero(nbd,device);
+    CscalarObject(const int nbd, const fill_zero& fill, const int device=0): nbu(nbd){
+      hdl=Cengine_engine->push<new_cscalar_zero_op>(nbd,device);
     }
 
-    CscalarObject(const int nbd, const fill_gaussian& fill, const int device=0){
-      hdl=Cengine_engine->push<new_cscalar_gaussian_op>(-1,device);
-      //hdl=engine::new_cscalar_gaussian(nbd,device);
+    CscalarObject(const int nbd, const fill_gaussian& fill, const int device=0): nbu(nbd){
+      hdl=Cengine_engine->push<new_cscalar_gaussian_op>(nbd,device);
     }
 
 
@@ -93,24 +81,26 @@ namespace Cengine{
 
 
     CscalarObject(const CscalarObject& x):
+      nbu(x.nbu),
       hdl(Cengine_engine->push<cscalar_copy_op>(x.hdl)){
-      //hdl(engine::cscalar_copy(x.hdl)){
     }
       
     CscalarObject(CscalarObject&& x){
+      nbu=x.nbu; 
       hdl=x.hdl;
       x.hdl=nullptr;
     }
 
     CscalarObject& operator=(const CscalarObject& x){
       delete hdl;
+      nbu=x.nbu; 
       hdl=Cengine_engine->push<cscalar_copy_op>(x.hdl);
-      //hdl=engine::cscalar_copy(x.hdl);
       return *this;
     }
 
     CscalarObject& operator=(CscalarObject&& x){
       delete hdl;
+      nbu=x.nbu; 
       hdl=x.hdl;
       x.hdl=nullptr;
       return *this;
@@ -128,55 +118,45 @@ namespace Cengine{
   public: // ---- Access -------------------------------------------------------------------------------------
 
 
-    int getnbu() const{ // TODO 
-      return asCscalarB(hdl->node->obj,__PRETTY_FUNCTION__).nbu;
+    int getnbu() const{ 
+      return nbu; 
     }
 
     complex<float> val() const{
-      //return engine::cscalar_get(hdl)[0];
       Cengine_engine->flush(hdl->node);
       vector<complex<float> > v=asCscalarB(hdl->node->obj,__PRETTY_FUNCTION__);
       return v[0];
     }
 
     RscalarObject real() const{
-      //return engine::cscalar_get_real(hdl);
       return Cengine_engine->push<cscalar_get_real_op>(hdl);
     }
 
     RscalarObject imag() const{
-      //return engine::cscalar_get_imag(hdl);
       return Cengine_engine->push<cscalar_get_imag_op>(hdl);
     }
 
     void add_real_to(RscalarObject& x){
-      //Chandle* h=engine::cscalar_get_real(hdl);
-      //replace(x.hdl,engine::rscalar_add(x.hdl,h));
       Chandle* h=Cengine_engine->push<cscalar_get_real_op>(hdl);
       replace(x.hdl,Cengine_engine->push<rscalar_add_op>(x.hdl,h));
       delete h;
     }
 
     void add_imag_to(RscalarObject& x){
-      //Chandle* h=engine::cscalar_get_imag(hdl);
-      //replace(x.hdl,engine::rscalar_add(x.hdl,h));
       Chandle* h=Cengine_engine->push<cscalar_get_imag_op>(hdl);
       replace(x.hdl,Cengine_engine->push<rscalar_add_op>(x.hdl,h));
       delete h;
     }
 
     void set_real(const RscalarObject& x){
-      //replace(hdl,engine::cscalar_set_real(hdl,x.hdl));
       replace(hdl,Cengine_engine->push<cscalar_set_real_op>(hdl,x.hdl));
     }
 
     void set_imag(const RscalarObject& x){
-      //replace(hdl,engine::cscalar_set_imag(hdl,x.hdl));
       replace(hdl,Cengine_engine->push<cscalar_set_imag_op>(hdl,x.hdl));
     }
 
     void flush() const{
-      //engine::cscalar_get(hdl);
       Cengine_engine->flush(hdl->node);
     }
 
@@ -185,11 +165,11 @@ namespace Cengine{
 
 
     void clear(){
-      replace(hdl,engine::cscalar_zero(hdl));
+      replace(hdl,Cengine_engine->push<cscalar_zero_op>(hdl));
     }
 
     void zero(){
-      replace(hdl,engine::cscalar_zero(hdl));
+      replace(hdl,Cengine_engine->push<cscalar_zero_op>(hdl));
     }
 
 
@@ -197,7 +177,7 @@ namespace Cengine{
 
 
     CscalarObject conj() const{
-      return engine::cscalar_conj(hdl);
+      return Cengine_engine->push<cscalar_conj_op>(hdl);
     }
 
     CscalarObject plus(const CscalarObject& x){
@@ -209,56 +189,53 @@ namespace Cengine{
 
 
     void add(const CscalarObject& x){
-      //replace(hdl,engine::cscalar_add(hdl,x.hdl));
       replace(hdl,Cengine_engine->push<cscalar_add_op>(hdl,x.hdl));
     }
 
     void add_to_real(const RscalarObject& x){
-      replace(hdl,engine::cscalar_add_to_real(hdl,x.hdl));
+      replace(hdl,Cengine_engine->push<cscalar_add_to_real_op>(hdl,x.hdl));
     }
 
     void add_to_imag(const RscalarObject& x){
-      replace(hdl,engine::cscalar_add_to_imag(hdl,x.hdl));
+      replace(hdl,Cengine_engine->push<cscalar_add_to_imag_op>(hdl,x.hdl));
     }
 
     void add(const CscalarObject& x, const float c){
-      replace(hdl,engine::cscalar_add_times_real(hdl,x.hdl,c));
+      replace(hdl,Cengine_engine->push<cscalar_add_times_real_op>(hdl,x.hdl,c));
     }
 
     void add(const CscalarObject& x, const complex<float> c){
-      replace(hdl,engine::cscalar_add_times_complex(hdl,x.hdl,c));
+      replace(hdl,Cengine_engine->push<cscalar_add_times_complex_op>(hdl,x.hdl,c));
     }
 
     void add_conj(const CscalarObject& x){
-      replace(hdl,engine::cscalar_add_conj(hdl,x.hdl));
+      replace(hdl,Cengine_engine->push<cscalar_add_conj_op>(hdl,x.hdl));
     }
 
-    void add_conj(const CscalarObject& x, const CscalarObject& c){
-      replace(hdl,engine::cscalar_add_prodc(hdl,c.hdl,x.hdl));
-    }
+    //void add_conj(const CscalarObject& x, const CscalarObject& c){
+    //replace(hdl,engine::cscalar_add_prodc(hdl,c.hdl,x.hdl));
+    //}
 
     void subtract(const CscalarObject& x){
-      replace(hdl,engine::cscalar_subtract(hdl,x.hdl));
+      replace(hdl,Cengine_engine->push<cscalar_subtract_op>(hdl,x.hdl));
     }
 
     void add_minus(const CscalarObject& x, const CscalarObject& y){
-      replace(hdl,engine::cscalar_add(hdl,x.hdl));
-      replace(hdl,engine::cscalar_subtract(hdl,y.hdl));
+      replace(hdl,Cengine_engine->push<cscalar_add_op>(hdl,x.hdl));
+      replace(hdl,Cengine_engine->push<cscalar_subtract_op>(hdl,y.hdl));
     }
 
 
     void add_prod(const CscalarObject& x, const CscalarObject& y){
-      //replace(hdl,engine::cscalar_add_prod(hdl,x.hdl,y.hdl));
-      //replace(hdl,Cengine_engine->push<cscalar_add_prod_op>(hdl,x.hdl,y.hdl));
       replace(hdl,Cengine_engine->push<cscalar_add_prod2_op>(hdl,x.hdl,y.hdl));
     }
 
     void add_prodc1(const CscalarObject& x, const CscalarObject& y){
-      replace(hdl,engine::cscalar_add_prodc(hdl,x.hdl,y.hdl));
+      replace(hdl,Cengine_engine->push<cscalar_add_prodc_op>(hdl,x.hdl,y.hdl));
     }
 
     void add_prod(const CscalarObject& x, const RscalarObject& y){
-      replace(hdl,engine::cscalar_add_prod_r(hdl,x.hdl,y.hdl));
+      replace(hdl,Cengine_engine->push<cscalar_add_prod_op>(hdl,x.hdl,y.hdl));
     }
 
 
@@ -355,29 +332,28 @@ namespace Cengine{
     }
 
     CscalarObject operator*(const CscalarObject& y) const{
-      CscalarObject R(fill::zero);
+      CscalarObject R(nbu,fill::zero);
       R.add_prod(*this,y);
       return R;
     }
 
     CscalarObject operator/(const CscalarObject& y) const{
-      CscalarObject R(fill::zero);
+      CscalarObject R(nbu,fill::zero);
       R.add_div(*this,y);
       return R;
     }
 
     CscalarObject operator*(const float c) const{
-      CscalarObject R(fill::zero);
+      CscalarObject R(nbu,fill::zero);
       R.add(*this,c);
       return R;
     }
 
     CscalarObject operator*(const complex<float> c) const{
-      CscalarObject R(fill::zero);
+      CscalarObject R(nbu,fill::zero);
       R.add(*this,c);
       return R;
     }
-
 
 
   public: // ---- I/O ----------------------------------------------------------------------------------------
@@ -388,7 +364,7 @@ namespace Cengine{
     }
 
     string str(const string indent="") const{
-      vector<complex<float> > R=engine::cscalar_get(hdl);
+      vector<complex<float> > R=cscalar_get(hdl);
       ostringstream oss;
       oss<<"[ ";
       for(int i=0; i<R.size(); i++)

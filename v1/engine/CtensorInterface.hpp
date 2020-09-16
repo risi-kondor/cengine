@@ -3,8 +3,6 @@
 
 #include "Cengine.hpp"
 #include "InterfaceBase.hpp"
-//#include "RscalarInterface.hpp"
-#include "CscalarInterface.hpp"
 
 #include "CtensorB_constructor_ops.hpp"
 #include "CtensorB_cumulative_ops.hpp"
@@ -187,12 +185,6 @@ namespace Cengine{
 
     // ---- Output operations --------------------------------------------------------------------------------
 
-
-    Gtensor<complex<float> > ctensor_get(Chandle* hdl){
-      Cengine_engine->flush(hdl->node);
-      cout<<hdl->node->nhandles<<endl; 
-      return asCtensorB(hdl->node->obj,__PRETTY_FUNCTION__);
-    }
 
   }
 }

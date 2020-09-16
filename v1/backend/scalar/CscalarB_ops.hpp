@@ -387,9 +387,6 @@ namespace Cengine{
 
     using Coperator::Coperator; 
 
-    //cscalar_add_prod_op(Cnode* r, Cnode* x, Cnode* y):
-    //Coperator(r,x,y){}
-
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
@@ -425,14 +422,10 @@ namespace Cengine{
 
     using Coperator::Coperator; 
     
-    //cscalar_add_prodc_op(Cnode* r, Cnode* x, Cnode* y):
-    //Coperator(r,x,y){}
-
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       asCscalarB(owner,__PRETTY_FUNCTION__).add_prodc(asCscalarB(inputs[1],__PRETTY_FUNCTION__),asCscalarB(inputs[2],__PRETTY_FUNCTION__));
-      //owner->computed=true; 
     }
 
     string str() const{
@@ -452,7 +445,6 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       asCscalarB(owner,__PRETTY_FUNCTION__).add_prod(asCscalarB(inputs[1],__PRETTY_FUNCTION__),asRscalarB(inputs[2],__PRETTY_FUNCTION__));
-      //owner->computed=true; 
     }
 
     string str() const{

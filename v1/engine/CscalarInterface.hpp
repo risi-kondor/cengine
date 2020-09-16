@@ -1,12 +1,9 @@
 #ifndef _CscalarInterface
 #define _CscalarInterface
 
-//#include "Cengine.hpp"
 #include "InterfaceBase.hpp"
-
-//#include "RscalarInterface.hpp"
-#include "RscalarB_ops.hpp"
-#include "CscalarB_ops.hpp"
+//#include "RscalarB_ops.hpp"
+//#include "CscalarB_ops.hpp"
 
 extern ::Cengine::Cengine* Cengine_engine;
 
@@ -14,11 +11,6 @@ extern ::Cengine::Cengine* Cengine_engine;
 namespace Cengine{
 
   namespace engine{
-
-    //Chandle* rscalar_add(Chandle* r, Chandle* x){
-    //return new_handle(Cengine_engine->enqueue(new rscalar_add_op(nodeof(r),nodeof(x))));
-    //}
-
 
 
     Chandle* new_cscalar(const int nbd=-1, const int device=0){
@@ -181,11 +173,6 @@ namespace Cengine{
     // ---- Output operations -------------------------------------------------------------------------
 
 
-    vector<complex<float> > cscalar_get(Chandle* hdl){
-      Cengine_engine->flush(hdl->node);
-      return asCscalarB(hdl->node->obj,__PRETTY_FUNCTION__);
-    }
-  
 
   }
 }
@@ -203,3 +190,8 @@ namespace Cengine{
     CscalarInterface(Cengine* _engine):
       engine(_engine){}
   */
+    //Chandle* rscalar_add(Chandle* r, Chandle* x){
+    //return new_handle(Cengine_engine->enqueue(new rscalar_add_op(nodeof(r),nodeof(x))));
+    //}
+
+

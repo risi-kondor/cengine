@@ -28,10 +28,7 @@ namespace Cengine{
     set<Cnode*> waiting;
     vector<Cnode*> tokill;
     
-    //set<Chandle*> handles;
-
     vector<Cworker*> workers;
-    //vector<GenericMetaBatcher*> batchers;
     vector<Batcher*> batchers;
     bool batching=true; 
     bool shutdown=false; 
@@ -48,20 +45,17 @@ namespace Cengine{
 
     condition_variable get_task_cv;
     mutex get_task_mx;
-    //mutex get_task_mx2;
 
 
     Cengine(){
       for(int i=0; i<3; i++)
 	workers.push_back(new Cworker(this,i));
-      //batchers.push_back(new MetaBatcher<ctensor_add_Mprod_op,ctensor_Mprod_signature,CtensorB_add_Mprod_batcher>());
     }
 
 
     ~Cengine(){
       DEBUG_ENGINE({CoutLock lk; cout<<"    Shutting down engine"<<endl;});
       shutdown=true; 
-      //for(auto p:handles) delete p;
       get_task_cv.notify_all();
       for(auto p:workers) delete p;
       for(auto p:batchers) delete p;
@@ -185,6 +179,8 @@ namespace Cengine{
       return new_handle(enqueue_for_handle(new OP(nodeof(h0),nodeof(h1),nodeof(h2),arg0,arg1,arg2,arg3)));
     }
 
+
+    // ---- Enqueue ------------------------------------------------------------------------------------------
 
 
     Chandle* operator()(Coperator* op){
@@ -353,19 +349,7 @@ namespace Cengine{
       //}
     }
 
-    /*
-    void protected_kill(Cnode* node){
-#ifdef ENGINE_PRIORITY
-      priority_guard<3> lock(done_pmx,2); 
-#else
-      lock_guard<mutex> lock(done_mx);
-#endif
-      kill(node);
-    }
-    */
-
     void kill(Cnode* node){
-      // return; 
       DEBUG_ENGINE({CoutLock lk; cout<<"    Killing "<<node->ident()<<endl;}); 
       //if(nodes.find(node)==nodes.end()){CoutLock lk; cout<<"Cannot find node "<<node->ident()<<"!!!"<<endl;}
       if(node->dependents.size()>0) {CoutLock lk; cout<<"Caught dependent"<<endl; exit(-1); return;}
@@ -427,7 +411,7 @@ namespace Cengine{
 	if(all_done) break;
 	this_thread::sleep_for(chrono::milliseconds(13));	
       }
-      {CoutLock lk; cout<<"flushed"<<endl;}
+      DEBUG_ENGINE({CoutLock lk; cout<<"flushed"<<endl;})
       return; 
     }
 
@@ -494,16 +478,15 @@ namespace Cengine{
   };
 
 
+  // ---- Functions -----------------------------------------------------------------------------------------
+
 
   inline void Cworker::run(){
     while(!owner->shutdown){
-      //this_thread::sleep_for(chrono::milliseconds(10));
       Coperator* op=owner->get_task(this);
       if(op){
 	DEBUG_ENGINE({CoutLock lk; 
 	    cout<<"    \e[1mWorker "<<id<<":\e[0m  "<<op->owner->ident()<<" <- "<<op->str()<<endl;});
-	//uniform_int_distribution<int> distr(0,10);
-	//this_thread::sleep_for(chrono::milliseconds(distr(rndGen)));
 	op->exec();
 	owner->done(op->owner);
       }
@@ -511,15 +494,19 @@ namespace Cengine{
   }
 
 
-  // ---- Functions -----------------------------------------------------------------------------------------
-
-
-  //inline Chandle* new_handle(Cnode* node){
-  //return Cengine_engine->new_handle(node);
-  //}
-  
-
-
 }
 
 #endif
+
+
+    /*
+    void protected_kill(Cnode* node){
+#ifdef ENGINE_PRIORITY
+      priority_guard<3> lock(done_pmx,2); 
+#else
+      lock_guard<mutex> lock(done_mx);
+#endif
+      kill(node);
+    }
+    */
+

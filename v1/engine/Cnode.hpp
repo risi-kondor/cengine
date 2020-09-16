@@ -5,6 +5,7 @@
 #include "Cobject.hpp"
 #include "Batcher.hpp"
 
+
 namespace Cengine{
 
 
@@ -15,7 +16,6 @@ namespace Cengine{
     virtual void release(Cnode* node)=0;
     virtual void done(Cnode* node)=0;
     virtual void kill(Cnode* node)=0;
-    //virtual void protected_kill(Cnode* node)=0;
     virtual void dec_handle(Cnode* node)=0;
 
   };
@@ -49,7 +49,7 @@ namespace Cengine{
       if(nhandles>0){CoutLock lk; cout<<"Error: attempting to delete node with handle."<<endl;exit(0);}
       // DEBUG_ENGINE({CoutLock lk; cout<<"Deleting "<<ident()<<endl;});
       delete op;
-      if(!is_view) delete obj; // !!!!
+      if(!is_view) delete obj; 
     }
 
     
@@ -71,10 +71,6 @@ namespace Cengine{
 	else engine->kill(this);
       }
     }
-
-    //void assess(){ // may be called from master thread, not protected 
-    //if(dependents.size()==0 && nhandles==0) engine->protected_kill(this); 
-    //}
 
     Cnode* father(){ // protected by done_mx 
       assert(op);
@@ -145,4 +141,8 @@ namespace Cengine{
 
 #endif
 
+
+    //void assess(){ // may be called from master thread, not protected 
+    //if(dependents.size()==0 && nhandles==0) engine->protected_kill(this); 
+    //}
 

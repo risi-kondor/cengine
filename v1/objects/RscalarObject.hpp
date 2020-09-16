@@ -3,7 +3,6 @@
 
 #include "Cengine_base.hpp"
 #include "RscalarB_ops.hpp"
-//#include "RscalarInterface.hpp"
 
 extern Cengine::Cengine* Cscalar_engine;
 
@@ -59,15 +58,15 @@ namespace Cengine{
       hdl=(*Cengine_engine)(new new_rscalar_set_op(-1,x,device));
     }
 
-    RscalarObject(const int nbd, const fill_raw& fill, const int device=0){
+    RscalarObject(const int nbd, const fill_raw& fill, const int device=0): nbu(nbd){
       hdl=(*Cengine_engine)(new new_rscalar_op(nbd,device));
     }
 
-    RscalarObject(const int nbd, const fill_zero& fill, const int device=0){
+    RscalarObject(const int nbd, const fill_zero& fill, const int device=0): nbu(nbd){
       hdl=(*Cengine_engine)(new new_rscalar_zero_op(nbd,device));
     }
 
-    RscalarObject(const int nbd, const fill_gaussian& fill, const int device=0){
+    RscalarObject(const int nbd, const fill_gaussian& fill, const int device=0): nbu(nbd){
       hdl=(*Cengine_engine)(new new_rscalar_gaussian_op(nbd,device));
     }
 
@@ -76,22 +75,25 @@ namespace Cengine{
 
 
     RscalarObject(const RscalarObject& x):
+      nbu(x.nbu),
       hdl((*Cengine_engine)(new rscalar_copy_op(nodeof(x.hdl)))){}
       
     RscalarObject(RscalarObject&& x){
+      nbu=x.nbu; 
       hdl=x.hdl;
       x.hdl=nullptr;
     }
 
     RscalarObject& operator=(const RscalarObject& x){
       delete hdl;
-      //hdl=engine::rscalar_copy(x.hdl);
+      nbu=x.nbu;
       hdl=(*Cengine_engine)(new rscalar_copy_op(nodeof(x.hdl)));
       return *this;
     }
 
     RscalarObject& operator=(RscalarObject&& x){
       delete hdl;
+      nbu=x.nbu; 
       hdl=x.hdl;
       x.hdl=nullptr;
       return *this;
@@ -110,7 +112,6 @@ namespace Cengine{
     }
 
     float val() const{
-      //return engine::rscalar_get(hdl)[0];
       Cengine_engine->flush(hdl->node);
       vector<float> R=asRscalarB(hdl->node->obj,__PRETTY_FUNCTION__);
       return R[0];

@@ -1329,6 +1329,21 @@ namespace Cengine{
 	  oss<<"]";
 	  if(i<dims[0]-1) oss<<"\n";
 	}
+	return oss.str(); 
+      }
+
+      if(k==3){
+	for(int u=0; u<dims[0]; u++){
+	  for(int i=0; i<dims[1]; i++){
+	    oss<<indent<<"[ ";
+	    for(int j=0; j<dims[2]; j++)
+	      oss<<(*this)({u,i,j})<<" ";
+	    oss<<"]";
+	    if(i<dims[1]-1) oss<<"\n";
+	  }
+	  oss<<"\n";
+	}
+	return oss.str();  
       }
 
       /*

@@ -153,13 +153,63 @@ namespace Cengine{
     }
  
     void add_inp_into(CscalarB& r, const CtensorB& A){
-      //{CoutLock lk; cout<<r.val<<endl;}
       assert(nbu==-1);
       r.val+=inp(A);
-      //{CoutLock lk; cout<<r.val<<endl;}
     }
 
+    void mix_into(CscalarB& r, const CscalarB& x) const{
+      to_device(0);
+      assert(dims.size()==2);
+      if(r.nbu==-1){
+	assert(dims[0]==1);
+	if(x.nbu==-1){
+	  assert(dims[1]==1);
+	  r.val+=complex<float>(arr[0],arrc[0])*x.val;
+	  return; 
+	}else{
+	  assert(dims[1]==x.nbu);
+	  for(int i=0; i<x.nbu; i++)
+	    r.val+=complex<float>(arr[i],arrc[i])*x.arr[i];
+	  return;
+	}
+      }else{
+	assert(dims[0]==r.nbu);
+	if(x.nbu==-1){
+	  assert(dims[1]==1);
+	  for(int i=0; i<r.nbu; i++)
+	    r.arr[i]+=complex<float>(arr[i],arrc[i])*x.val;
+	}else{
+	  assert(dims[1]==x.nbu);
+	  for(int i=0; i<r.nbu; i++){
+	    complex<float> t=r.arr[i];
+	    for(int j=0; j<x.nbu; j++)
+	      t+=complex<float>(arr[i*x.nbu+j],arrc[i*x.nbu+j])*x.val;
+	    r.arr[i]=t;
+	  }
+	}
+      }
+    }
 
+    void mix_into(CtensorB& r, const CtensorB& x) const{
+      to_device(0);
+      assert(dims.size()==2);
+      if(r.nbu==-1){
+	assert(dims[0]==1);
+	if(x.nbu==-1){
+	  assert(dims[1]==1);
+	  r.add(x,complex<float>(arr[0],arrc[0]));
+	  return; 
+	}else{
+	  assert(dims[1]==x.nbu);
+	  FCG_UNIMPL();
+	  return;
+	}
+      }else{
+	FCG_UNIMPL();
+      }
+    }
+
+    
   public: // ---- I/O ----------------------------------------------------------------------------------------
 
 
