@@ -24,11 +24,19 @@ int main(int argc, char** argv){
   Ctensor A({4,4},3,fill::identity);
   Ctensor B({4,4},3,fill::sequential);
 
+  Ctensor N=B.column_norms(); 
+  cout<<N<<endl<<endl; 
+  B.divide_columns(N);
+  cout<<B<<endl;
+  cout<<B.column_norms()<<endl; 
+  cout<<endl;
 
   Ctensor C=A+B;
   cout<<C<<endl; 
 
   Ctensor W({4,4},fill::gaussian);
   cout<<W.mix(x)<<endl; 
+
+  
 
 }

@@ -110,6 +110,10 @@ namespace Cengine{
     }
 
 
+    CtensorB* divide_cols(const CtensorB& N) const{
+      return new CtensorB(CFtensor::divide_cols(N));
+    }
+
     CtensorB* normalize_cols() const{
       return new CtensorB(CFtensor::normalize_cols());
     }

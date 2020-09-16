@@ -77,8 +77,8 @@ namespace Cengine{
     }
 
 
-    Chandle* ctensor_normalize_cols(Chandle* x){
-      return new_handle(Cengine_engine->enqueue(new ctensor_normalize_cols_op(nodeof(x))));
+    Chandle* ctensor_divide_cols(Chandle* x, Chandle* n){
+      return new_handle(Cengine_engine->enqueue(new ctensor_divide_cols_op(nodeof(x),nodeof(n))));
     }
 
     Chandle* ctensor_add_normalize_cols_back(Chandle* r, Chandle*g, Chandle* x){

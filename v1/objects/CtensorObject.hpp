@@ -111,8 +111,7 @@ namespace Cengine{
       dims(x.dims),
       nbu(x.nbu),
       hdl(Cengine_engine->push<ctensor_copy_op>(x.hdl)){}
-    //hdl(engine::ctensor_copy(x.hdl)){}
-      
+    
     CtensorObject(CtensorObject&& x):
       dims(std::move(x.dims)),
       nbu(x.nbu){
@@ -125,7 +124,6 @@ namespace Cengine{
       nbu=x.nbu;
       delete hdl;
       hdl=Cengine_engine->push<ctensor_copy_op>(x.hdl);
-      //hdl=engine::ctensor_copy(x.hdl);
       return *this;
     }
 
@@ -215,17 +213,14 @@ namespace Cengine{
 
     CtensorObject conj() const{
       return CtensorObject(Cengine_engine->push<ctensor_conj_op>(hdl),dims,nbu);
-      //return CtensorObject(engine::ctensor_conj(hdl),dims);
     }
 
     CtensorObject transp() const{
       return CtensorObject(Cengine_engine->push<ctensor_transp_op>(hdl),dims,nbu); //TODO
-      //return CtensorObject(engine::ctensor_transp(hdl),dims);
     }
 
     CtensorObject herm() const{
       return CtensorObject(Cengine_engine->push<ctensor_herm_op>(hdl),dims,nbu);
-      //return CtensorObject(engine::ctensor_herm(hdl),dims);
     }
 
     CtensorObject plus(const CtensorObject& x){
@@ -334,7 +329,12 @@ namespace Cengine{
       replace(hdl,Cengine_engine->push<ctensor_add_Mprod_op<1,1> >(hdl,x.hdl,y.hdl,x.dims,y.dims));
     }
 
-    
+
+    void add_column_norms(const CtensorObject& x){
+      replace(hdl,Cengine_engine->push<ctensor_add_col_norms_op>(hdl,x.hdl));
+    }
+
+
     void add_ReLU(const CtensorObject& x, const float c=0){
       replace(hdl,engine::ctensor_add_ReLU(hdl,x.hdl,c));
     }
@@ -364,50 +364,60 @@ namespace Cengine{
   public: // ---- Operators ---------------------------------------------------------------------------------
 
 
-  CtensorObject& operator+=(const CtensorObject& y){
-    add(y);
-    return *this;
-  }
+    CtensorObject& operator+=(const CtensorObject& y){
+      add(y);
+      return *this;
+    }
 
-  CtensorObject& operator-=(const CtensorObject& y){
-    subtract(y);
-    return *this;
-  }
+    CtensorObject& operator-=(const CtensorObject& y){
+      subtract(y);
+      return *this;
+    }
 
-  CtensorObject operator+(const CtensorObject& y){
-    CtensorObject R(*this);
-    R.add(y);
-    return R;
-  }
+    CtensorObject operator+(const CtensorObject& y){
+      CtensorObject R(*this);
+      R.add(y);
+      return R;
+    }
 
-  CtensorObject operator-(const CtensorObject& y){
-    CtensorObject R(*this);
-    R.subtract(y);
-    return R;
-  }
+    CtensorObject operator-(const CtensorObject& y){
+      CtensorObject R(*this);
+      R.subtract(y);
+      return R;
+    }
 
-  CtensorObject operator*(const CscalarObject& c){
-    CtensorObject R(dims,nbu,fill::zero);
-    R.add(*this,c);
-    return R;
-  }
+    CtensorObject operator*(const CscalarObject& c){
+      CtensorObject R(dims,nbu,fill::zero);
+      R.add(*this,c);
+      return R;
+    }
 
-  CtensorObject operator*(const CtensorObject& y){
-    int I=dims.combined(0,dims.k()-1);
-    int J=y.dims.combined(1,y.dims.k());
-    CtensorObject R({I,J},fill::zero);
-    R.add_Mprod(*this,y);
-    return R;
-  }
+    CtensorObject operator*(const CtensorObject& y){
+      int I=dims.combined(0,dims.k()-1);
+      int J=y.dims.combined(1,y.dims.k());
+      CtensorObject R({I,J},fill::zero);
+      R.add_Mprod(*this,y);
+      return R;
+    }
 
-  CtensorObject operator*(const Transpose<CtensorObject>& y){
-    int I=dims.combined(0,dims.k()-1);
-    int J=y.obj.dims.combined(0,y.obj.dims.k()-1);
-    CtensorObject R({I,J},fill::zero);
-    R.add_Mprod_AT(*this,y.obj);
-    return R;
-  }
+    CtensorObject operator*(const Transpose<CtensorObject>& y){
+      int I=dims.combined(0,dims.k()-1);
+      int J=y.obj.dims.combined(0,y.obj.dims.k()-1);
+      CtensorObject R({I,J},fill::zero);
+      R.add_Mprod_AT(*this,y.obj);
+      return R;
+    }
 
+    CtensorObject column_norms() const{
+      CtensorObject R(dims.remove(dims.size()-2),nbu,fill::zero);
+      R.add_column_norms(*this);
+      return R;
+    }
+
+    void divide_columns(const CtensorObject& N){
+      return CtensorObject(Cengine_engine->push<ctensor_divide_cols_op>(hdl,N.hdl),dims,nbu);
+    }
+    
 
   public: // ---- I/O ----------------------------------------------------------------------------------------
 

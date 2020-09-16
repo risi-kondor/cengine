@@ -639,6 +639,31 @@ namespace Cengine{
     }
 
 
+    CFtensor divide_cols(const CFtensor& N) const{
+      assert(k>=2);
+      const int J=dims[k-1];
+      const int I=dims[k-2];
+      const int A=asize/(I*J);
+      assert(N.asize==asize/I);
+      CFtensor R(dims,fill::zero);
+      if(device==0){
+	for(int a=0; a<A; a++){
+	  int offs=a*I*J;
+	  for(int j=0; j<J; j++){
+	    float z=N.arr[a*J+j];
+	    for(int i=0; i<I; i++){
+	      R.arr[offs+i*J+j]=arr[offs+i*J+j]/z;
+	      R.arrc[offs+i*J+j]=arrc[offs+i*J+j]/z;
+	    }
+	  }    
+	}
+      }else{
+	FCG_UNIMPL(); 
+      }
+      return R;
+    }
+
+
     CFtensor normalize_cols() const{
       Gdims ndims=dims.chunk(0,dims.size()-1);
       const int J=dims[dims.size()-1];

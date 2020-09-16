@@ -67,20 +67,37 @@ namespace Cengine{
   // ---- Normalization  -------------------------------------------------------------------------------------
 
 
-  class ctensor_normalize_cols_op: public Coperator{
+  class ctensor_add_col_norms_op: public Coperator{
   public:
 
-    ctensor_normalize_cols_op(Cnode* x):
-      Coperator(x){}
+    ctensor_add_col_norms_op(Cnode* r, Cnode* x):
+      Coperator(r,x){}
 
     virtual void exec(){
-      assert(!owner->obj);
-      //owner->obj=asCtensorB(inputs[0],__PRETTY_FUNCTION__).normalize_cols();
-      //owner->computed=true; 
+      owner->obj=inputs[0]->obj;
+      CTENSORB(inputs[0]).add_col_norms(CTENSORB(inputs[1]));
     }
 
     string str() const{
       return "ctensor_normalize_cols"+inp_str();
+    }
+
+  };
+
+
+  class ctensor_divide_cols_op: public Coperator{
+  public:
+
+    ctensor_divide_cols_op(Cnode* r, Cnode* n):
+      Coperator(r,n){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=CTENSORB(inputs[0]).divide_cols(CTENSORB(inputs[1]));
+    }
+
+    string str() const{
+      return "ctensor_divide_cols"+inp_str();
     }
 
   };

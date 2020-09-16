@@ -176,3 +176,33 @@ void subtractc(const CFtensor& x, const complex<float> c){
 }
 
 
+// ---- Normalization ----------------------------------------------------------------------------------------
+
+
+void add_col_norms(const CFtensor& x){
+
+  int xk=x.dims.size();
+  assert(xk>=2);
+  const int J=x.dims[xk-1];
+  const int I=x.dims[xk-2];
+  const int A=x.asize/(I*J);
+  assert(asize==A*J);
+
+  if(device==0){
+    for(int a=0; a<A; a++){
+      cout<<a<<endl;
+      int offs=a*I*J;
+      for(int j=0; j<J; j++){
+	float t=0;
+	for(int i=0; i<I; i++){
+	  t+=x.arr[offs+i*J+j]*x.arr[offs+i*J+j]+x.arrc[offs+i*J+j]*x.arrc[offs+i*J+j];
+	}
+	arr[a*J+j]+=sqrt(t);
+      }
+    }
+    return;
+  }
+
+  FCG_UNIMPL();
+
+}
