@@ -67,19 +67,17 @@ namespace Cengine{
   // ---- Normalization  -------------------------------------------------------------------------------------
 
 
-  class ctensor_add_col_norms_op: public Coperator{
+  class ctensor_add_col_norms_op: public CumulativeOp2<CtensorB,CtensorB>{
   public:
 
-    ctensor_add_col_norms_op(Cnode* r, Cnode* x):
-      Coperator(r,x){}
+    using CumulativeOp2::CumulativeOp2;
 
-    virtual void exec(){
-      owner->obj=inputs[0]->obj;
-      CTENSORB(inputs[0]).add_col_norms(CTENSORB(inputs[1]));
+    virtual void exec(CtensorB& R, const CtensorB& x){
+      R.add_col_norms(x);
     }
 
     string str() const{
-      return "ctensor_normalize_cols"+inp_str();
+      return "ctensor_add_col_norms"+inp_str();
     }
 
   };
@@ -103,22 +101,38 @@ namespace Cengine{
   };
 
 
-  class ctensor_add_normalize_cols_back_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
+  class ctensor_add_divide_cols_op: public CumulativeOp3<CtensorB,CtensorB,CtensorB>{
   public:
 
-    ctensor_add_normalize_cols_back_op(Cnode* xg, Cnode* g, Cnode* x):
-      Coperator(xg,g,x){}
+    using CumulativeOp3::CumulativeOp3;
 
-    virtual void exec(){
-      assert(!owner->obj);
-      //owner->obj=asCtensorB(inputs[0],__PRETTY_FUNCTION__).add_normalize_cols_back(asCtensorB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
+    virtual void exec(CtensorB& R, const CtensorB& x, const CtensorB& n){
+      R.add_divide_cols(x,n);
     }
 
     string str() const{
-      return "ctensor_add_normalize_cols_back"+inp_str();
+      return "ctensor_add_divide_cols"+inp_str();
     }
 
   };
+
+
+  class ctensor_add_divide_cols_back1_op: public CumulativeOp4<CtensorB,CtensorB,CtensorB,CtensorB>{
+  public:
+
+    using CumulativeOp4::CumulativeOp4;
+
+    virtual void exec(CtensorB& R, const CtensorB& g, const CtensorB& x, const CtensorB& n){
+      R.add_divide_cols_back1(g,x,n);
+    }
+
+    string str() const{
+      return "ctensor_add_divide_cols_back1"+inp_str();
+    }
+
+  };
+
+
 
 
   // ---- In-place operators  --------------------------------------------------------------------------------
@@ -147,3 +161,76 @@ namespace Cengine{
 
 #endif 
   
+  /*
+  class ctensor_add_col_norms_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
+  public:
+
+    ctensor_add_col_norms_op(Cnode* r, Cnode* x):
+      Coperator(r,x){}
+
+    virtual void exec(){
+      owner->obj=inputs[0]->obj;
+      CTENSORB(inputs[0]).add_col_norms(CTENSORB(inputs[1]));
+    }
+
+    string str() const{
+      return "ctensor_normalize_cols"+inp_str();
+    }
+
+  };
+  */
+
+  /*
+  class ctensor_add_normalize_cols_back_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
+  public:
+
+    ctensor_add_normalize_cols_back_op(Cnode* xg, Cnode* g, Cnode* x):
+      Coperator(xg,g,x){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      //owner->obj=asCtensorB(inputs[0],__PRETTY_FUNCTION__).add_normalize_cols_back(asCtensorB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
+    }
+
+    string str() const{
+      return "ctensor_add_normalize_cols_back"+inp_str();
+    }
+
+  };
+  */
+  /*
+  class ctensor_add_normalize_cols_back_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
+  public:
+
+    ctensor_add_normalize_cols_back_op(Cnode* xg, Cnode* g, Cnode* x):
+      Coperator(xg,g,x){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      //owner->obj=asCtensorB(inputs[0],__PRETTY_FUNCTION__).add_normalize_cols_back(asCtensorB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
+    }
+
+    string str() const{
+      return "ctensor_add_normalize_cols_back"+inp_str();
+    }
+
+  };
+  */
+  /*
+  class ctensor_add_normalize_cols_back_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
+  public:
+
+    ctensor_add_normalize_cols_back_op(Cnode* xg, Cnode* g, Cnode* x):
+      Coperator(xg,g,x){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      //owner->obj=asCtensorB(inputs[0],__PRETTY_FUNCTION__).add_normalize_cols_back(asCtensorB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
+    }
+
+    string str() const{
+      return "ctensor_add_normalize_cols_back"+inp_str();
+    }
+
+  };
+  */

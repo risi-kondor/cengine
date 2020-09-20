@@ -243,7 +243,7 @@ namespace Cengine{
     }
 
     void add_div_back0(const CscalarB& x, const CscalarB& y){
-      if(nbu==-1) val+=x.val/std::conj(y.val);
+      if(nbu==-1) val+=x.val/std::conj(y.val); 
       else for(int i=0; i<nbu; i++) arr[i]+=x.arr[i]/std::conj(y.arr[i]);
     }
 

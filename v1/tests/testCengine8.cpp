@@ -26,9 +26,10 @@ int main(int argc, char** argv){
 
   Ctensor N=B.column_norms(); 
   cout<<N<<endl<<endl; 
-  B.divide_columns(N);
-  cout<<B<<endl;
-  cout<<B.column_norms()<<endl; 
+
+  Ctensor D=B.divide_columns(N);
+  cout<<D<<endl;
+  cout<<D.column_norms()<<endl; 
   cout<<endl;
 
   Ctensor C=A+B;

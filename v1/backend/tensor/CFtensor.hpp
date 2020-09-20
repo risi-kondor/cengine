@@ -289,7 +289,6 @@ namespace Cengine{
     template<typename TYPE>
     operator Gtensor<complex<TYPE> >(){
       Gtensor<complex<TYPE> > R(dims,fill::raw);
-      cout<<dims<<endl; 
       to_device(0);
       for(int i=0; i<asize; i++)
 	R.arr[i]=complex<TYPE>(arr[i],arrc[i]);
@@ -930,6 +929,7 @@ namespace Cengine{
 	    oss<<"]";
 	    if(i<dims[0]-1) oss<<"\n";
 	  }
+	  oss<<endl;
 	}
 	
 	if(k==3){
@@ -944,6 +944,7 @@ namespace Cengine{
 	    }
 	    oss<<endl;
 	  }
+	  oss<<endl;  
 	}
 
 	return oss.str();

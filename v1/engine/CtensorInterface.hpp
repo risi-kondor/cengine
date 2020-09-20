@@ -81,9 +81,9 @@ namespace Cengine{
       return new_handle(Cengine_engine->enqueue(new ctensor_divide_cols_op(nodeof(x),nodeof(n))));
     }
 
-    Chandle* ctensor_add_normalize_cols_back(Chandle* r, Chandle*g, Chandle* x){
-      return new_handle(Cengine_engine->enqueue(new ctensor_add_normalize_cols_back_op(nodeof(r),nodeof(g),nodeof(x))));
-    }
+    //Chandle* ctensor_add_normalize_cols_back(Chandle* r, Chandle*g, Chandle* x){
+    //return new_handle(Cengine_engine->enqueue(new ctensor_add_normalize_cols_back_op(nodeof(r),nodeof(g),nodeof(x))));
+    //}
 
 
     // ---- Cumulative operations ----------------------------------------------------------------------------

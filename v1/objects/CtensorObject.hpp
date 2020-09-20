@@ -409,12 +409,13 @@ namespace Cengine{
     }
 
     CtensorObject column_norms() const{
+      assert(dims.size()>=2);
       CtensorObject R(dims.remove(dims.size()-2),nbu,fill::zero);
       R.add_column_norms(*this);
       return R;
     }
 
-    void divide_columns(const CtensorObject& N){
+    CtensorObject divide_columns(const CtensorObject& N){
       return CtensorObject(Cengine_engine->push<ctensor_divide_cols_op>(hdl,N.hdl),dims,nbu);
     }
     

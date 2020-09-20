@@ -77,8 +77,13 @@ namespace Cengine{
 
     Gdims remove(const int j) const{
       Gdims R;
-      for(int i=0; i<size(); i++)
-	if(i!=j) R.push_back((*this)[i]);
+      if(j<0){
+	for(int i=0; i<size(); i++)
+	  if(i!=size()+j) R.push_back((*this)[i]);
+      }else{
+	for(int i=0; i<size(); i++)
+	  if(i!=j) R.push_back((*this)[i]);
+      }
       return R;
     }
 

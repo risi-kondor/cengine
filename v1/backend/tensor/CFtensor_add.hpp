@@ -190,7 +190,6 @@ void add_col_norms(const CFtensor& x){
 
   if(device==0){
     for(int a=0; a<A; a++){
-      cout<<a<<endl;
       int offs=a*I*J;
       for(int j=0; j<J; j++){
 	float t=0;
@@ -206,3 +205,57 @@ void add_col_norms(const CFtensor& x){
   FCG_UNIMPL();
 
 }
+
+
+void add_divide_cols(const CFtensor& X, const CFtensor& N){
+  assert(k>=2);
+  assert(X.asize==asize);
+  const int J=dims[k-1];
+  const int I=dims[k-2];
+  const int A=asize/(I*J);
+  assert(N.asize==asize/I);
+  if(device==0){
+    for(int a=0; a<A; a++){
+      int offs=a*I*J;
+      for(int j=0; j<J; j++){
+	float z=N.arr[a*J+j];
+	for(int i=0; i<I; i++){
+	  arr[offs+i*J+j]+=X.arr[offs+i*J+j]/z;
+	  arrc[offs+i*J+j]+=X.arrc[offs+i*J+j]/z;
+	}
+      }    
+    }
+  }else{
+    FCG_UNIMPL(); 
+  }
+}
+
+
+void add_divide_cols_back1(const CFtensor& G, const CFtensor& X, const CFtensor& N){
+  assert(k>=2);
+  assert(G.dims==X.dims);
+  assert(dims==N.dims);
+  const int J=G.dims[k-1];
+  const int I=G.dims[k-2];
+  const int A=G.asize/(I*J);
+  assert(N.asize==G.asize/I);
+  if(device==0){
+    for(int a=0; a<A; a++){
+      int offs=a*I*J;
+      for(int j=0; j<J; j++){
+	float z=-pow(N.arr[a*J+j],-2);
+	for(int i=0; i<I; i++){
+	  complex<float> t=complex<float>(G.arr[offs+i*J+j],G.arrc[offs+i*J+j])*
+	    complex<float>(X.arr[offs+i*J+j],-X.arrc[offs+i*J+j])*z;
+	  arr[offs+j]+=std::real(t);
+	  arrc[offs+j]+=std::imag(t);
+	}
+      }    
+    }
+  }else{
+    FCG_UNIMPL(); 
+  }
+}
+
+
+

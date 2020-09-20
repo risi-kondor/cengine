@@ -92,6 +92,12 @@ namespace Cengine{
       return new_handle(enqueue_for_handle(new OP(nodeof(h0),nodeof(h1),nodeof(h2))));
     }
 
+    template<typename OP>
+    Chandle* push(Chandle* h0, Chandle* h1, Chandle* h2, Chandle* h3){
+      return new_handle(enqueue_for_handle(new OP(nodeof(h0),nodeof(h1),nodeof(h2),nodeof(h3))));
+    }
+
+    // ---- 1 arg
 
     template<typename OP, typename ARG0>
     Chandle* push(const ARG0 arg0){
@@ -113,7 +119,8 @@ namespace Cengine{
       return new_handle(enqueue_for_handle(new OP(nodeof(h0),nodeof(h1),nodeof(h2),arg0)));
     }
 
-
+    // ----  2 args
+    
     template<typename OP, typename ARG0, typename ARG1>
     Chandle* push(const ARG0 arg0, const ARG1 arg1){
       return new_handle(enqueue_for_handle(new OP(arg0,arg1)));
@@ -134,7 +141,7 @@ namespace Cengine{
       return new_handle(enqueue_for_handle(new OP(nodeof(h0), nodeof(h1), nodeof(h2), arg0, arg1)));
     }
 
-    // 3 args 
+    // ---- 3 args 
 
     template<typename OP, typename ARG0, typename ARG1, typename ARG2>
     Chandle* push(const ARG0 arg0, const ARG1 arg1, const ARG2 arg2){
@@ -156,8 +163,7 @@ namespace Cengine{
       return new_handle(enqueue_for_handle(new OP(nodeof(h0),nodeof(h1),nodeof(h2),arg0,arg1,arg2)));
     }
 
-
-    // 4 args 
+    // ---- 4 args 
 
     template<typename OP, typename ARG0, typename ARG1, typename ARG2, typename ARG3>
     Chandle* push(const ARG0 arg0, const ARG1 arg1, const ARG2 arg2, const ARG3 arg3){
@@ -384,8 +390,9 @@ namespace Cengine{
 
     void flush(){
       DEBUG_ENGINE({CoutLock lk; cout<<"flush"<<endl;})
+	//cout<<"flush"<<endl; 
       //for(auto p:batchers) p->flush(); 
-      while(true){
+	while(true){
 	//#ifdef ENGINE_PRIORITY
 	//priority_guard<3> lock(done_pmx,2); 
 	//#else

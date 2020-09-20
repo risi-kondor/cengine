@@ -1309,6 +1309,7 @@ namespace Cengine{
 	for(int j=0; j<dims[0]; j++)
 	  oss<<arr[j]<<" ";
 	oss<<"]";
+	oss<<"\n";
       }
 
       if(k==2){
@@ -1319,6 +1320,7 @@ namespace Cengine{
 	  oss<<"]";
 	  if(i<dims[0]-1) oss<<"\n";
 	}
+	oss<<"\n";
       }
 
       if(k==3 && dims[2]==1){
@@ -1329,6 +1331,7 @@ namespace Cengine{
 	  oss<<"]";
 	  if(i<dims[0]-1) oss<<"\n";
 	}
+	oss<<"\n";
 	return oss.str(); 
       }
 
@@ -1343,6 +1346,7 @@ namespace Cengine{
 	  }
 	  oss<<"\n";
 	}
+	oss<<"\n";
 	return oss.str();  
       }
 
