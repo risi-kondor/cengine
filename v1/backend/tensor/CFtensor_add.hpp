@@ -232,11 +232,12 @@ void add_divide_cols(const CFtensor& X, const CFtensor& N){
 
 
 void add_divide_cols_back1(const CFtensor& G, const CFtensor& X, const CFtensor& N){
-  assert(k>=2);
+  const int _k=G.k;
+  assert(_k>=2);
   assert(G.dims==X.dims);
   assert(dims==N.dims);
-  const int J=G.dims[k-1];
-  const int I=G.dims[k-2];
+  const int J=G.dims[_k-1];
+  const int I=G.dims[_k-2];
   const int A=G.asize/(I*J);
   assert(N.asize==G.asize/I);
   if(device==0){

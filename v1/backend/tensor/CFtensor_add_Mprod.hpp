@@ -9,7 +9,7 @@ void add_Mprod(const CFtensor& x, const CFtensor& y, const int nx=1, const int n
   const int K=x.combined_size(x.k-nx,x.k);
   assert(y.combined_size(0,ny)==K);
 
-  cout<<dims<<endl; 
+  //cout<<dims<<endl; 
   const int I=x.combined_size(0,x.k-nx);
   const int J=y.combined_size(ny,y.k);
   assert(asize==I*J);
@@ -76,7 +76,7 @@ void add_Mprod_AT(const CFtensor& x, const CFtensor& y, const int nx=1, const in
   const int K=x.combined_size(x.k-nx,x.k);
   assert(y.combined_size(y.k-ny,y.k)==K);
 
-  cout<<dims<<endl; 
+  //cout<<dims<<endl; 
   const int I=x.combined_size(0,x.k-nx);
   const int J=y.combined_size(0,y.k-ny);
   assert(asize==I*J);
