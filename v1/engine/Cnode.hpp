@@ -14,6 +14,7 @@ namespace Cengine{
 
     virtual Cnode* new_node(Coperator* op)=0;
     virtual void release(Cnode* node)=0;
+    virtual void release_batcher(Cnode* node)=0;
     virtual void done(Cnode* node)=0;
     virtual void kill(Cnode* node)=0;
     virtual void dec_handle(Cnode* node)=0;
@@ -64,7 +65,8 @@ namespace Cengine{
     }
     
     void remove_dependent(Cnode* dependent){ // protected by done_mx
-      if(dependents.find(dependent)==dependents.end()) {CoutLock lk; cout<<"Dependent not found"<<endl;}
+      if(dependents.find(dependent)==dependents.end()){
+	CoutLock lk; cout<<"\e[1mDependent not found \e[0m"<<ident()<<" "<<dependent->op->str()<<endl;}
       dependents.erase(dependent);
       if(dependents.size()==0 && nhandles==0){
 	if(batcher) batcher->kill(this);

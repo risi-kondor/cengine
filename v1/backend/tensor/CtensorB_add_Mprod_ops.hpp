@@ -35,6 +35,12 @@ namespace Cengine{
       if(Tsel==2) return "ctensor_add_Mprod_AT<"+to_string(Csel)+">";
     }
     
+    string batcher_name() const{
+      if(Tsel==0) return "ctensor_add_Mprod<"+to_string(Csel)+">"+signature().str();
+      if(Tsel==1) return "ctensor_add_Mprod_TA<"+to_string(Csel)+">"+signature().str();
+      if(Tsel==2) return "ctensor_add_Mprod_AT<"+to_string(Csel)+">"+signature().str();
+    }
+    
 
   public:
 

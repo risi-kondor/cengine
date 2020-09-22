@@ -64,6 +64,12 @@ using namespace std;
 #define DEBUG_ENGINE(cmd);
 #endif 
 
+#ifdef DEBUG_FLUSH_FLAG
+#define DEBUG_FLUSH(cmd) cmd;
+#else
+#define DEBUG_FLUSH(cmd);
+#endif 
+
 //const int explicitL=3;
 //const int inline_explicitL=5;
 
@@ -331,6 +337,15 @@ namespace Cengine{
     for(int i=0; i<n; i++)
       w[i]=lambda(v[i]);
     return w;
+  }
+
+
+  template<typename TYPE1, typename TYPE2>
+  bool multi_or(TYPE2& v, std::function<bool(TYPE1)> lambda){
+    bool b=false; 
+    for(auto p: v)
+      if(lambda(p)){b=true; break;}
+    return b;
   }
 
 

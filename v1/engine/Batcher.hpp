@@ -16,8 +16,9 @@ namespace Cengine{
     virtual void release(Cnode* node)=0;
     virtual void kill(Cnode* node)=0;
 
-    virtual void exec()=0; 
+    virtual void release()=0; 
     virtual int flush()=0; 
+    virtual int npending() const=0; 
 
   };
 

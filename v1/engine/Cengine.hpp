@@ -24,7 +24,6 @@ namespace Cengine{
     int nbatchers;
 
     set<Cnode*> nodes;
-    deque<Cnode*> ready;
     set<Cnode*> waiting;
     vector<Cnode*> tokill;
     
@@ -36,7 +35,6 @@ namespace Cengine{
     int nnodes=0;
     int nhandles=0;
 
-    mutex ready_mx;
 #ifdef ENGINE_PRIORITY
     priority_mutex<3> done_pmx;
 #else
@@ -45,11 +43,43 @@ namespace Cengine{
 
     condition_variable get_task_cv;
     mutex get_task_mx;
+    atomic<int> active_workers; 
+    mutex active_workers_mx;
+    condition_variable active_workers_cv;
 
+    atomic<int> active_batchers; 
+    mutex active_batchers_mx;
+    condition_variable active_batchers_cv;
 
-    Cengine(){
-      for(int i=0; i<3; i++)
+    deque<Cnode*> ready;
+    mutex ready_mx;
+    mutex ready_list_empty_mx;
+    condition_variable ready_list_empty_cv;
+
+    deque<Cnode*> ready_batchers;
+    mutex ready_batchers_mx;
+    mutex ready_batchers_empty_mx;
+    condition_variable ready_batchers_empty_cv;
+
+    thread* sentinel;
+
+  public:
+
+    Cengine(): Cengine(3){}
+
+    Cengine(const int _nworkers){
+      active_workers=_nworkers;
+      active_batchers=0; 
+      for(int i=0; i<_nworkers; i++)
 	workers.push_back(new Cworker(this,i));
+      if(false){
+      sentinel=new thread([this](){
+	  while(true){
+	    cout<<":"<<active_workers<<endl;
+	    this_thread::sleep_for(chrono::milliseconds(500)); 
+	  }
+	});
+      }
     }
 
 
@@ -244,7 +274,7 @@ namespace Cengine{
 	  if((p->dependents.insert(node)).second){
 	    if(!p->computed) node->nblockers++;
 	  }
-	}
+	} 
 	batchers[bop->batcher_id()-1]->push(op);
 	nodes.insert(node);
 	return rnode;
@@ -311,6 +341,8 @@ namespace Cengine{
       return rnode;
     }
 
+    // ---- Releasing nodes ----------------------------------------------------------------------------------
+
 
     void release(Cnode* node){ // visited by workers but protected by done_mx
       //DEBUG_ENGINE({CoutLock lk; cout<<"    Releasing "<<node->ident()<<endl;});
@@ -325,6 +357,25 @@ namespace Cengine{
       //{CoutLock lk; for(auto p:ready) cout<<p->ident()<<" "; cout<<endl;}
       get_task_cv.notify_one();
     }
+
+
+    void release_batcher(Cnode* node){ // protected by done_mx
+      //DEBUG_ENGINE({CoutLock lk; cout<<"    Releasing "<<node->ident()<<endl;});
+      node->released=true; 
+      {
+	lock_guard<mutex> lock(ready_batchers_mx);
+	auto it=find(ready_batchers.begin(), ready_batchers.end(),node);
+	if(it!=ready_batchers.end()){
+	  CoutLock lk; cout<<"Batcher already released."<<endl; 
+	  ready_batchers.erase(it);
+	}
+	ready_batchers.push_back(node);
+      }
+      get_task_cv.notify_one();
+    }
+
+
+    // ---- Finishing operators ------------------------------------------------------------------------------
 
 
     void done(Cnode* node){ // visited by workers
@@ -348,12 +399,19 @@ namespace Cengine{
 	p->remove_blocker(node); // might release *p
       }
       node->computed=true;
-      node->working=false; 
+      node->working=false;
+      if(dynamic_cast<BatcherExecutor*>(op)){
+	{lock_guard<mutex> lock(active_batchers_mx); active_batchers--;}
+	if(active_batchers==0) active_batchers_cv.notify_one();
+      }
+      if(ready.size()==0) ready_list_empty_cv.notify_one();
+      if(ready_batchers.size()==0) ready_batchers_empty_cv.notify_one();
       //if(node->dependents.size()==0 && node->nhandles==0){ // may lead to orphan nodes 
       //{CoutLock lk; cout<<"Autokill "<<node->ident()<<endl;} 
       //kill(node);
       //}
     }
+
 
     void kill(Cnode* node){
       DEBUG_ENGINE({CoutLock lk; cout<<"    Killing "<<node->ident()<<endl;}); 
@@ -380,6 +438,21 @@ namespace Cengine{
      }
 
 
+    // ---- Flushing -----------------------------------------------------------------------------------------
+
+    
+    void dump_batchers(){
+      DEBUG_FLUSH({CoutLock lk; cout<<"Dumping batchers..."<<endl;});
+#ifdef ENGINE_PRIORITY
+      priority_guard<3> lock(done_pmx,0);
+#else
+      lock_guard<mutex> lock(done_mx); 
+#endif
+      for(auto p:batchers)
+	p->flush(); 
+    }
+
+
     void flush(Cnode* node){
       flush(); 
       //DEBUG_ENGINE({CoutLock lk; cout<<"flush"<<endl;})
@@ -388,36 +461,78 @@ namespace Cengine{
      }
 
 
-    void flush(){
-      DEBUG_ENGINE({CoutLock lk; cout<<"flush"<<endl;})
-	//cout<<"flush"<<endl; 
-      //for(auto p:batchers) p->flush(); 
-	while(true){
-	//#ifdef ENGINE_PRIORITY
-	//priority_guard<3> lock(done_pmx,2); 
-	//#else
-	//lock_guard<mutex> lock(done_mx);
-	//#endif
-	bool all_done=true;
-	for(auto p:batchers){
-	  if(p->flush()>0) all_done=false; 
-	}
-	if(waiting.size()>0) all_done=false;
-	else{
-	  lock_guard<mutex> lock2(ready_mx);
-	  if(ready.size()>0) all_done=false;
-	}
-	if(all_done) break;
-	this_thread::sleep_for(chrono::milliseconds(13));
-      }
+    void flush(){ // not protected by done_mx 
+      DEBUG_ENGINE({CoutLock lk; cout<<"Flushing engine..."<<endl;});
+      int h=0;
+      bool all_done=false;
       while(true){
+	all_done=true; 
+
+	//{CoutLock lk; cout<<"------"<<endl;}
+	dump_batchers(); 
+
+	if(ready_batchers.size()>0){
+	  DEBUG_FLUSH(
+		      {CoutLock lk; cout<<"Flushing "<<ready_batchers.size()<<" batchers on ready list"<<endl;});
+	  unique_lock<mutex> lock(ready_batchers_empty_mx);
+	  ready_batchers_empty_cv.wait(lock,[this](){return ready_batchers.size()==0;});
+	}
+
+	while(ready.size()>0){
+	  DEBUG_FLUSH({CoutLock lk; cout<<"Flushing "<<ready.size()<<" operations on ready list"<<endl;});
+	  unique_lock<mutex> lock(ready_list_empty_mx);
+	  ready_list_empty_cv.wait(lock,[this](){return ready.size()==0;});
+	  //{CoutLock lk; cout<<"...done"<<endl;}
+	}
+
+	unique_lock<mutex> block(active_batchers_mx);
+	active_batchers_cv.wait(block,[this](){
+	    DEBUG_FLUSH(if(active_batchers>0) 
+		{CoutLock lk; cout<<"Waiting for "<<active_batchers<<" active batchers"<<endl;});
+	    return active_batchers==0;
+	  });
+	//cout<<"."<<endl; 
+
+	unique_lock<mutex> wlock(active_workers_mx);
+	active_workers_cv.wait(wlock,[this](){
+	    DEBUG_FLUSH(if(active_workers>0)
+		{CoutLock lk; cout<<"Waiting for "<<active_workers<<" workers"<<endl;});
+	    return active_workers==0;
+	  });
+	DEBUG_FLUSH(cout<<"."<<endl;);
+
+	for(auto p:batchers)
+	  if(p->npending()>0){all_done=false; break;}
+	if(ready.size()>0) all_done=false;
+	if(ready_batchers.size()>0) all_done=false;
+	if(waiting.size()>0) all_done=false;
+	if(all_done) break;
+
+	if(h++>100){
+	  CoutLock lk; cout<<"Timeout. "<<endl; 
+	  for(auto p:waiting) cout<<p->str()<<endl;
+	  cout<<"---"<<endl;
+	  for(auto p:ready) cout<<p->str()<<endl;
+	  exit(0);
+	}
+
+	//this_thread::sleep_for(chrono::milliseconds(13));
+
+      }
+
+      while(active_workers>0){
+	{CoutLock lk; cout<<"/"<<endl;}
+	/*
 	bool all_done=true;
 	for(auto p:workers){
 	  if(p->working) all_done=false;
 	}
 	if(all_done) break;
+	*/
 	this_thread::sleep_for(chrono::milliseconds(13));	
       }
+
+      DEBUG_FLUSH({CoutLock lk; cout<<"done."<<endl<<endl;});
       DEBUG_ENGINE({CoutLock lk; cout<<"flushed"<<endl;})
       return; 
     }
@@ -461,9 +576,14 @@ namespace Cengine{
 
     Coperator* get_task(Cworker* worker){ // visited by workers
       Coperator* op; 
+
       worker->working=false; 
+      {lock_guard<mutex> lock(active_workers_mx); active_workers--;}
+      //cout<<active_workers<<endl;
+      if(active_workers==0) active_workers_cv.notify_one();
+      
       unique_lock<mutex> lock(get_task_mx);
-      get_task_cv.wait(lock,[this](){return ready.size()>0 || shutdown;});
+      get_task_cv.wait(lock,[this](){return ready.size()>0 || ready_batchers.size()>0 || shutdown;});
       {
 #ifdef ENGINE_PRIORITY
 	priority_guard<3> lock(done_pmx,2); 
@@ -471,17 +591,33 @@ namespace Cengine{
 	lock_guard<mutex> lock(done_mx);
 #endif
 	lock_guard<mutex> lock2(ready_mx);
-	if(ready.size()==0) return nullptr;
-	worker->working=true;
-	op=ready.front()->op;
-	ready.pop_front();
-	op->owner->working=true; 
-	//{CoutLock lk; for(auto p:ready) cout<<p->ident()<<" "; cout<<endl;}
+
+	{lock_guard<mutex> lock(active_workers_mx); 
+	  active_workers++;}
+
+	if(ready_batchers.size()>0){
+	  worker->working=true;
+	  op=ready_batchers.front()->op;
+	  ready_batchers.pop_front();
+	  op->owner->working=true; 
+	  get_task_cv.notify_one();
+	  active_batchers++;
+	  return op;      
+	}
+
+	if(ready.size()>0){
+	  worker->working=true;
+	  op=ready.front()->op;
+	  ready.pop_front();
+	  op->owner->working=true; 
+	  get_task_cv.notify_one();
+	  return op;      
+	}
+	
+	return nullptr;
       }
-      get_task_cv.notify_one();
-      return op;      
-    }
-    
+
+    }      
   };
 
 

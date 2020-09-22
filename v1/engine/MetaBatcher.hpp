@@ -27,19 +27,20 @@ namespace Cengine{
 
   public:
 
-    void push(Coperator* op){
+    void push(Coperator* _op){
       
+      BatchedOperator* op=dynamic_cast<BatchedOperator*>(_op);
       SUBINDEX ix=dynamic_cast<OP*>(op)->signature();
 
       auto it=subengines.find(ix);
       if(it!=subengines.end()){
-	it->second->push(op);
+	it->second->push(_op);
 	return;
       }
 
-      BATCHER* sub=new BATCHER(engine);
+      BATCHER* sub=new BATCHER(engine,op->batcher_name());
       subengines[ix]=sub;
-      sub->push(op);
+      sub->push(_op);
     }
 
 
@@ -50,13 +51,20 @@ namespace Cengine{
       return nwaiting; 
     }
 
+    int npending() const{
+      int t=0;
+      for(auto p:subengines)
+	t+=p.second->npending();
+      return t;
+    }
+    
     void release(Cnode* node){
     }
 
     void kill(Cnode* node){
     }
 
-    void exec(){}
+    void release(){}
 
   };
 

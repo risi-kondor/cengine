@@ -142,6 +142,8 @@ template<int selector>
 void add_Mprod_TA(const CFtensor& x, const CFtensor& y, const int nx=1, const int ny=1){
   
   const int K=x.combined_size(0,nx);
+  
+  if(y.combined_size(0,ny)!=K){CoutLock lk; cout<<K<<" "<<y.combined_size(0,ny)<<endl;};
   assert(y.combined_size(0,ny)==K);
 
   const int I=x.combined_size(nx,x.k);
