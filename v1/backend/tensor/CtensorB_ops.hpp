@@ -133,13 +133,13 @@ namespace Cengine{
   };
 
 
-  class ctensor_add_divide_cols_back0_op: public CumulativeOp4<CtensorB,CtensorB,CtensorB,CtensorB>{
+  class ctensor_add_divide_cols_back0_op: public CumulativeOp3<CtensorB,CtensorB,CtensorB>{
   public:
 
-    using CumulativeOp4::CumulativeOp4;
+    using CumulativeOp3::CumulativeOp3;
 
-    virtual void exec(CtensorB& R, const CtensorB& g, const CtensorB& x, const CtensorB& n){
-      R.add_divide_cols_back0(g,x,n);
+    virtual void exec(CtensorB& R, const CtensorB& g, const CtensorB& n){
+      R.add_divide_cols_back0(g,n);
     }
 
     string str() const{

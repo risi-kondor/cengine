@@ -233,7 +233,6 @@ void add_col_norms_back(const CFtensor& G, const CFtensor& X, const CFtensor& N)
 
 
 void add_divide_cols(const CFtensor& X, const CFtensor& N){
-  {CoutLock lk; cout<<X.dims<<N.dims<<endl;}
   assert(k>=2);
   assert(X.asize==asize);
   const int J=dims[k-1];
@@ -244,8 +243,10 @@ void add_divide_cols(const CFtensor& X, const CFtensor& N){
     for(int a=0; a<A; a++){
       int offs=a*I*J;
       for(int j=0; j<J; j++){
+	//complex<float> z=complex<float>(N.arr[a*J+j],N.arrc[a*J+j]);
 	float z=N.arr[a*J+j];
 	for(int i=0; i<I; i++){
+	  //complex<float> u=complex<float>()
 	  arr[offs+i*J+j]+=X.arr[offs+i*J+j]/z;
 	  arrc[offs+i*J+j]+=X.arrc[offs+i*J+j]/z;
 	}
@@ -257,23 +258,25 @@ void add_divide_cols(const CFtensor& X, const CFtensor& N){
 }
 
 
-void add_divide_cols_back0(const CFtensor& G, const CFtensor& X, const CFtensor& N){
-  {CoutLock lk; cout<<X.dims<<N.dims<<endl;}
+void add_divide_cols_back0(const CFtensor& G, const CFtensor& N){
   assert(k>=2);
-  assert(X.asize==asize);
   const int J=dims[k-1];
   const int I=dims[k-2];
   const int A=asize/(I*J);
   assert(N.asize==asize/I);
-  assert(G.asize==N.asize);
+  assert(G.asize==asize);
   if(device==0){
     for(int a=0; a<A; a++){
       int offs=a*I*J;
       for(int j=0; j<J; j++){
-	float z=N.arr[a*J+j];
+	complex<float> n(N.arr[a*J+j],0); //-N.arrc[a*J+j]);
+	//complex<float> z=complex<float>(1,0)/n/n; //complex<float>(G.arr[a*J+j],G.arrc[a*J+j])/n/n;
 	for(int i=0; i<I; i++){
-	  arr[offs+i*J+j]+=X.arr[offs+i*J+j]/z;
-	  arrc[offs+i*J+j]+=X.arrc[offs+i*J+j]/z;
+	  complex<float> u=complex<float>(G.arr[offs+i*J+j],G.arrc[offs+i*J+j])/n;
+	  //complex<float> u=z*complex<float>(G.arr[offs+i*J+j],G.arrc[offs+i*J+j])*
+	  //complex<float>(X.arr[offs+i*J+j],-X.arrc[offs+i*J+j]);
+	  arr[offs+i*J+j]+=std::real(u);
+	  arrc[offs+i*J+j]+=std::imag(u);
 	}
       }    
     }
@@ -292,16 +295,17 @@ void add_divide_cols_back1(const CFtensor& G, const CFtensor& X, const CFtensor&
   const int I=G.dims[_k-2];
   const int A=G.asize/(I*J);
   assert(N.asize==G.asize/I);
+  assert(asize==N.asize);
   if(device==0){
     for(int a=0; a<A; a++){
       int offs=a*I*J;
       for(int j=0; j<J; j++){
 	float z=-pow(N.arr[a*J+j],-2);
-	for(int i=0; i<I; i++){
-	  complex<float> t=complex<float>(G.arr[offs+i*J+j],G.arrc[offs+i*J+j])*
+	for(int i=0; i<I; i++){ // improve
+ 	  complex<float> t=complex<float>(G.arr[offs+i*J+j],G.arrc[offs+i*J+j])*
 	    complex<float>(X.arr[offs+i*J+j],-X.arrc[offs+i*J+j])*z;
-	  arr[offs+j]+=std::real(t);
-	  arrc[offs+j]+=std::imag(t);
+	  arr[a*J+j]+=std::real(t);
+	  arrc[a*J+j]+=std::imag(t);
 	}
       }    
     }

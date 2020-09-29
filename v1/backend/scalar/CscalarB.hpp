@@ -251,7 +251,7 @@ namespace Cengine{
       if(nbu==-1) val+=x.val/std::conj(y.val); 
       else for(int i=0; i<nbu; i++) arr[i]+=x.arr[i]/std::conj(y.arr[i]);
     }
-
+ 
     void add_div_back1(const CscalarB& g, const CscalarB& x, const CscalarB& y){
       if(nbu==-1) val-=g.val*std::conj(x.val*complex<float>(pow(y.val,-2.0)));
       else for(int i=0; i<nbu; i++) arr[i]-=g.arr[i]*std::conj(x.arr[i]*complex<float>(pow(y.arr[i],-2.0)));
