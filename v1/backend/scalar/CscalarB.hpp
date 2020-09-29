@@ -232,6 +232,11 @@ namespace Cengine{
       else for(int i=0; i<nbu; i++) arr[i]+=x.arr[i]*std::conj(y.arr[i]);
     }
 
+    void add_prodcc(const CscalarB& x, const CscalarB& y){
+      if(nbu==-1) val+=std::conj(x.val*y.val);
+      else for(int i=0; i<nbu; i++) arr[i]+=std::conj(x.arr[i]*y.arr[i]);
+    }
+
     void add_prod(const CscalarB& x, const RscalarB& y){
       if(nbu==-1) val+=x.val*y.val;
       else for(int i=0; i<nbu; i++) arr[i]+=x.arr[i]*y.arr[i];
@@ -271,6 +276,11 @@ namespace Cengine{
     void add_pow(const CscalarB& x, const float p, const complex<float> c=1.0){
       if(nbu==-1) val+=c*std::pow(x.val,p);
       else for(int i=0; i<nbu; i++) arr[i]+=c*std::pow(x.arr[i],p);
+    }
+
+    void add_pow_back(const CscalarB& g, const CscalarB& x, const float p, const complex<float> c=1.0){
+      if(nbu==-1) val+=c*g.val*std::conj(std::pow(x.val,p));
+      else for(int i=0; i<nbu; i++) arr[i]+=c*g.arr[i]*std::conj(std::pow(x.arr[i],p));
     }
 
     void add_exp(const CscalarB& x){

@@ -207,13 +207,65 @@ void add_col_norms(const CFtensor& x){
 }
 
 
-void add_divide_cols(const CFtensor& X, const CFtensor& N){
+void add_col_norms_back(const CFtensor& G, const CFtensor& X, const CFtensor& N){
   assert(k>=2);
   assert(X.asize==asize);
   const int J=dims[k-1];
   const int I=dims[k-2];
   const int A=asize/(I*J);
   assert(N.asize==asize/I);
+  assert(G.asize==N.asize);
+  if(device==0){
+    for(int a=0; a<A; a++){
+      int offs=a*I*J;
+      for(int j=0; j<J; j++){
+	float z=G.arr[a*J+j]/N.arr[a*J+j];
+	for(int i=0; i<I; i++){
+	  arr[offs+i*J+j]+=X.arr[offs+i*J+j]*z;
+	  arrc[offs+i*J+j]+=X.arrc[offs+i*J+j]*z;
+	}
+      }    
+    }
+  }else{
+    FCG_UNIMPL(); 
+  }
+}
+
+
+void add_divide_cols(const CFtensor& X, const CFtensor& N){
+  {CoutLock lk; cout<<X.dims<<N.dims<<endl;}
+  assert(k>=2);
+  assert(X.asize==asize);
+  const int J=dims[k-1];
+  const int I=dims[k-2];
+  const int A=asize/(I*J);
+  assert(N.asize==asize/I);
+  if(device==0){
+    for(int a=0; a<A; a++){
+      int offs=a*I*J;
+      for(int j=0; j<J; j++){
+	float z=N.arr[a*J+j];
+	for(int i=0; i<I; i++){
+	  arr[offs+i*J+j]+=X.arr[offs+i*J+j]/z;
+	  arrc[offs+i*J+j]+=X.arrc[offs+i*J+j]/z;
+	}
+      }    
+    }
+  }else{
+    FCG_UNIMPL(); 
+  }
+}
+
+
+void add_divide_cols_back0(const CFtensor& G, const CFtensor& X, const CFtensor& N){
+  {CoutLock lk; cout<<X.dims<<N.dims<<endl;}
+  assert(k>=2);
+  assert(X.asize==asize);
+  const int J=dims[k-1];
+  const int I=dims[k-2];
+  const int A=asize/(I*J);
+  assert(N.asize==asize/I);
+  assert(G.asize==N.asize);
   if(device==0){
     for(int a=0; a<A; a++){
       int offs=a*I*J;

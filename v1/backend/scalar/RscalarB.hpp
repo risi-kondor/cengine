@@ -189,7 +189,7 @@ namespace Cengine{
     }
 
     void add_div_back1(const RscalarB& g, const RscalarB& x, const RscalarB& y){
-      if(nbu==-1) val-=g.val*x.val*pow(y.val,-2.0);
+      if(nbu==-1) val-=g.val*x.val/y.val/y.val; //*pow(y.val,-2.0);
       else for(int i=0; i<nbu; i++) arr[i]-=g.arr[i]*x.arr[i]*pow(y.arr[i],-2.0);
     }
 
@@ -207,6 +207,11 @@ namespace Cengine{
     void add_pow(const RscalarB& x, const float p, const float c=1.0){
       if(nbu==-1) val+=c*std::pow(x.val,p);
       else for(int i=0; i<nbu; i++) arr[i]+=c*std::pow(x.arr[i],p);
+    }
+
+    void add_pow_back(const RscalarB& g, const RscalarB& x, const float p, const float c=1.0){
+      if(nbu==-1) val+=c*g.val*std::pow(x.val,p);
+      else for(int i=0; i<nbu; i++) arr[i]+=c*g.arr[i]*std::pow(x.arr[i],p);
     }
 
     void add_exp(const RscalarB& x){

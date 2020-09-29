@@ -252,7 +252,7 @@ namespace Cengine{
     }
 
     string str() const{
-      return "rscalar_add_div_b0"+inp_str();
+      return "rscalar_add_div_back0"+inp_str();
     }
 
   };
@@ -267,11 +267,12 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      asRscalarB(owner,__PRETTY_FUNCTION__).add_div_back1(asRscalarB(inputs[1],__PRETTY_FUNCTION__),asRscalarB(inputs[2],__PRETTY_FUNCTION__),asRscalarB(inputs[3],__PRETTY_FUNCTION__));
+      asRscalarB(owner,__PRETTY_FUNCTION__).
+	add_div_back1(asRscalarB(inputs[1],__PRETTY_FUNCTION__),asRscalarB(inputs[2],__PRETTY_FUNCTION__),asRscalarB(inputs[3],__PRETTY_FUNCTION__));
     }
 
     string str() const{
-      return "rscalar_add_div_b1"+inp_str();
+      return "rscalar_add_div_back1"+inp_str();
     }
 
   };
@@ -294,6 +295,28 @@ namespace Cengine{
 
     string str() const{
       return "rscalar_add_pow"+inp_str();
+    }
+
+  };
+  
+
+  class rscalar_add_pow_back_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
+  public:
+
+    float p;
+    float c;
+
+    rscalar_add_pow_back_op(Cnode* r, Cnode* g, Cnode* x, float _p, float _c):
+      Coperator(r,g,x), p(_p), c(_c){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=inputs[0]->obj;
+      asRscalarB(owner,__PRETTY_FUNCTION__).add_pow_back(asRscalarB(inputs[1],__PRETTY_FUNCTION__),asRscalarB(inputs[2],__PRETTY_FUNCTION__),p,c);
+    }
+
+    string str() const{
+      return "rscalar_add_pow_back"+inp_str();
     }
 
   };

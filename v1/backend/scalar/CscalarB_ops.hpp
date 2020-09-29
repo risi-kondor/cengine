@@ -435,6 +435,24 @@ namespace Cengine{
   };
     
 
+  class cscalar_add_prodcc_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
+  public:
+
+    using Coperator::Coperator; 
+    
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=inputs[0]->obj;
+      asCscalarB(owner,__PRETTY_FUNCTION__).add_prodcc(asCscalarB(inputs[1],__PRETTY_FUNCTION__),asCscalarB(inputs[2],__PRETTY_FUNCTION__));
+    }
+
+    string str() const{
+      return "cscalar_add_prodcc"+inp_str();
+    }
+
+  };
+    
+
   class cscalar_add_prod_r_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
   public:
 
@@ -528,6 +546,28 @@ namespace Cengine{
 
     string str() const{
       return "cscalar_add_pow"+inp_str();
+    }
+
+  };
+  
+
+  class cscalar_add_pow_back_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
+  public:
+
+    float p;
+    complex<float> c;
+
+    cscalar_add_pow_back_op(Cnode* r, Cnode* g, Cnode* x, float _p, complex<float> _c):
+      Coperator(r,g,x), p(_p), c(_c){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=inputs[0]->obj;
+      asCscalarB(owner,__PRETTY_FUNCTION__).add_pow_back(asCscalarB(inputs[1],__PRETTY_FUNCTION__),asCscalarB(inputs[2],__PRETTY_FUNCTION__),p,c);
+    }
+
+    string str() const{
+      return "cscalar_add_pow_back"+inp_str();
     }
 
   };

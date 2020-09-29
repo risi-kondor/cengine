@@ -58,8 +58,8 @@ namespace Cengine{
 
 
     void push(Coperator* op){ // protected by done_mx 
-      DEBUG_ENGINE({CoutLock lk; cout<<"    Batching "<<node->ident()<<" ["<<node->op->str()<<"] "<<endl;});
       Cnode* node=op->owner;
+      DEBUG_ENGINE({CoutLock lk; cout<<"    Batching "<<node->ident()<<" ["<<node->op->str()<<"] "<<endl;});
       if(node->nblockers==0) ready.push_back(node);
       else waiting.insert(node);
       node->batcher=this; 

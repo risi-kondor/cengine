@@ -83,6 +83,22 @@ namespace Cengine{
   };
 
 
+  class ctensor_add_col_norms_back_op: public CumulativeOp4<CtensorB,CtensorB,CtensorB,CtensorB>{
+  public:
+
+    using CumulativeOp4::CumulativeOp4;
+
+    virtual void exec(CtensorB& R, const CtensorB& g, const CtensorB& x, const CtensorB& n){
+      R.add_col_norms_back(g,x,n);
+    }
+
+    string str() const{
+      return "ctensor_add_col_norms_back"+inp_str();
+    }
+
+  };
+
+
   class ctensor_divide_cols_op: public Coperator{
   public:
 
@@ -116,6 +132,21 @@ namespace Cengine{
 
   };
 
+
+  class ctensor_add_divide_cols_back0_op: public CumulativeOp4<CtensorB,CtensorB,CtensorB,CtensorB>{
+  public:
+
+    using CumulativeOp4::CumulativeOp4;
+
+    virtual void exec(CtensorB& R, const CtensorB& g, const CtensorB& x, const CtensorB& n){
+      R.add_divide_cols_back0(g,x,n);
+    }
+
+    string str() const{
+      return "ctensor_add_divide_cols_back0"+inp_str();
+    }
+
+  };
 
   class ctensor_add_divide_cols_back1_op: public CumulativeOp4<CtensorB,CtensorB,CtensorB,CtensorB>{
   public:
