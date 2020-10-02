@@ -169,10 +169,29 @@ namespace Cengine{
   // ---- In-place operators  --------------------------------------------------------------------------------
 
   
-  class ctensor_zero_op: public Coperator, public InPlaceOperator{
+  class ctensor_zero_op: public Coperator, public InPlaceOperator{ // DEPRECATED 
   public:
 
     ctensor_zero_op(Cnode* r):
+      Coperator(r){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=inputs[0]->obj;
+      asCtensorB(owner,__PRETTY_FUNCTION__).zero();
+    }
+
+    string str() const{
+      return "ctensor_zero"+inp_str();
+    }
+
+  };
+  
+  
+  class ctensor_set_zero_op: public Coperator, public InPlaceOperator{
+  public:
+
+    ctensor_set_zero_op(Cnode* r):
       Coperator(r){}
 
     virtual void exec(){

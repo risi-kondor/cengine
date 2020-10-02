@@ -177,10 +177,10 @@ namespace Cengine{
   // ---- In-place operators  --------------------------------------------------------------------------------
 
   
-  class cscalar_zero_op: public Coperator, public InPlaceOperator{
+  class cscalar_set_zero_op: public Coperator, public InPlaceOperator{
   public:
 
-    cscalar_zero_op(Cnode* r):
+    cscalar_set_zero_op(Cnode* r):
       Coperator(r){}
 
     virtual void exec(){
@@ -189,7 +189,7 @@ namespace Cengine{
     }
 
     string str() const{
-      return "cscalar_zero"+inp_str();
+      return "cscalar_set_zero"+inp_str();
     }
 
   };

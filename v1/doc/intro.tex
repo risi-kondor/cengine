@@ -1,30 +1,41 @@
-\Cengine{} is a lightweight \cpp{} compute engine that dynamically parallelizes %unstructured 
-numerical computations in a combination of two ways: 
+\Cengine{} is a lightweight compute engine designed to run in the background, below user level \cpp{} code.  
+The puropose of \Cengine{} is to dynamically parallelize computations by  
+%dynamically parallelizes %unstructured 
+%numerical computations in a combination of two ways: 
 %mathematical workloads by 
-\begin{compactenum}[~~\m{\circ}]
-\item Automatically distributing operations across multiple CPU threads, 
-\item Batching together operations of the same kind for parallel execution on the GPU. 
+\begin{compactenum}[~~(a)]
+\item distributing certain numerical operations across multiple CPU threads and/or  
+\item batching together operations of the same kind for parallel execution on the GPU. 
 \end{compactenum}
-\Cengine{} employs the delayed execution model of computation. 
-Internally,  \Cengine{} maintains a   
-DAG to ensure that dependency relationships are not violated. 
+\Cengine{} employs the delayed execution model of computation to decouple user code %calling code 
+from the worker threads. 
+%give itself freedom in which 
+%order to execute the operations demanded by user level code. 
+%Internally, it 
+It must therefore maintain a internal dependency graph between operations   
+to ensure correctness. %that dependency relationships are not violated. 
 
-From the user side the engine expects a sequence of simple instructions such as 
+From the user code side, the engine expects a sequence of simple instructions. For example, 
 
 \texttt{~~~c=engine.push<ctensor\_add\_op>(a,b)}
 
-telling it to add tensors \ccode{a} and \ccode{b} and store the result in \ccode{c}. 
-The instructions are not executed immediately. 
-Instead, \Cengine{} just adds the \ccode{ctensor\_add\_op} operator to its internal queue, to be executed 
-when one of the CPU threads becomes 
-available or a sufficient number of operations of the same type have accumulated to be executed in parallel 
-on the GPU. %The result of a sequence of operations is returned to the user once it is ready. 
+tells the engine to add tensors \ccode{a} and \ccode{b} and store the result in \ccode{c}. 
+Instead of executing this instruction directly, 
+%The instructions are not executed immediately. 
+%Instead, 
+\Cengine{} just adds the corresponding \ccode{ctensor\_add\_op} operator to its internal queue, 
+and executes it later, when either a CPU threads becomes 
+available or a sufficient number of operations of the same type have accumulated to 
+make executing them on the GPU together economical. 
+%The result of a sequence of operations is returned to the user once it is ready. 
 
-\Cengine{} offers a small number of built-in data types such as \ccode{rscalar, cscalar} and \ccode{ctensor} 
-for real/ complex valued scalar and tensor objects, together with a complement of basic linear algebra 
-operators acting on them. However, is designed to function equaly well with user-defined data types and 
-custom operators, and in fact we expect that in most use cases the engine will be extended in this way. 
+\Cengine{} offers a small collection of simple built-in data types such as \ccode{rscalar, cscalar} and \ccode{ctensor} 
+to store real/complex valued scalar and tensor objects, and a corresponding complement of 
+basic arithmetic and linear algebra operators. 
+However, the engine is designed to manage user defined data types and 
+operators just as well as it can manage its built-in types. 
+%, and in fact we expect that in most use cases the engine will be extended in this way. 
 
-\Cengine{} is written in standard \cppe{} and has no other dependencies besides CUDA/CUBLAS 
+\Cengine{} is written in standard \cppe{} and requires no special libraries besides CUDA/CUBLAS 
 for GPU functionality.  
 

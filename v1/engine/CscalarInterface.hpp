@@ -64,7 +64,7 @@ namespace Cengine{
 
 
     Chandle* cscalar_zero(Chandle* r){
-      return new_handle(Cengine_engine->enqueue(new cscalar_zero_op(nodeof(r))));
+      return new_handle(Cengine_engine->enqueue(new cscalar_set_zero_op(nodeof(r))));
     }
 
 
