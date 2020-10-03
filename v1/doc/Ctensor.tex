@@ -1,20 +1,28 @@
-\begin{cldescr}{\ccode{Ctensor}}
+\begin{cldescr}{\ccode{ctensor}}
+
+The \ccode{ctensor} virtual type represents complex valued matrices and tensors in single precision arithmetic. 
+A \ccode{ctensor} object may have a bundle dimension \m{n_{\textrm{bu}}}. 
+The backend storage class for \ccode{ctensor} is \ccode{CtensorB}. 
+User level code can access \ccode{ctensor} objects using the following operators. 
+
 
 \begin{clgroup}[Constructors]
 \mmember{
 new\_ctensor\_op(const Gdims\& dims, const int nbu=-1, const int dev	=0)\\
 new\_ctensor\_zero\_op(const Gdims\& dims, const int nbu=-1, const int dev=0)\\
+new\_ctensor\_ones\_op(const Gdims\& dims, const int nbu=-1, const int dev=0)\\
 new\_ctensor\_identity\_op(const Gdims\& dims, const int nbu=-1, const int dev=0)\\
+new\_ctensor\_sequential\_op(const Gdims\& dims, const int nbu=-1, const int dev=0)\\
 new\_ctensor\_gaussian\_op(const Gdims\& dims, const int nbu=-1, const int dev=0)
 }{Construct a new \ccode{ctensor} object of size \ccode{dims} with \ccode{nbu} bundles on \ccode{dev}. 
-The four cases correspond to the object being uninitialized, initialized to zero, the identity matrix, 
-or initialized with random standard normal entries.  
+The six cases correspond to the object being (a) uninitialized, (b) initialized to zero, 
+(c) the ones tensor, (d) the identity matrix, (e) initilized with entries \m{1,2,\ldots} in sequence, 
+(g) initialized with random standard normal entries.  
 \ccode{nbu=-1} signifies that the object is not bundled and \ccode{device=0} is the host.}
-
+\\ 
 \member{new\_ctensor\_from\_gtensor\_op(const Gtensor\& T, const int nbu=-1, const int dev=0)}{
-Create a new \ccode{ctensor} from the \ccode{Gtensor} \ccode{T}.}. 
-
-\member{ctensor\_copy\_op(const ctensor\& x)}{Create a new \ccode{ctensor} by copying \ccode{x}}. 
+Create a new \ccode{ctensor} from the \ccode{Gtensor} \ccode{T}.} 
+\member{ctensor\_copy\_op(const ctensor\& X)}{Create a new \ccode{ctensor} by copying \ccode{X}.} 
 \end{clgroup}
 
 \begin{clgroup}[In-place operators]
@@ -22,9 +30,10 @@ Create a new \ccode{ctensor} from the \ccode{Gtensor} \ccode{T}.}.
 \end{clgroup}
 
 \begin{clgroup}[Not in-place operators]
-\member{ctensor\_conj\_op(const ctensor\& x)}{Return \m{\wbar{x}}.}
-\member{ctensor\_get\_real\_op(const ctensor\& x)}{Return the real part of \m{x}.}
-\member{ctensor\_get\_imag\_op(const ctensor\& x)}{Return the imaginary part of \m{x}.}
+\member{ctensor\_conj\_op(const ctensor\& X)}{Return the conjugate tensor \m{\wbar{X}}.}
+\member{ctensor\_transp\_op(const ctensor\& X)}{Return \m{X^\top}, the transpose of \m{X}.}
+\member{ctensor\_herm\_op(const ctensor\& X)}{Return \m{X^\dag}, the Hermitian conjugate of \m{X}.}
+//\member{ctensor\_get\_imag\_op(const ctensor\& x)}{Return the imaginary part of \m{x}.}
 \end{clgroup}
 
 \begin{clgroup}[Cumulative operators]
