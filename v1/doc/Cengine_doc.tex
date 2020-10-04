@@ -41,7 +41,7 @@
 
 \newcommand{\exclude}[1]{#1}
 \newcommand{\df}[1]{\textbf{#1}}
-s\newcommand{\ignorefornow}{}
+\newcommand{\ignorefornow}{}
 \newcommand{\todo}[1]{{\color{red}[#1]}}
 \newcommand{\unimpl}[1]{{\color{gray} #1}}
 \newcommand{\variance}[1]{{\color{blue}#1}}
@@ -110,28 +110,42 @@ Asynchronous C++ CPU/GPU compute engine, v\ts 0.0}\\ \\ \\ \\ \\
 \tableofcontents
 \clearpage
 
-\chapter*{Overview}
-\addcontentsline{toc}{part}{Overview}
+\chapter*{Abstract}
+\addcontentsline{toc}{part}{Abstract}
 \input{intro}
-
-\addcontentsline{toc}{part}{Installation}
-\input{installation.tex} 
 \clearpage
 
-\chapter*{Usage}
-\addcontentsline{toc}{part}{Usage}
+\chapter*{Overview}
+\addcontentsline{toc}{part}{Overview}
 \input{usage.tex} 
+\clearpage
+
+\chapter*{Installation}
+\addcontentsline{toc}{part}{Installation}
+\input{installation.tex} 
 \clearpage
 
 
 \part*{Reference}
 \addcontentsline{toc}{part}{Reference}
 %\input{cpp_classes}
+%\clearpage 
+
+\chapter*{Core classes}
+\addcontentsline{toc}{chapter}{Core classes}
+%\clearpage 
+
+\input{Cengine}
 \clearpage 
+\input{Chandle}
+\input{Coperator}
+\clearpage 
+\input{BatchedOperator}
+\clearpage
 
 \chapter*{Built-in types and operators}
 \addcontentsline{toc}{chapter}{Built-in types and operators}
-%\input{}
+\input{builtin}
 \clearpage 
 
 \input{Rscalar}
@@ -141,8 +155,8 @@ Asynchronous C++ CPU/GPU compute engine, v\ts 0.0}\\ \\ \\ \\ \\
 \input{Ctensor}
 \clearpage 
 
-\chapter*{Wrapper classes}
-\addcontentsline{toc}{chapter}{Wrapper classes}
+%\chapter*{Wrapper classes}
+%\addcontentsline{toc}{chapter}{Wrapper classes}
 
 
 

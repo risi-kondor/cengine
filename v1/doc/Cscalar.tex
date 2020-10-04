@@ -2,14 +2,14 @@
 
 The \ccode{cscalar} virtual type is used to represent single precision complex valued scalars. 
 A \ccode{cscalar} object may either store a single complex number or a bundle of \m{n_{\textrm{bu}}} complex numbers. 
-The backend storage class for \ccode{cscalar} is \ccode{CscalarB}. 
-User level code can access \ccode{cscalar} objects by pushing one of the following operators to the engine. 
+%The backend storage class for \ccode{cscalar} is \ccode{CscalarB}. 
+User level code can access \ccode{cscalar} objects using the following operators. 
 
 \begin{clgroup}[Constructors]
 \mmember{
 new\_cscalar\_op(const int nbu=-1, const int dev	=0)\\
 new\_cscalar\_zero\_op(const int nbu=-1, const int dev=0)\\
-new\_rscalar\_set\_op(const int nbu=-1, const complex<float> z, const int dev=0)\\
+new\_cscalar\_set\_op(const int nbu=-1, const complex<float> z, const int dev=0)\\
 new\_cscalar\_gaussian\_op(const int nbu=-1, const int dev=0)
 }{Construct a new \ccode{cscalar} object with \ccode{nbu} bundles on \ccode{dev}. 
 The four cases correspond to the object being uninitialized, initialized to zero, initialized to \m{z}, 
@@ -57,8 +57,7 @@ Apply the sigmoid operator to the real and imaginary parts of \m{z} separately a
 \end{clgroup}
 
 \begin{clgroup}[Backward operators]
-\item \hspace{-6pt}The following operators are the ``backward'' counterparts of some of the above operators 
-for use in automatic differentiation.
+\item \hspace{-6pt}The ``backward'' operators are for use in automatic differentiation.
 \\ 
 \member{cscalar\_add\_div\_back0\_op(const rscalar\& r, const rscalar\& g, const rscalar\& x,\hspace{60pt}\mbox{}}{
 Set \m{r\leftarrow r+g/\wbar{y}}.\hfill\ccode{\hfill const rscalar\& y)}}
@@ -75,8 +74,8 @@ Set~ \m{r\leftarrow r+g}~ if~ \m{x\<\geq 0} ~and~ \m{r\leftarrow r-g} ~otherwise
 \end{clgroup}
 
 \begin{clgroup}[Blocking operations]
-\item \hspace{-6pt}The following functions are called directly (as opposed to being pushed to the engine as an operator) 
-and force the engine to flush all operations up to \ccode{x}.
+\item \hspace{-6pt}The following functions are called directly (as opposed to being pushed to the engine as an operator). 
+%and force the engine to flush all operations up to \ccode{x}.
 \\ 
 \member{vector< complex<float> > cscalar\_get(const cscalar\& z)}{
 Flush \ccode{z} and return its value(s) in a \ccode{std::vector}. }

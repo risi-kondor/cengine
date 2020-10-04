@@ -1,1 +1,41 @@
+\Cengine{} is a header-only library that does not require separately compiling any object files. 
+Assuming that the library's root directory is \ccode{\$(CENGINE\_ROOT)}, the core header files 
+are located in \ccode{\$(CENGINE\_ROOT)/include} and \ccode{\$(CENGINE\_ROOT)/engine}. 
+In addition, if the user wishes to use the built in scalar and tensor classes, they must also 
+include \ccode{\$(CENGINE\_ROOT)/backend/scalar} and \ccode{\$(CENGINE\_ROOT)/backend/tensor}. 
+Thus, to compile your own code \ccode{foo.cpp} with \Cengine{} the compiler might be invoked as for example 
 
+\texttt{~~~c++ -o foo foo.cpp -std=c++11 -lstdc++11 -lm -I\$(CENGINE\_ROOT)/include\\ 
+\mbox{}~~~-I\$(CENGINE\_ROOT)/engine 
+\$(CENGINE\_ROOT)/backend/scalar \$(CENGINE\_ROOT)/backend/tensor}. 
+
+Some systems require also linking the pthreads library as \ccode{-lpthreads}. 
+
+The top level executable of any code compiled with \Cengine{} must include \ccode{Cengine.cpp}, which 
+defines certain global variables and starts the compute engine. 
+
+\subsection*{Compile time flags and variables}
+\addcontentsline{toc}{section}{Compile time flags and variables}
+
+Use \ccode{\#define} to set any of the following compile time flags. 
+
+\begin{tabularx}{\textwidth}{|l|l|X|}
+\hline
+Flag&default&\\
+\hline
+\hline 
+DEBUG\_ENGINE\_FLAG & off & When set, the engine will print detailed diagnostic information as it runs. \\
+\hline 
+\end{tabularx}
+\bigskip
+
+Use \ccode{\#define} to set the value of any of the following compile time variables. 
+
+\begin{tabularx}{\textwidth}{|l|l|X|}
+\hline
+Flag&default&\\
+\hline
+\hline 
+CENGINE\_NWORKERS& 4 & Default number of CPU worker threads.\\
+\hline 
+\end{tabularx}

@@ -2,8 +2,9 @@
 
 The \ccode{rscalar} virtual type is used to represent single precision real valued scalars. 
 An \ccode{rscalar} object can store a single real number or a bundle of \m{n_{\textrm{bu}}} real numbers. 
-The backend storage class for \ccode{rscalar} is \ccode{RscalarB}. 
-User level code can access \ccode{rscalar} objects by pushing one of the following operators to the engine. 
+%The backend storage class for \ccode{rscalar} is \ccode{RscalarB}. 
+User level code can access \ccode{rscalar} objects by using the following operators. 
+%pushing one of the following operators to the engine. 
 
 \begin{clgroup}[Constructors]
 \mmember{
@@ -41,15 +42,15 @@ Set \m{r\leftarrow r+x}~ if~ \m{x\<\geq 0}, otherwise set \m{r\leftarrow r+c\ts 
 \end{clgroup}
 
 \begin{clgroup}[Backward operators]
-\item \hspace{-6pt}The following operators are the ``backward'' counterparts of some of the above operators for 
-use in automatic differentiation.
+\item \hspace{-6pt}The following ``backward'' operators are %the ``backward'' counterparts of some of the above operators for 
+for use in automatic differentiation.
 \\ 
-\mmember{rscalar\_add\_div\_back1\_op(const rscalar\& r, const rscalar\& g, const rscalar\& x,\hspace{60pt}\mbox{}\\
-\hfill const rscalar\& y)}{
-Set \m{r\leftarrow r-g\,x/y^2}.}
-\mmember{rscalar\_add\_pow\_back\_op(const rscalar\& r, const rscalar\& x,  const rscalar\& g, const float p, 
-\\\hfill const float c)}{
-Set \m{r\leftarrow r+c\,g\,x^p}.}
+\member{rscalar\_add\_div\_back1\_op(const rscalar\& r, const rscalar\& g, const rscalar\& x,\hspace{60pt}\mbox{}}{
+%\hfill const rscalar\& y)}{
+Set \m{r\leftarrow r-g\,x/y^2}. \hfill \ccode{const rscalar\& y)}}
+\member{rscalar\_add\_pow\_back\_op(const rscalar\& r, const rscalar\& x,  const rscalar\& g, const float p,\hspace{-40pt}}{
+%\\\hfill const float c)}{
+Set \m{r\leftarrow r+c\,g\,x^p}.\hfill \ccode{const float c)}}
 \member{rscalar\_add\_abs\_back\_op(const rscalar\& r, const rscalar\& g, const rscalar\& x)}{
 Set~ \m{r\leftarrow r+g}~ if~ \m{x\<\geq 0} ~and~ \m{r\leftarrow r-g} ~otherwise.}
 \member{rscalar\_add\_ReLU\_back\_op(const rscalar\& r, const rscalar\& g, const rscalar\& x, const float c)\hspace{-30pt}\mbox{}}{
@@ -62,7 +63,7 @@ Set \m{r\leftarrow r+g\ts x/(1\<-x)}.}
 \item \hspace{-6pt}The following functions are called directly (as opposed to being pushed to the engine as an operator).
 \\ 
 \member{vector<float> rscalar\_get(const rscalar\& x)}{
-Flush \ccode{x} and return its value(s) in a \ccode{std::vector}. }
+Flush \ccode{x} and return its value(s) in an \ccode{std::vector}. }
 \end{clgroup}
 
 \end{cldescr}

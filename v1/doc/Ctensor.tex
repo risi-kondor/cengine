@@ -2,7 +2,7 @@
 
 The \ccode{ctensor} virtual type represents complex valued matrices and tensors in single precision arithmetic. 
 A \ccode{ctensor} object may have a bundle dimension \m{n_{\textrm{bu}}}. 
-The backend storage class for \ccode{ctensor} is \ccode{CtensorB}. 
+%The backend storage class for \ccode{ctensor} is \ccode{CtensorB}. 
 User level code can access \ccode{ctensor} objects using the following operators. 
 
 
@@ -33,20 +33,22 @@ Create a new \ccode{ctensor} from the \ccode{Gtensor} \ccode{T}.}
 \member{ctensor\_conj\_op(const ctensor\& X)}{Return the conjugate tensor \m{\wbar{X}}.}
 \member{ctensor\_transp\_op(const ctensor\& X)}{Return \m{X^\top}, the transpose of \m{X}.}
 \member{ctensor\_herm\_op(const ctensor\& X)}{Return \m{X^\dag}, the Hermitian conjugate of \m{X}.}
-//\member{ctensor\_get\_imag\_op(const ctensor\& x)}{Return the imaginary part of \m{x}.}
+%\member{ctensor\_get\_imag\_op(const ctensor\& x)}{Return the imaginary part of \m{x}.}
 \end{clgroup}
 
 \begin{clgroup}[Cumulative operators]
-\member{ctensor\_add\_op(const ctensor\& r, const ctensor\& x)}{Set \m{r\leftarrow r+x}.}
-\member{ctensor\_add\_conj\_op(const ctensor\& r, const ctensor\& x)}{Set \m{r\leftarrow r+\wbar{x}}.}
-\member{ctensor\_add\_transp\_op(const ctensor\& r, const ctensor\& x)}{Set \m{r\leftarrow r+x^\top}.}
-\member{ctensor\_add\_herm\_op(const ctensor\& r, const ctensor\& x)}{Set \m{r\leftarrow r+x^\dag}.}
+\member{ctensor\_add\_op(const ctensor\& R, const ctensor\& X)}{Set \m{r\leftarrow R+X}.}
+\member{ctensor\_add\_conj\_op(const ctensor\& R, const ctensor\& X)}{Set \m{r\leftarrow R+\wbar{X}}.}
+\member{ctensor\_add\_transp\_op(const ctensor\& R, const ctensor\& X)}{Set \m{r\leftarrow R+X^\top}.}
+\member{ctensor\_add\_herm\_op(const ctensor\& R, const ctensor\& X)}{Set \m{r\leftarrow R+X^\dag}.}
 \\ 
-\member{ctensor\_add\_times\_real\_op(const ctensor\& R, const ctensor\& A, const float c)}{Set \m{R\leftarrow R+cA}.}
-\member{ctensor\_add\_times\_complex\_op(const ctensor\& R, const ctensor\& A, const complex<float> c)}{Set \m{R\leftarrow R+cA}.}
+\member{ctensor\_add\_times\_real\_op(const ctensor\& R, const ctensor\& X, const float c)}{Set \m{R\leftarrow R+cX}.}
+\member{ctensor\_add\_times\_complex\_op(const ctensor\& R, const ctensor\& X, const complex<float> c)}{Set \m{R\leftarrow R+cX}.}
 \\ 
-\member{ctensor\_add\_prod\_rA\_op(const ctensor\& R, const rscalar\& c, const ctensor\& A)}{Set \m{R\leftarrow R+cA}.}
-\member{ctensor\_add\_prod\_cA\_op(const ctensor\& R, const cscalar\& c, const ctensor\& A)}{Set \m{R\leftarrow R+cA}.}
+\member{ctensor\_add\_prod\_rA\_op(const ctensor\& R, const rscalar\& c, const ctensor\& X)}{Set \m{R\leftarrow R+cX}.}
+\member{ctensor\_add\_prod\_cA\_op(const ctensor\& R, const cscalar\& c, const ctensor\& X)}{Set \m{R\leftarrow R+cX}.}
+\member{ctensor\_add\_prod\_cc\_A\_op(const ctensor\& R, const cscalar\& c, const ctensor\& X)}{Set \m{R\leftarrow R+\wbar{c}X}.}
+\member{ctensor\_add\_prod\_c\_Ac\_op(const ctensor\& R, const cscalar\& c, const ctensor\& X)}{Set \m{R\leftarrow R+c\wbar{X}}.}
 \\
 \mmember{
 ctensor\_add\_Mprod\_op(const ctensor\& R, const ctensor\& A, const ctensor\& B)\\
@@ -59,6 +61,11 @@ ctensor\_add\_Mprod\_HA\_op(const ctensor\& R, const ctensor\& A, const ctensor\
 }{
 Set \m{R\leftarrow R+AB},~ \m{R\leftarrow R+AB^\top},~ \m{R\leftarrow R+A^\topB},~ \m{R\leftarrow R+A\wbar{B}},~ 
 \m{R\leftarrow R+A^\top\wbar{B}},~ \m{R\leftarrow R+AB^\dag},~  \m{R\leftarrow R+A^\dagB}.}
+\\
+\member{ctensor\_add\_column\_norms\_op(const ctensor\& R, const ctensor\& X)}{
+Increment \m{R(i_1,\ldots,i_{k-1})} with the \m{\ell_2} norm of the column \m{X(i_1,\ldots,i_{k-1},\ts\cdot\ts)}.}
+\member{ctensor\_divide\_cols\_op(const ctensor\& R, const ctensor\& N)}{
+Divide each element of the column \m{R(i_1,\ldots,i_{k-1},\ts\cdot\ts)} by \m{N(i_1,\ldots,i_{k-1})}.}
 
 \end{clgroup}
 
@@ -66,6 +73,27 @@ Set \m{R\leftarrow R+AB},~ \m{R\leftarrow R+AB^\top},~ \m{R\leftarrow R+A^\topB}
 \member{ctensor\_add\_inp\_op(const cscalar\& r, const ctensor\& A, const ctensor\& B)}{
 Set \m{r\leftarrow r+\inp{A,B}}.}
 \end{clgroup}
+
+
+\begin{clgroup}[Backward operators]
+\item \hspace{-6pt}The following ``backward'' operators are for use in automatic differentiation.
+\\ 
+\mmember{ctensor\_add\_col\_norms\_back\_op(const ctensor\& R, const ctensor\& G, const ctensor\& X,\hspace{50pt}\mbox{} 
+\\ \hfill const ctensor\& N)}{}\vspace{-18pt}
+\mmember{ctensor\_add\_divide\_cols\_back0\_op(const ctensor\& R, const ctensor\& G, const ctensor\& X,\hspace{50pt}\mbox{} 
+\\ \hfill const ctensor\& N)}{}\vspace{-18pt}
+\mmember{ctensor\_add\_divide\_cols\_back1\_op(const ctensor\& R, const ctensor\& G, const ctensor\& X,\hspace{50pt}\mbox{} 
+\\ \hfill const ctensor\& N)}{}\vspace{-18pt}
+\end{clgroup}
+
+\begin{clgroup}[Blocking operations]
+\item \hspace{-6pt}The following functions are called directly as opposed to being pushed to the engine as an operator. 
+%and force the engine to flush all operations up to \ccode{x}.
+\\ 
+\member{Gtensor<complex<float> > ctensor\_get(const ctensor\& X)}{
+Flush \ccode{X} and return its value as a \ccode{Gtensor}.}
+\end{clgroup}
+
 
 \end{cldescr}
 
@@ -84,3 +112,4 @@ Set \m{r\leftarrow r+\inp{A,B}}.}
 \member{ctensor\_add\_pow\_op(const ctensor\& r, const ctensor\& x, const float p, const float c)}{
 Set \m{r\leftarrow r+c\,x^p}.}
 }
+

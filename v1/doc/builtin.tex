@@ -1,0 +1,23 @@
+\Cengine{} provides three built-in ``virtual'' data types:
+\begin{compactenum}[~~\m{\circ}]
+\item \ccode{rscalar} to represent real valued scalars;
+\item \ccode{cscalar} to represent complex valued scalars;
+\item \ccode{ctensor} to represent complex valued tensors and matrices. 
+\end{compactenum} 
+All three use single precision arithmetic and support parallelism through bundles. 
+The types are ``virtual'' in the sense that corresponding can only be created and 
+accessed by pushing the appropriate operators to the \ccode{Cengine}. 
+The actual backend classes corresponding to the three types are \ccode{RscalarB}, \ccode{CscalarB} 
+and \ccode{CtensorB}, but these are not directly accessible to the user. 
+
+The following pages list the corresponding operators in function format. For example, the 
+command issued to the engine to add a real scalar \m{y} to another real scalar \m{x} and store the 
+resulting handle in hdl is 
+
+\texttt{~~~Chandle* hdl=engine.push<rscalar\_add\_op>(xhdl,yhdl)}. 
+
+In the documentation this would appear simply as 
+
+\texttt{~~~rscalar\_add\_op(const rscalar\& x, const rscalar\& y)},
+
+since \ccode{xhdl} and \ccode{yhdl} are \code{Chandle} objects pointing to \ccode{rscalar}s. 

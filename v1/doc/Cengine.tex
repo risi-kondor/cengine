@@ -1,0 +1,23 @@
+\begin{cldescr}{\ccode{Cengine}}
+
+\ccode{Cengine} is the library's central class, responsible for scheduling operations demanded by the user code. 
+Typically a single \ccode{Cengine} instance is initialized at startup and remains running until the program terminates.
+
+\begin{clgroup}[Constructors]
+\mmember{Cengine()\\Cengine(const int n)}{
+Start an \ccode{Cengine} with \m{n} CPU worker threads. If \m{n} is not specified, it is set to \ccode{CENGINE\_NWORKERS}.}
+\end{clgroup}
+
+\begin{clgroup}[Methods]
+\member{push<OPERATOR>(Chandle* x0, ...Chandle* xk, const PARAM0 p0, ...const PARAMM pm)\hspace{-40pt}\mbox{}}{
+	Enqueue the operation \ccode{OPERATOR} with arguments \m{x_0,\ldots,x_k} and parameters 
+	\m{p_0,\ldots,p_m} on the engine. Calls made through this method are the main mechanism for 
+	communicating with the engine.}
+\\
+\member{flush(const Chandle\& x)}{Expedite operations leading up to computing \ccode{x} and block 
+until \ccode{x} has been computed.}
+\member{flush()}{Flush all operations curretnly enqueued on the engine, including batched operations. 
+Control blocks until all computations are complete.} 
+\end{clgroup}
+
+\end{cldescr}

@@ -1,0 +1,12 @@
+\begin{cldescr}{\ccode{Chandle}}
+
+\ccode{Chandle} objects are used in user code to refer to objects managed by the engine. 
+In particular, most \ccode{push} commands return a \ccode{Chandle} to the object created, and, in turn, 
+command arguments are passed to the engine in the form of \ccode{Chandle}s. 
+
+\ccode{Chandle}s are also critical for the engine's memory management. As long as there is 
+at least one \ccode{Chandle} pointing to a given backend object, the object is not deleted. 
+On the other hand, when the last \ccode{Chandle} referencing a given object is deleted and 
+there are no operations enqued in the engine dependging on the object as an argument either, 
+the object is automatically scheduled for deletion. 
+\end{cldescr}
