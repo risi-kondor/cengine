@@ -165,11 +165,11 @@ namespace Cengine{
 
 
     void clear(){
-      replace(hdl,Cengine_engine->push<cscalar_zero_op>(hdl));
+      replace(hdl,Cengine_engine->push<cscalar_set_zero_op>(hdl));
     }
 
     void zero(){
-      replace(hdl,Cengine_engine->push<cscalar_zero_op>(hdl));
+      replace(hdl,Cengine_engine->push<cscalar_set_zero_op>(hdl));
     }
 
 
