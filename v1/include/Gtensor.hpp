@@ -323,6 +323,24 @@ namespace Cengine{
     }
 
 
+  public: // ---- Conversions --------------------------------------------------------------------------------
+
+
+    Gtensor(const Gtensor<complex<TYPE> >& x): 
+      Gtensor(x.k,x.dims,x.strides,x.asize,0){
+      x.to_device(0);
+      for(int i=0; i<asize; i++) arr[i]=std::real(x.arr[i]);
+    }
+        
+
+    template<typename TYPE2>
+    Gtensor(const Gtensor<TYPE2>& x): 
+      Gtensor(x.k,x.dims,x.strides,x.asize,0){
+      x.to_device(0);
+      for(int i=0; i<asize; i++) arr[i]=x.arr[i];
+    }
+        
+
   public: // ---- Views --------------------------------------------------------------------------------------
 
 
@@ -802,11 +820,48 @@ namespace Cengine{
       return R;
     }
 
+    Gtensor<float> real() const{
+      FCG_CPUONLY();
+      Gtensor<float> R(dims,fill::raw);
+      for(int i=0; i<asize; i++) R.arr[i]=std::real(arr[i]);
+      return R;
+    }
+
 
   public: // ---- Contractive products -----------------------------------------------------------------------
 
 
     Gtensor operator*(const Gtensor& x) const{
+      FCG_CPUONLY();
+      assert(dims.size()==2);
+      assert(dims[1]==x.dims[0]);
+
+      if(x.dims.size()==1){
+	Gtensor R(Gdims({dims[0]}));
+	  for(int i=0; i<dims[0]; i++){
+	    TYPE t=0;
+	    for(int p=0; p<dims[1]; p++)
+	      t+=(*this)(i,p)*x(p);
+	    R(i)=t;
+	  }
+	return R;
+      }
+
+      assert(x.dims.size()==2);
+      Gtensor R(Gdims({dims[0],x.dims[1]}));
+      for(int i=0; i<dims[0]; i++)
+	for(int j=0; j<x.dims[1]; j++){
+	  TYPE t=0;
+	  for(int p=0; p<dims[1]; p++)
+	    t+=(*this)(i,p)*x(p,j);
+	  R(i,j)=t;
+	}
+      return R;
+    }
+
+
+    template<typename TYPE2>
+    Gtensor operator*(const Gtensor<TYPE2>& x) const{
       FCG_CPUONLY();
       assert(dims.size()==2);
       assert(dims[1]==x.dims[0]);

@@ -130,7 +130,7 @@ namespace Cengine{
     // ---- 1 arg
 
     template<typename OP, typename ARG0>
-    Chandle* push(const ARG0 arg0){
+    Chandle* push(const ARG0& arg0){ // changed!!
       return new_handle(enqueue_for_handle(new OP(arg0)));
     }
 
