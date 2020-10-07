@@ -104,6 +104,17 @@ namespace Cengine{
     return oss.str();
   }
 
+  template<typename TYPE1>
+  inline string Coperator::inp_str(const TYPE1& x1) const{
+    ostringstream oss;
+    oss<<"(";
+    for(int i=0; i<inputs.size(); i++)
+      oss<<inputs[i]->ident()<<",";
+    oss<<x1;
+    oss<<")";
+    return oss.str();
+  }
+
 
   template<typename TYPE>
   inline TYPE& downcast(Cnode* x, const char* s){

@@ -55,6 +55,9 @@ namespace Cengine{
 
     string inp_str() const;	
 
+    template<typename TYPE1>
+    string inp_str(const TYPE1& x1) const;	
+    
   };
 
 

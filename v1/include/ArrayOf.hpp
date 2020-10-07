@@ -176,14 +176,14 @@ namespace Cengine{
       return *arr[i*strides[0]+j];
     }
 
-    OBJ operator()(const int i, const int j, const int k) const{
+    OBJ operator()(const int i, const int j, const int _k) const{
       assert(k==3);
-      return *arr[i*strides[0]+j*strides[1]+k];
+      return *arr[i*strides[0]+j*strides[1]+_k];
     }
 
-    OBJ& operator()(const int i, const int j, const int k){
+    OBJ& operator()(const int i, const int j, const int _k){
       assert(k==3);
-      return *arr[i*strides[0]+j*strides[1]+k];
+      return *arr[i*strides[0]+j*strides[1]+_k];
     }
 
   public: // ---- I/O ----------------------------------------------------------------------------------------

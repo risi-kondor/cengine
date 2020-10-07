@@ -185,6 +185,7 @@ namespace Cengine{
 
     virtual void exec(){
       assert(!owner->obj);
+      owner->obj=inputs[0]->obj;
       asCscalarB(owner,__PRETTY_FUNCTION__).zero();
     }
 
@@ -545,7 +546,7 @@ namespace Cengine{
     }
 
     string str() const{
-      return "cscalar_add_pow"+inp_str();
+      return "cscalar_add_pow"+inp_str(p);
     }
 
   };
