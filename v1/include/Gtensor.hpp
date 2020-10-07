@@ -125,6 +125,10 @@ namespace Cengine{
 	std::copy(v[i]->arr, v[i]->arr+smemsize,arr+i*smemsize);
       }
     }
+
+
+  private:
+
       
     void make_strides(){
       k=dims.size();
@@ -1221,7 +1225,7 @@ namespace Cengine{
 
   public: // ---- Optimization kernels ------------------------------------------------------------------------
 
-
+    /*
     void adam_update(Gtensor<TYPE>& g, Gtensor<TYPE>& mt, Gtensor<TYPE>& vt, 
       const TYPE beta1, const TYPE beta2, const TYPE alpha, const TYPE epsilon){
       assert(g.asize==asize);
@@ -1242,8 +1246,9 @@ namespace Cengine{
       }
       
     }
+    */
 
-
+    /*
     void adam_update_complex(Gtensor<TYPE>& g, Gtensor<TYPE>& mt, Gtensor<TYPE>& vt, 
       const float beta1, const float beta2, const float alpha, const float epsilon){
       assert(g.asize==asize);
@@ -1265,7 +1270,9 @@ namespace Cengine{
       }
       
     }
+    */
 
+    /*
     template<typename BTYPE>
     void adagrad_update_complex(const Gtensor<complex<BTYPE> >& g, Gtensor<complex<BTYPE> >& G, 
       const BTYPE eta, const BTYPE epsilon){
@@ -1289,6 +1296,7 @@ namespace Cengine{
 
     }
 
+    */
 
 
 

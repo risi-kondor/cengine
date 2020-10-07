@@ -94,6 +94,8 @@ namespace Cengine{
 	arr[i]=new OBJ(arg1,arg2,arg3,arg4);
     }
 
+  private:
+
     void allocate(){
      strides[k-1]=1;
       for(int i=k-2; i>=0; i--)
@@ -143,6 +145,7 @@ namespace Cengine{
     }
 
     ArrayOf<OBJ>& operator=(ArrayOf<OBJ>&& x){
+      delete[] arr;
       reallocate(x.dims);
       for(int i=0; i<asize; i++)
 	arr[i]=x.arr[i];
