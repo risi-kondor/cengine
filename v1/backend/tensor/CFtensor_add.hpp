@@ -69,6 +69,116 @@ void add_herm(const CFtensor& x, const int n=1) const{
 }
 
 
+void add_to_slice(const CFtensor& x, const int ix, const int offs){
+  assert(k==x.k+1);
+  for(int i=0; i<ix; i++) assert(dims[i]==x.dims[i]);
+  for(int i=ix; i<x.k; i++) assert(dims[i+1]==x.dims[i]);
+  int subsize=x.asize;
+  if(ix>0) subsize=x.strides[ix-1];
+  int supsize=x.asize/subsize;
+  int jstride=asize; 
+  if(ix>0) jstride=strides[ix-1];
+
+  if(device==0){
+    for(int j=0; j<supsize; j++){
+      int toffs=j*jstride+offs*strides[ix];
+      for(int i=0; i<subsize; i++){
+	arr[toffs+i]+=x.arr[j*subsize+i];
+	arrc[toffs+i]+=x.arrc[j*subsize+i];
+      }
+    }
+    return; 
+  }
+  FCG_UNIMPL();
+  //const float alpha = 1.0;
+  //CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrg, 1, arrg, 1));
+  //CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrgc, 1, arrgc, 1));
+}
+
+
+void add_to_slices(const CFtensor& x, const int ix, const int offs){
+  assert(k==x.k);
+  for(int i=0; i<k; i++) 
+    if(i!=ix) assert(dims[i]==x.dims[i]);
+    else assert(dims[i]>=x.dims[i]);
+  int subsize=x.asize;
+  if(ix>0) subsize=x.strides[ix-1];
+  int supsize=x.asize/subsize;
+  int jstride=asize; 
+  if(ix>0) jstride=strides[ix-1];
+
+  if(device==0){
+    for(int j=0; j<supsize; j++){
+      int toffs=j*jstride+offs*strides[ix];
+      //for(int m=0; m<x.dims[ix];; m++){
+	for(int i=0; i<subsize; i++){
+	  arr[toffs+i]+=x.arr[j*subsize+i];
+	  arrc[toffs+i]+=x.arrc[j*subsize+i];
+	}
+	//toffs+=strides[ix];
+	//}
+    }
+    return; 
+  }
+  FCG_UNIMPL();
+  //const float alpha = 1.0;
+  //CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrg, 1, arrg, 1));
+  //CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrgc, 1, arrgc, 1));
+}
+
+
+void add_slice(const CFtensor& x, const int ix, const int offs){
+  assert(x.k==k+1);
+  for(int i=0; i<ix; i++) assert(dims[i]==x.dims[i]);
+  for(int i=ix; i<k; i++) assert(x.dims[i+1]==dims[i]);
+  int subsize=asize;
+  if(ix>0) subsize=strides[ix-1];
+  int supsize=asize/subsize;
+  int jstride=x.asize; 
+  if(ix>0) jstride=x.strides[ix-1];
+
+  if(device==0){
+    for(int j=0; j<supsize; j++){
+      int toffs=j*jstride+offs*x.strides[ix];
+      for(int i=0; i<subsize; i++){
+	arr[j*subsize+i]+=x.arr[toffs+i];
+	arrc[j*subsize+i]+=x.arrc[toffs+i];
+      }
+    }
+    return; 
+  }
+  FCG_UNIMPL();
+}
+
+
+void add_slices(const CFtensor& x, const int ix, const int offs, const int n){
+  assert(k==x.k);
+  for(int i=0; i<k; i++) 
+    if(i!=ix) assert(dims[i]==x.dims[i]);
+    else assert(x.dims[i]>=dims[i]);
+  int subsize=strides[ix];
+  int supsize=x.asize/(strides[ix]*dims[ix]);
+  int jstride=asize; 
+  if(ix>0) jstride=strides[ix-1];
+  int jxstride=x.asize;
+  if(ix>0) jxstride=x.strides[ix-1];
+
+  if(device==0){
+    for(int j=0; j<supsize; j++){
+      for(int m=0; m<n; m++){
+	for(int i=0; i<subsize; i++){
+	  arr[j*jstride+m*strides[ix]+i]+=x.arr[j*jxstride+(m+offs)*x.strides[ix]+i];
+	  arrc[j*jstride+m*strides[ix]+i]+=x.arrc[j*jxstride+(m+offs)*x.strides[ix]+i];
+	}
+      }
+    }
+    return; 
+  }
+  FCG_UNIMPL();
+}
+
+
+
 // ---- With constants -----------------------------------------------------------------------------------
 
 

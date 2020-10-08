@@ -83,6 +83,95 @@ namespace Cengine{
   };
   
 
+  class ctensor_add_to_slice_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
+  public:
+
+    int ix;
+    int offs;
+
+    ctensor_add_to_slice_op(Cnode* r, Cnode* x, const int _ix, const int _offs):
+      Coperator(r,x), ix(_ix), offs(_offs){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=inputs[0]->obj;
+      asCtensorB(owner,__PRETTY_FUNCTION__).add_to_slice(asCtensorB(inputs[1],__PRETTY_FUNCTION__),ix,offs);
+    }
+
+    string str() const{
+      return "ctensor_add_to_slice"+inp_str(ix,offs);
+    }
+    
+  };
+  
+
+  class ctensor_add_to_slices_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
+  public:
+
+    int ix;
+    int offs;
+
+    ctensor_add_to_slices_op(Cnode* r, Cnode* x, const int _ix, const int _offs):
+      Coperator(r,x), ix(_ix), offs(_offs){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=inputs[0]->obj;
+      asCtensorB(owner,__PRETTY_FUNCTION__).add_to_slices(asCtensorB(inputs[1],__PRETTY_FUNCTION__),ix,offs);
+    }
+
+    string str() const{
+      return "ctensor_add_to_slices"+inp_str(ix,offs);
+    }
+    
+  };
+  
+
+  class ctensor_add_slice_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
+  public:
+
+    int ix;
+    int offs;
+
+    ctensor_add_slice_op(Cnode* r, Cnode* x, const int _ix, const int _offs):
+      Coperator(r,x), ix(_ix), offs(_offs){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=inputs[0]->obj;
+      asCtensorB(owner,__PRETTY_FUNCTION__).add_slice(asCtensorB(inputs[1],__PRETTY_FUNCTION__),ix,offs);
+    }
+
+    string str() const{
+      return "ctensor_add_slice"+inp_str(ix,offs);
+    }
+    
+  };
+  
+
+  class ctensor_add_slices_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
+  public:
+
+    int ix;
+    int offs;
+    int n; 
+
+    ctensor_add_slices_op(Cnode* r, Cnode* x, const int _ix, const int _offs, const int _n):
+      Coperator(r,x), ix(_ix), offs(_offs), n(_n){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=inputs[0]->obj;
+      asCtensorB(owner,__PRETTY_FUNCTION__).add_slices(asCtensorB(inputs[1],__PRETTY_FUNCTION__),ix,offs,n);
+    }
+
+    string str() const{
+      return "ctensor_add_slices"+inp_str(ix,offs,n);
+    }
+    
+  };
+  
+
   // ---- Subtract -------------------------------------------------------------------------------------------
 
 

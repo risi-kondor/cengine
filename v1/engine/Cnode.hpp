@@ -116,6 +116,30 @@ namespace Cengine{
   }
 
 
+  template<typename TYPE1, typename TYPE2>
+  inline string Coperator::inp_str(const TYPE1& x1, const TYPE2& x2) const{
+    ostringstream oss;
+    oss<<"(";
+    for(int i=0; i<inputs.size(); i++)
+      oss<<inputs[i]->ident()<<",";
+    oss<<x1<<","<<x2;
+    oss<<")";
+    return oss.str();
+  }
+
+
+  template<typename TYPE1, typename TYPE2, typename TYPE3>
+  inline string Coperator::inp_str(const TYPE1& x1, const TYPE2& x2, const TYPE3& x3) const{
+    ostringstream oss;
+    oss<<"(";
+    for(int i=0; i<inputs.size(); i++)
+      oss<<inputs[i]->ident()<<",";
+    oss<<x1<<","<<x2<<","<<x3;
+    oss<<")";
+    return oss.str();
+  }
+
+
   template<typename TYPE>
   inline TYPE& downcast(Cnode* x, const char* s){
     if(!x){
