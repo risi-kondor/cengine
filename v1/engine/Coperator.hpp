@@ -41,6 +41,11 @@ namespace Cengine{
       inputs.push_back(x3);
     }
 
+    Coperator(Cnode* x0, vector<Cnode*> v1){
+      inputs.push_back(x0);
+      for(auto p:v1) inputs.push_back(p);
+    }
+
 
   public:
 

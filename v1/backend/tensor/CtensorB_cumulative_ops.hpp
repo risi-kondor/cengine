@@ -105,23 +105,46 @@ namespace Cengine{
   };
   
 
-  class ctensor_add_to_slices_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
+  class ctensor_add_to_chunk_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
   public:
 
     int ix;
     int offs;
 
-    ctensor_add_to_slices_op(Cnode* r, Cnode* x, const int _ix, const int _offs):
+    ctensor_add_to_chunk_op(Cnode* r, Cnode* x, const int _ix, const int _offs):
       Coperator(r,x), ix(_ix), offs(_offs){}
 
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      asCtensorB(owner,__PRETTY_FUNCTION__).add_to_slices(asCtensorB(inputs[1],__PRETTY_FUNCTION__),ix,offs);
+      asCtensorB(owner,__PRETTY_FUNCTION__).add_to_chunk(asCtensorB(inputs[1],__PRETTY_FUNCTION__),ix,offs);
     }
 
     string str() const{
-      return "ctensor_add_to_slices"+inp_str(ix,offs);
+      return "ctensor_add_to_chunk"+inp_str(ix,offs);
+    }
+    
+  };
+  
+
+  class ctensor_add_to_slices_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
+  public:
+
+    int ix;
+
+    ctensor_add_to_slices_op(Cnode* r, vector<Cnode*> v, const int _ix):
+      Coperator(r,v), ix(_ix){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=inputs[0]->obj;
+      vector<const CFtensor*> v(inputs.size()-1);
+      for(int i=0; i<inputs.size()-1; i++) v[i]=&asCtensorB(inputs[i+1],__PRETTY_FUNCTION__);
+      asCtensorB(owner,__PRETTY_FUNCTION__).add_to_slices(v,ix);
+    }
+
+    string str() const{
+      return "ctensor_add_to_slices";
     }
     
   };
@@ -149,24 +172,24 @@ namespace Cengine{
   };
   
 
-  class ctensor_add_slices_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
+  class ctensor_add_chunk_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
   public:
 
     int ix;
     int offs;
     int n; 
 
-    ctensor_add_slices_op(Cnode* r, Cnode* x, const int _ix, const int _offs, const int _n):
+    ctensor_add_chunk_op(Cnode* r, Cnode* x, const int _ix, const int _offs, const int _n):
       Coperator(r,x), ix(_ix), offs(_offs), n(_n){}
 
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      asCtensorB(owner,__PRETTY_FUNCTION__).add_slices(asCtensorB(inputs[1],__PRETTY_FUNCTION__),ix,offs,n);
+      asCtensorB(owner,__PRETTY_FUNCTION__).add_chunk(asCtensorB(inputs[1],__PRETTY_FUNCTION__),ix,offs,n);
     }
 
     string str() const{
-      return "ctensor_add_slices"+inp_str(ix,offs,n);
+      return "ctensor_add_chunk"+inp_str(ix,offs,n);
     }
     
   };

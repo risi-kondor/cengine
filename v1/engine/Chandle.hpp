@@ -45,6 +45,10 @@ namespace Cengine{
     return hdl->node;
   }
 
+  inline Cnode* nodeof(const Chandle* hdl){
+    return hdl->node;
+  }
+
   inline void replace(Chandle*& target, Chandle* hdl){
     delete target;
     target=hdl;

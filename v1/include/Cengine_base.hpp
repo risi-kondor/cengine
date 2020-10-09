@@ -233,11 +233,10 @@ namespace Cengine{
   void variadic_unroller_sub(vector<TYPE*>& argv, TYPE& x){
     argv.push_back(&x);}
 
+
   template<class TYPE, typename... Args>
-  vector<const TYPE*> const_variadic_unroller(const TYPE& x, Args&... args){
-    vector<const TYPE*> argv;
-    const_variadic_unroller_sub(argv, x, args...);
-    return argv;}
+  void const_variadic_unroller_sub(vector<const TYPE*>& argv, const TYPE& x){
+    argv.push_back(&x);}
 
   template<class TYPE, typename... Args>
   void const_variadic_unroller_sub(vector<const TYPE*>& argv, const TYPE& x, Args&... args){
@@ -245,8 +244,10 @@ namespace Cengine{
     const_variadic_unroller_sub(argv, args...);}
 
   template<class TYPE, typename... Args>
-  void const_variadic_unroller_sub(vector<const TYPE*>& argv, const TYPE& x){
-    argv.push_back(&x);}
+  vector<const TYPE*> const_variadic_unroller(const TYPE& x, Args&... args){
+    vector<const TYPE*> argv;
+    const_variadic_unroller_sub(argv, x, args...);
+    return argv;}
 
 
   template<class TYPE, class TYPE2, typename... Args>
