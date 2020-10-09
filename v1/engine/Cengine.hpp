@@ -543,6 +543,7 @@ namespace Cengine{
  
     Chandle* new_handle(Cnode* node){
      Chandle* hdl=new Chandle(node);
+     nhandles++;
      hdl->id=nhandles-1; //++;
      //handles.insert(hdl);
      //DEBUG_ENGINE({CoutLock lk; cout<<"    New handle "<<hdl->ident()<<" ["<<hdl->node->ident()<<"]"<<endl;}); 
