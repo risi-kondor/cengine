@@ -110,6 +110,8 @@ namespace Cengine{
     fill_const(){}
     fill_const(const TYPE _p):p(_p){}
   };
+  struct fill_stack: public fill_pattern{fill_stack(){}};
+  struct fill_cat: public fill_pattern{fill_cat(){}};
 
   namespace fill{
     static const fill_noalloc noalloc;
@@ -125,6 +127,8 @@ namespace Cengine{
     static const fill_symm_bernoulli symm_bernoulli; //7
     static const fill_gaussian gaussian; //8
     static const fill_cgaussian cgaussian;
+    static const fill_stack stack;
+    static const fill_cat cat;
   }
 
   

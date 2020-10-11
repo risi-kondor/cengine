@@ -205,7 +205,32 @@ namespace Cengine{
     }
 
   };
+
+
+  // ---- Access ---------------------------------------------------------------------------------------------
+
   
+  class ctensor_set_element_op: public Coperator, public InPlaceOperator{
+  public:
+
+    Gindex ix;
+
+    ctensor_set_element_op(Cnode* r, Cnode* x, const Gindex& _ix):
+      Coperator(r,x), ix(_ix){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=inputs[0]->obj;
+      asCtensorB(owner,__PRETTY_FUNCTION__).set(ix,asCscalarB(inputs[1],__PRETTY_FUNCTION__).val);
+    }
+
+    string str() const{
+      return "ctensor_set_Element"+inp_str(ix);
+    }
+
+  };
+
+
   
 }
 

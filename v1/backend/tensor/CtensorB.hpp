@@ -161,6 +161,11 @@ namespace Cengine{
       r.val+=inp(A);
     }
 
+    void add_element_into(CscalarB& r, const Gindex& ix){
+      assert(nbu==-1);
+      r.val+=get(ix);
+    }
+
     void mix_into(CscalarB& r, const CscalarB& x) const{
       to_device(0);
       assert(dims.size()==2);

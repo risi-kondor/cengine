@@ -222,6 +222,20 @@ namespace Cengine{
       return new_handle(enqueue_for_handle(new OP(nodeof(h0),nodeof(h1),nodeof(h2),arg0,arg1,arg2,arg3)));
     }
 
+    // ---- Direct access ------------------------------------------------------------------------------------
+
+
+    void direct(Chandle* h, std::function<void(Cobject& obj)> f){
+      flush(h->node);
+      f(*h->node->obj);
+    }
+
+    template<typename RET>
+    RET direct(Chandle* h, std::function<RET(Cobject& obj)> f){
+      flush(h->node);
+      return f(*h->node->obj);
+    }
+
 
     // ---- Enqueue ------------------------------------------------------------------------------------------
 

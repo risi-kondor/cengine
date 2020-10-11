@@ -35,6 +35,12 @@ namespace Cengine{
     return asCtensorB(hdl->node->obj,__PRETTY_FUNCTION__);
   }
 
+  //Gtensor<complex<float> > ctensor_get_element(Chandle* hdl){
+  //Cengine_engine->flush(hdl->node);
+    //cout<<hdl->node->nhandles<<endl; 
+    //return asCtensorB(hdl->node->obj,__PRETTY_FUNCTION__);
+  //}
+
   
   
 }

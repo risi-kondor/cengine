@@ -533,6 +533,27 @@ namespace Cengine{
   };
 
 
+  class ctensor_add_element_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
+  public:
+
+    Gindex ix;
+
+    ctensor_add_element_op(Cnode* r, Cnode* A, const Gindex& _ix):
+      Coperator(r,A), ix(_ix){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=inputs[0]->obj;
+      asCtensorB(inputs[1],__PRETTY_FUNCTION__).add_element_into(asCscalarB(owner,__PRETTY_FUNCTION__),ix);
+    }
+
+    string str() const{
+      return "ctensor_add_element"+inp_str(ix);
+    }
+
+  };
+
+
 
   
 
