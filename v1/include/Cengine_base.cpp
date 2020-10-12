@@ -26,3 +26,12 @@ template<> int Cengine::ctensor_add_Mprod_op<2,3>::_batcher_id=0;
 //__device__ __constant__ unsigned char cg_cmem[CG_CONST_MEM_SIZE];
 #endif
 
+#include "CengineSession.hpp"
+
+namespace Cengine{
+
+  void shutdown(){
+    delete Cengine_engine;
+  }
+
+}

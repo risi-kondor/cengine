@@ -244,7 +244,6 @@ namespace Cengine{
       return new_handle(enqueue_for_handle(op));
     }
 
-
     Cnode* enqueue(Coperator* op){ // Protected by done_mx
 #ifdef ENGINE_PRIORITY
       priority_guard<3> lock(done_pmx,0);
@@ -253,7 +252,7 @@ namespace Cengine{
 #endif
       return enqueue_sub(op);
     }
-
+    
 
     Cnode* enqueue_for_handle(Coperator* op){ // Protected by done_mx
 #ifdef ENGINE_PRIORITY
@@ -579,6 +578,7 @@ namespace Cengine{
 	lock_guard<mutex> lock(done_mx);
 #endif
 	node->nhandles--;
+	//DEBUG_ENGINE({CoutLock lk; cout<<node->ident()<<" nh="<<node->nhandles<<endl;})
 	if(node->dependents.size()==0 && node->nhandles==0){
 	  if(node->batcher) node->batcher->kill(node);
 	  else kill(node); 

@@ -47,7 +47,7 @@ namespace Cengine{
     Cnode(Coperator* _op): op(_op){}
 
     ~Cnode(){
-      if(nhandles>0){CoutLock lk; cout<<"Error: attempting to delete node with handle."<<endl;exit(0);}
+      if(nhandles>0){CoutLock lk; cout<<"Error: attempting to delete node "<<ident()<<" with handle."<<endl;exit(0);}
       // DEBUG_ENGINE({CoutLock lk; cout<<"Deleting "<<ident()<<endl;});
       delete op;
       if(!is_view) delete obj; 

@@ -77,8 +77,8 @@ namespace Cengine{
 
     void kill(Cnode* node){
       DEBUG_ENGINE({CoutLock lk; cout<<"    Killing "<<node->ident()<<" in batcher"<<endl;});
-      CoutLock lk;
-      cout<<"\e[1mKill "<<node->ident()<<" \\e[0m"<<endl; 
+      //CoutLock lk;
+      //cout<<"\e[1mKill "<<node->ident()<<" \e[0m"<<endl; 
     }
 
 

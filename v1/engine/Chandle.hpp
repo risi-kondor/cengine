@@ -16,11 +16,12 @@ namespace Cengine{
   public:
 
     Chandle(Cnode* _node): node(_node){
-      node->nhandles++;
+      //node->nhandles++; // Changed!
+      //DEBUG_ENGINE({CoutLock lk; cout<<"    Creating handle to "<<node->ident()<<endl;})
     }
     
     ~Chandle(){
-      //DEBUG_ENGINE({CoutLock lk; cout<<"    Deleting "<<ident()<<endl;})
+      //DEBUG_ENGINE({CoutLock lk; cout<<"    Deleting handle to "<<node->ident()<<endl;})
       node->engine->dec_handle(node);
     }
 
