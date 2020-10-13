@@ -99,7 +99,7 @@ namespace Cengine{
 
     
     int flush(){ // protected_by done_mx 
-      DEBUG_ENGINE({CoutLock lk; cout<<"    \e[1mFlushing batcher.\e[0m "<<waiting.size()<<" "<<ready.size()<<endl;});
+      DEBUG_ENGINE({CoutLock lk; cout<<"    Flushing batcher. "<<waiting.size()<<" "<<ready.size()<<endl;});
       if(ready.size()>0) release();
       return waiting.size(); 
     }

@@ -55,7 +55,7 @@ namespace Cengine{
 
 
     virtual void batched_exec(const vector<Cnode*>& nodes ){
-      DEBUG_ENGINE({CoutLock lk; cout<<"    \e[1mRunning batched ctensor_add_Mprod\e[0m"<<endl;});
+      DEBUG_ENGINE({CoutLock lk; cout<<"    Running batched ctensor_add_Mprod..."<<endl;});
       assert(nodes.size()>0);
       BasicCnodeEngine* engine=nodes[0]->engine;
 

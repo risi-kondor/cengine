@@ -16,7 +16,7 @@ namespace Cengine{
   public:
 
     Chandle(Cnode* _node): node(_node){
-      //node->nhandles++; // Changed!
+      node->nhandles++; // Changed!
       //DEBUG_ENGINE({CoutLock lk; cout<<"    Creating handle to "<<node->ident()<<endl;})
     }
     
@@ -24,6 +24,15 @@ namespace Cengine{
       //DEBUG_ENGINE({CoutLock lk; cout<<"    Deleting handle to "<<node->ident()<<endl;})
       node->engine->dec_handle(node);
     }
+
+    Chandle(const Chandle& x){
+      node=x.node;
+      node->nhandles++;
+      //node->engine->nhandles++;
+      //id=dynamic_cast<Cengine*>(node->engine)->nhandles++;
+    }
+
+    Chandle(const Chandle&& x)=delete;
 
 
   public:

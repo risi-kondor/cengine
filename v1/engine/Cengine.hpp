@@ -84,7 +84,7 @@ namespace Cengine{
 
 
     ~Cengine(){
-      DEBUG_ENGINE({CoutLock lk; cout<<"    Shutting down engine"<<endl;});
+      DEBUG_ENGINE({CoutLock lk; cout<<"\e[1mShutting down engine.\e[0m"<<endl;});
       shutdown=true; 
       get_task_cv.notify_all();
       for(auto p:workers) delete p;
@@ -244,6 +244,7 @@ namespace Cengine{
       return new_handle(enqueue_for_handle(op));
     }
 
+    /*
     Cnode* enqueue(Coperator* op){ // Protected by done_mx
 #ifdef ENGINE_PRIORITY
       priority_guard<3> lock(done_pmx,0);
@@ -252,17 +253,20 @@ namespace Cengine{
 #endif
       return enqueue_sub(op);
     }
-    
+    */
 
-    Cnode* enqueue_for_handle(Coperator* op){ // Protected by done_mx
+    Chandle* enqueue_for_handle(Coperator* op){ // Protected by done_mx
 #ifdef ENGINE_PRIORITY
       priority_guard<3> lock(done_pmx,0);
 #else
       lock_guard<mutex> lock(done_mx); 
 #endif
       Cnode* r=enqueue_sub(op);
-      r->nhandles=1;
-      return r;
+      Chandle* hdl=new Chandle(r);
+      nhandles++;
+      hdl->id=nhandles-1; //++;
+      //r->nhandles=1; // debug!!
+      return hdl;
     }
 
     
@@ -353,7 +357,7 @@ namespace Cengine{
       }
       
       if(node->nblockers==0){
-	DEBUG_ENGINE({CoutLock lk; cout<<"    Early "<<node->ident()<<endl;});
+	//DEBUG_ENGINE({CoutLock lk; cout<<"    Early "<<node->ident()<<endl;});
 	release(node);
       }
       else waiting.insert(node);
@@ -482,7 +486,7 @@ namespace Cengine{
 
 
     void flush(){ // not protected by done_mx 
-      DEBUG_ENGINE({CoutLock lk; cout<<"Flushing engine..."<<endl;});
+      DEBUG_ENGINE({CoutLock lk; cout<<endl<<"    \e[1mFlushing engine...\e[0m"<<endl;});
       int h=0;
       bool all_done=false;
       while(true){
@@ -553,7 +557,7 @@ namespace Cengine{
       }
 
       DEBUG_FLUSH({CoutLock lk; cout<<"done."<<endl<<endl;});
-      DEBUG_ENGINE({CoutLock lk; cout<<"flushed"<<endl;})
+      DEBUG_ENGINE({CoutLock lk; cout<<"    \e[1mFlushed.\e[0m"<<endl<<endl;})
       return; 
     }
 
@@ -570,6 +574,9 @@ namespace Cengine{
      return hdl;
     }
 
+    Chandle* new_handle(Chandle* h){
+      return h;
+    }
 
     void dec_handle(Cnode* node){
 #ifdef ENGINE_PRIORITY
