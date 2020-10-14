@@ -12,6 +12,9 @@ namespace Cengine{
 
     ~CengineSession(){
       delete Cengine_engine;
+#ifdef CENGINE_OBJ_COUNT
+      cout<<"CscalarB objects leaked: "<<CscalarB_count<<endl; 
+#endif
     }
 
   };

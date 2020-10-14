@@ -20,6 +20,7 @@ namespace Cengine{
     Chandle* hdl;
 
     ~CscalarObject(){
+      delete hdl; 
     }
 
 

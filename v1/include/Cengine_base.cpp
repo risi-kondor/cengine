@@ -1,5 +1,13 @@
 #include "Cengine_base.hpp"
 
+namespace Cengine{
+
+#ifdef CENGINE_OBJ_COUNT
+  atomic<int> CscalarB_count; 
+#endif 
+
+}
+
 #include "Cengine.hpp"
 #include "CtensorB_add_Mprod_ops.hpp"
 
@@ -33,5 +41,6 @@ namespace Cengine{
   void shutdown(){
     delete Cengine_engine;
   }
+
 
 }

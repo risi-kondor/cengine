@@ -1,3 +1,6 @@
+#define CENGINE_OBJ_COUNT 
+//#define DEBUG_ENGINE_FLAG 
+
 #include "Cengine_base.cpp"
 #include "CscalarObject.hpp"
 
@@ -7,6 +10,8 @@ typedef CscalarObject Cscalar;
 
 
 int main(int argc, char** argv){
+
+  CengineSession csession;
 
   Cscalar x(2.0);
   Cscalar y(3.0);

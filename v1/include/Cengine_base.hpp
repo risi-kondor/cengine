@@ -76,6 +76,15 @@ using namespace std;
 #define CG_CONST_MEM_SIZE 32276
 
 
+#ifdef CENGINE_OBJ_COUNT
+#define CSCALARB_CREATE() ::Cengine::CscalarB_count++; //cout<<::Cengine::CscalarB_count<<endl;
+#define CSCALARB_DESTROY() ::Cengine::CscalarB_count--; //cout<<::Cengine::CscalarB_count<<endl;
+#else
+#define CSCALARB_CREATE();
+#define CSCALARB_DESTROY();
+#endif 
+
+
 namespace Cengine{
 
   namespace engine{}; 

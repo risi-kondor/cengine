@@ -18,6 +18,9 @@ namespace Cengine{
       return "";
     }
 
+    virtual string describe() const{
+      return "";
+    }
 
   };
 
