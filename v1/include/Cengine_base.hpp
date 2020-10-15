@@ -77,11 +77,31 @@ using namespace std;
 
 
 #ifdef CENGINE_OBJ_COUNT
+#define CNODE_CREATE() ::Cengine::Cnode_count++; //cout<<::Cengine::Cnode_count<<endl;
+#define CNODE_DESTROY() ::Cengine::Cnode_count--; //cout<<::Cengine::Cnode_count<<endl;
+#define CHANDLE_CREATE() ::Cengine::Chandle_count++; cout<<::Cengine::Chandle_count<<endl;
+#define CHANDLE_DESTROY() ::Cengine::Chandle_count--; cout<<::Cengine::Chandle_count<<endl;
+#define COPERATOR_CREATE() ::Cengine::Coperator_count++; //cout<<::Cengine::Coperator_count<<endl;
+#define COPERATOR_DESTROY() ::Cengine::Coperator_count--; //cout<<::Cengine::Coperator_count<<endl;
+#define RSCALARB_CREATE() ::Cengine::RscalarB_count++; //cout<<::Cengine::RscalarB_count<<endl;
+#define RSCALARB_DESTROY() ::Cengine::RscalarB_count--; //cout<<::Cengine::RscalarB_count<<endl;
 #define CSCALARB_CREATE() ::Cengine::CscalarB_count++; //cout<<::Cengine::CscalarB_count<<endl;
 #define CSCALARB_DESTROY() ::Cengine::CscalarB_count--; //cout<<::Cengine::CscalarB_count<<endl;
+#define CTENSORB_CREATE() ::Cengine::CtensorB_count++; //cout<<::Cengine::CtensorB_count<<endl;
+#define CTENSORB_DESTROY() ::Cengine::CtensorB_count--; //cout<<::Cengine::CtensorB_count<<endl;
 #else
+#define CNODE_CREATE();
+#define CNODE_DESTROY();
+#define CHANDLE_CREATE();
+#define CHANDLE_DESTROY();
+#define COPERATOR_CREATE();
+#define COPERATOR_DESTROY();
+#define RSCALARB_CREATE();
+#define RSCALARB_DESTROY();
 #define CSCALARB_CREATE();
 #define CSCALARB_DESTROY();
+#define CTENSORB_CREATE();
+#define CTENSORB_DESTROY();
 #endif 
 
 

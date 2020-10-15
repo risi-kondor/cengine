@@ -20,10 +20,13 @@ namespace Cengine{
     mutable int device=0;
 
 
-    RscalarB(){}
+    RscalarB(){
+      RSCALARB_CREATE();
+    }
 
     ~RscalarB(){
       delete[] arr;
+      RSCALARB_DESTROY();
     }
 
     string classname() const{
@@ -44,20 +47,31 @@ namespace Cengine{
   public: // ---- Filled constructors -----------------------------------------------------------------------
 
 
-    RscalarB(const float c, const device_id& dev=0): val(c){}
+    RscalarB(const float c, const device_id& dev=0): 
+      val(c){
+      RSCALARB_CREATE();
+    }
 
-    RscalarB(const fill_raw& fill, const device_id& dev=0){}
+    RscalarB(const fill_raw& fill, const device_id& dev=0){
+      RSCALARB_CREATE();
+    }
 
-    RscalarB(const fill_zero& fill, const device_id& dev=0): val(0){}
+    RscalarB(const fill_zero& fill, const device_id& dev=0): 
+      val(0){
+      RSCALARB_CREATE();
+    }
  
     RscalarB(const fill_gaussian& fill, const device_id& dev=0){
       normal_distribution<float> distr;
       val=distr(rndGen);
+      RSCALARB_CREATE();
     }
 
 
-    RscalarB(const int _nbu, const fill_raw& fill, const device_id& dev=0): nbu(_nbu){
+    RscalarB(const int _nbu, const fill_raw& fill, const device_id& dev=0): 
+      nbu(_nbu){
       reallocate();
+      RSCALARB_CREATE();
     }
 
     RscalarB(const int _nbu, const fill_zero& fill, const device_id& dev=0): 
@@ -97,6 +111,7 @@ namespace Cengine{
 	reallocate();
 	std::copy(x.arr,x.arr+nbu,arr);
       }
+      RSCALARB_CREATE();
     }
 
     RscalarB(RscalarB&& x): 
@@ -106,6 +121,7 @@ namespace Cengine{
 	arr=x.arr;
 	x.arr=nullptr;
       }
+      RSCALARB_CREATE();
     }
 
 

@@ -15,7 +15,13 @@ namespace Cengine{
     Gdims dims; 
     int nbu=-1;
 
-    CtensorB(){}
+    CtensorB(){
+      CTENSORB_CREATE();
+    }
+
+    ~CtensorB(){
+      CTENSORB_DESTROY();
+    }
 
     string classname() const{
       return "CtensorB";
@@ -32,7 +38,9 @@ namespace Cengine{
 
     
     CtensorB(const Gtensor<complex<float> >& x, const device_id& dev=0): 
-      CFtensor(x), dims(x.dims), nbu(-1){}
+      CFtensor(x), dims(x.dims), nbu(-1){
+      CTENSORB_CREATE();
+    }
 
 
   public: // ---- Filled constructors -----------------------------------------------------------------------
@@ -40,11 +48,15 @@ namespace Cengine{
 
     template<typename FILLTYPE, typename = typename std::enable_if<std::is_base_of<fill_pattern, FILLTYPE>::value, FILLTYPE>::type>
     CtensorB(const Gdims& _dims, const FILLTYPE& fill, const device_id& dev=0):
-      CFtensor(_dims,fill,dev), dims(_dims){}
+      CFtensor(_dims,fill,dev), dims(_dims){
+      CTENSORB_CREATE();
+    }
 	  
     template<typename FILLTYPE, typename = typename std::enable_if<std::is_base_of<fill_pattern, FILLTYPE>::value, FILLTYPE>::type>
     CtensorB(const Gdims& _dims, const int _nbu, const FILLTYPE& fill, const device_id& dev=0):
-      CFtensor(_dims.prepend(_nbu),fill,dev), dims(_dims), nbu(_nbu){}
+      CFtensor(_dims.prepend(_nbu),fill,dev), dims(_dims), nbu(_nbu){
+      CTENSORB_CREATE();
+    }
 	  
 
   public: // ---- Copying -----------------------------------------------------------------------------------
@@ -53,10 +65,13 @@ namespace Cengine{
     CtensorB(const CtensorB& x): 
       CFtensor(x), dims(x.dims), nbu(x.nbu){
       COPY_WARNING;
+      CTENSORB_CREATE();
     }
 
     CtensorB(const CtensorB& x, const nowarn_flag& dummy): 
-      CFtensor(x,dummy), dims(x.dims), nbu(x.nbu){}
+      CFtensor(x,dummy), dims(x.dims), nbu(x.nbu){
+      CTENSORB_CREATE();
+    }
 
     CtensorB* clone() const{
       return new CtensorB(*this, nowarn);
@@ -68,10 +83,12 @@ namespace Cengine{
     
     CtensorB(const CFtensor& x):
       CFtensor(x), dims(x.dims), nbu(-1){
+      CTENSORB_CREATE();
     }
 
     CtensorB(CFtensor&& x):
       CFtensor(std::move(x)), dims(x.dims), nbu(-1){
+      CTENSORB_CREATE();
     }
 
 

@@ -3,7 +3,12 @@
 namespace Cengine{
 
 #ifdef CENGINE_OBJ_COUNT
+  atomic<int> Cnode_count; 
+  atomic<int> Chandle_count; 
+  atomic<int> Coperator_count; 
+  atomic<int> RscalarB_count; 
   atomic<int> CscalarB_count; 
+  atomic<int> CtensorB_count; 
 #endif 
 
 }

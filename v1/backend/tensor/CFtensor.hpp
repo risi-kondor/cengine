@@ -48,8 +48,8 @@ namespace Cengine{
     mutable int device=0;
 
     ~CFtensor(){
-      if(!is_view && arr) delete arr;
-      if(!is_view && arrg) CUDA_SAFE(cudaFree(arrg)); 
+      if(!is_view && arr) {delete[] arr;}
+      if(!is_view && arrg) {CUDA_SAFE(cudaFree(arrg));}
     }
 
     string classname() const {return "Cengine::CFtensor";}

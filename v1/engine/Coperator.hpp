@@ -17,21 +17,26 @@ namespace Cengine{
 
   public:
 
-    Coperator(){}
+    Coperator(){
+      COPERATOR_CREATE();
+    }
 
     Coperator(Cnode* x0){
       inputs.push_back(x0);
+      COPERATOR_CREATE();
     }
 
     Coperator(Cnode* x0, Cnode* x1){
       inputs.push_back(x0);
       inputs.push_back(x1);
+      COPERATOR_CREATE();
     }
 
     Coperator(Cnode* x0, Cnode* x1, Cnode* x2){
       inputs.push_back(x0);
       inputs.push_back(x1);
       inputs.push_back(x2);
+      COPERATOR_CREATE();
     }
 
     Coperator(Cnode* x0, Cnode* x1, Cnode* x2, Cnode* x3){
@@ -39,11 +44,17 @@ namespace Cengine{
       inputs.push_back(x1);
       inputs.push_back(x2);
       inputs.push_back(x3);
+      COPERATOR_CREATE();
     }
 
     Coperator(Cnode* x0, vector<Cnode*> v1){
       inputs.push_back(x0);
       for(auto p:v1) inputs.push_back(p);
+      COPERATOR_CREATE();
+    }
+
+    ~Coperator(){
+      COPERATOR_DESTROY();
     }
 
 

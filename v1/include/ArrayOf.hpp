@@ -27,8 +27,9 @@ namespace Cengine{
     }
 
     ~ArrayOf(){
-      //for(int i=0; i<asize; i++) 
-      //delete arr[i];
+      //cout<<"del"<<endl; 
+      for(int i=0; i<asize; i++) 
+	delete arr[i];
       delete[] arr;
     }
 
