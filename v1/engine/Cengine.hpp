@@ -425,6 +425,7 @@ namespace Cengine{
       node->computed=true;
       node->working=false;
       if(dynamic_cast<BatcherExecutor*>(op)){
+	delete node; // changed!
 	{lock_guard<mutex> lock(active_batchers_mx); active_batchers--;}
 	if(active_batchers==0) active_batchers_cv.notify_one();
       }
