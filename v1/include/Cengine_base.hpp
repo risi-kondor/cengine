@@ -77,8 +77,8 @@ using namespace std;
 
 
 #ifdef CENGINE_OBJ_COUNT
-#define CNODE_CREATE() ::Cengine::Cnode_count++; cout<<::Cengine::Cnode_count<<endl;
-#define CNODE_DESTROY() ::Cengine::Cnode_count--; cout<<::Cengine::Cnode_count<<endl;
+#define CNODE_CREATE() ::Cengine::Cnode_count++; //cout<<::Cengine::Cnode_count<<endl;
+#define CNODE_DESTROY() ::Cengine::Cnode_count--; //cout<<::Cengine::Cnode_count<<endl;
 #define CHANDLE_CREATE() ::Cengine::Chandle_count++; //cout<<::Cengine::Chandle_count<<endl;
 #define CHANDLE_DESTROY() ::Cengine::Chandle_count--; //cout<<::Cengine::Chandle_count<<endl;
 #define COPERATOR_CREATE() ::Cengine::Coperator_count++; //cout<<::Cengine::Coperator_count<<endl;

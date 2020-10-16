@@ -222,6 +222,31 @@ namespace Cengine{
       return new_handle(enqueue_for_handle(new OP(nodeof(h0),nodeof(h1),nodeof(h2),arg0,arg1,arg2,arg3)));
     }
 
+
+    // ---- 5 args 
+
+    template<typename OP, typename ARG0, typename ARG1, typename ARG2, typename ARG3, typename ARG4>
+    Chandle* push(const ARG0 arg0, const ARG1 arg1, const ARG2 arg2, const ARG3 arg3, const ARG4 arg4){
+      return new_handle(enqueue_for_handle(new OP(arg0,arg1,arg2,arg3,arg4)));
+    }
+
+
+    // ---- 6 args 
+
+    template<typename OP, typename ARG0, typename ARG1, typename ARG2, typename ARG3, typename ARG4, typename ARG5>
+    Chandle* push(const ARG0 arg0, const ARG1 arg1, const ARG2 arg2, const ARG3 arg3, const ARG4 arg4, const ARG5 arg5){
+      return new_handle(enqueue_for_handle(new OP(arg0,arg1,arg2,arg3,arg4,arg5)));
+    }
+
+
+    // ---- 7 args 
+
+    template<typename OP, typename ARG0, typename ARG1, typename ARG2, typename ARG3, typename ARG4, typename ARG5, typename ARG6>
+    Chandle* push(const ARG0 arg0, const ARG1 arg1, const ARG2 arg2, const ARG3 arg3, const ARG4 arg4, const ARG5 arg5, const ARG6 arg6){
+      return new_handle(enqueue_for_handle(new OP(arg0,arg1,arg2,arg3,arg4,arg5,arg6)));
+    }
+
+
     // ---- Direct access ------------------------------------------------------------------------------------
 
 
@@ -408,7 +433,7 @@ namespace Cengine{
 #else
       lock_guard<mutex> lock(done_mx);
 #endif
-      DEBUG_ENGINE({CoutLock lk; cout<<"    Done "<<node->ident()<<endl;});
+      //DEBUG_ENGINE({CoutLock lk; cout<<"    Done "<<node->ident()<<endl;});
       Coperator* op=node->op; 
       if(op){
 	for(int i=0; i<op->inputs.size(); i++){
