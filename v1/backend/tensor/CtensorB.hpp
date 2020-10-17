@@ -47,13 +47,13 @@ namespace Cengine{
 
 
     template<typename FILLTYPE, typename = typename std::enable_if<std::is_base_of<fill_pattern, FILLTYPE>::value, FILLTYPE>::type>
-    CtensorB(const Gdims& _dims, const FILLTYPE& fill, const device_id& dev=0):
+    CtensorB(const Gdims& _dims, const FILLTYPE& fill, const int dev=0):
       CFtensor(_dims,fill,dev), dims(_dims){
       CTENSORB_CREATE();
     }
 	  
     template<typename FILLTYPE, typename = typename std::enable_if<std::is_base_of<fill_pattern, FILLTYPE>::value, FILLTYPE>::type>
-    CtensorB(const Gdims& _dims, const int _nbu, const FILLTYPE& fill, const device_id& dev=0):
+    CtensorB(const Gdims& _dims, const int _nbu, const FILLTYPE& fill, const int dev=0):
       CFtensor(_dims.prepend(_nbu),fill,dev), dims(_dims), nbu(_nbu){
       CTENSORB_CREATE();
     }
@@ -92,7 +92,7 @@ namespace Cengine{
     }
 
 
-    void to_device(const device_id& _dev) const{
+    void to_device(const int _dev) const{
       CFtensor::to_device(_dev);
     }
 

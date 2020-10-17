@@ -116,7 +116,7 @@ namespace Cengine{
       if(_dev.id()==device) return; 
       parr_valid=false; 
       for(auto p: pack)
-	p->to_device(_dev);
+	p->to_device(_dev.id());
       device=_dev.id();
     }
 

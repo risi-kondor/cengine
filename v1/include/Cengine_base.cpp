@@ -1,4 +1,5 @@
 #include "Cengine_base.hpp"
+#include "CengineTraceback.hpp"
 
 namespace Cengine{
 
@@ -10,6 +11,10 @@ namespace Cengine{
   atomic<int> CscalarB_count; 
   atomic<int> CtensorB_count; 
 #endif 
+
+#ifdef CENGINE_TRACEBACK_FLAG
+  Cengine::CengineTraceback traceback;
+#endif
 
 }
 

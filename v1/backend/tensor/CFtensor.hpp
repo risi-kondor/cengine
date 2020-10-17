@@ -139,7 +139,7 @@ namespace Cengine{
       }
     }
 
-    CFtensor(const Gdims& _dims, const fill_identity& dummy, const device_id& dev=0): 
+    CFtensor(const Gdims& _dims, const fill_identity& dummy, const int dev=0): 
       CFtensor(_dims){
       assert(dims[k-1]==dims[k-2]);
       std::fill(arr,arr+memsize,0);
@@ -148,7 +148,7 @@ namespace Cengine{
       to_device(dev);
     }
 
-    CFtensor(const Gdims& _dims, const fill_gaussian& dummy, const device_id& dev=0):
+    CFtensor(const Gdims& _dims, const fill_gaussian& dummy, const int dev=0):
       CFtensor(_dims){
       normal_distribution<double> distr;
       for(int i=0; i<asize; i++) arr[i]=distr(rndGen);
@@ -156,13 +156,13 @@ namespace Cengine{
       to_device(dev);
     }
 
-    CFtensor(const Gdims& _dims, const fill_sequential& dummy, const device_id& dev=0):
+    CFtensor(const Gdims& _dims, const fill_sequential& dummy, const int dev=0):
       CFtensor(_dims,fill::zero){
       for(int i=0; i<asize; i++) arr[i]=i;
       to_device(dev);
     }
 
-    CFtensor(const Gdims& _dims, const fill_const<complex<float> >& dummy, const device_id& dev=0):
+    CFtensor(const Gdims& _dims, const fill_const<complex<float> >& dummy, const int dev=0):
       CFtensor(_dims){
       float re=std::real(dummy.p);
       for(int i=0; i<asize; i++) arr[i]=re;
@@ -243,8 +243,7 @@ namespace Cengine{
   public: // ---- Transporters ------------------------------------------------------------------------------
  
 
-    const CFtensor& to_device(const device_id& dev) const{
-      const int _dev=dev.id();
+    const CFtensor& to_device(const int _dev) const{
       if(_dev==0){
  	if(device==0) return *this;
  	delete[] arr;

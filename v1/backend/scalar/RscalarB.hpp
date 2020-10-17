@@ -139,7 +139,6 @@ namespace Cengine{
 
 
     void to_device(const device_id& _dev) const{
-      //CFscalar::to_device(_dev);
     }
 
 

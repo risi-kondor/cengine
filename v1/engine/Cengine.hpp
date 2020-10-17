@@ -14,7 +14,6 @@
 #include "MetaBatcher.hpp"
 #include "CengineHelpers.hpp"
 
-
 namespace Cengine{
 
 
@@ -25,7 +24,7 @@ namespace Cengine{
 
     set<Cnode*> nodes;
     set<Cnode*> waiting;
-    vector<Cnode*> tokill;
+    //set<Cnode*> tokill;
     
     vector<Cworker*> workers;
     vector<Batcher*> batchers;
@@ -85,6 +84,7 @@ namespace Cengine{
 
     ~Cengine(){
       DEBUG_ENGINE({CoutLock lk; cout<<"\e[1mShutting down engine.\e[0m"<<endl;});
+      CENGINE_TRACE("\e[1mShutting down engine.\e[0m");
       shutdown=true; 
       get_task_cv.notify_all();
       for(auto p:workers) delete p;
@@ -266,19 +266,9 @@ namespace Cengine{
 
 
     Chandle* operator()(Coperator* op){
-      return new_handle(enqueue_for_handle(op));
+      return enqueue_for_handle(op);
     }
 
-    /*
-    Cnode* enqueue(Coperator* op){ // Protected by done_mx
-#ifdef ENGINE_PRIORITY
-      priority_guard<3> lock(done_pmx,0);
-#else
-      lock_guard<mutex> lock(done_mx); 
-#endif
-      return enqueue_sub(op);
-    }
-    */
 
     Chandle* enqueue_for_handle(Coperator* op){ // Protected by done_mx
 #ifdef ENGINE_PRIORITY
@@ -335,9 +325,10 @@ namespace Cengine{
 	Cnode* father=op->inputs[0];
 	//lock_guard<mutex> lock(done_mx);
 	if(!father->computed && !father->working){
-	  assert(father->op);
+	  CENGINE_ASSERT(father->op);
 	  if(dynamic_cast<CumulativeOperator*>(father->op)){
 	    DEBUG_ENGINE({CoutLock lk; cout<<"    Creating diamond"<<endl;});
+	    CENGINE_TRACE("Creating diamond");
 	    Cnode* grandfather=father->father();
 	    for(auto& p:op->inputs)
 	      if(p==father) p=grandfather;
@@ -345,6 +336,7 @@ namespace Cengine{
 	  }
 	  if(dynamic_cast<diamond_op*>(father->op) && !father->released){ 
 	    DEBUG_ENGINE({CoutLock lk; cout<<"    Extending diamond"<<endl;});
+	    CENGINE_TRACE("Extending diamond");
 	    Cnode* greatgrandfather=father->father()->father();
 	    for(auto& p:op->inputs)
 	      if(p==father) p=greatgrandfather;
@@ -370,6 +362,7 @@ namespace Cengine{
       }
 
       DEBUG_ENGINE({CoutLock lk; cout<<"    Enqueuing "<<node->ident()<<" ["<<node->op->str()<<"] "<<endl;});
+      CENGINE_TRACE("Enqueuing "+node->ident()+" ["+node->op->str()+"] ");
       nodes.insert(node);
 
       // Complete diamond 
@@ -433,58 +426,87 @@ namespace Cengine{
 #else
       lock_guard<mutex> lock(done_mx);
 #endif
+
       //DEBUG_ENGINE({CoutLock lk; cout<<"    Done "<<node->ident()<<endl;});
+
       Coperator* op=node->op; 
       if(op){
 	for(int i=0; i<op->inputs.size(); i++){
 	  Cnode* p=op->inputs[i];
 	  for(int j=0; j<i; j++) 
 	    if(op->inputs[j]==p){p=nullptr;}
-	  if(p!=nullptr) p->remove_dependent(node); // might kill *p
+	  if(p!=nullptr) p->remove_dependent(node);
 	}
       }
+
       for(auto p: node->dependents){
-	//cout<<p->ident()<<endl;
-	p->remove_blocker(node); // might release *p
+	p->remove_blocker(node);
       }
+
       node->computed=true;
       node->working=false;
+
       if(dynamic_cast<BatcherExecutor*>(op)){
 	delete node; // changed!
+	node=nullptr;
 	{lock_guard<mutex> lock(active_batchers_mx); active_batchers--;}
 	if(active_batchers==0) active_batchers_cv.notify_one();
       }
-      if(ready.size()==0) ready_list_empty_cv.notify_one();
-      if(ready_batchers.size()==0) ready_batchers_empty_cv.notify_one();
-      //if(node->dependents.size()==0 && node->nhandles==0){ // may lead to orphan nodes 
-      //{CoutLock lk; cout<<"Autokill "<<node->ident()<<endl;} 
-      //kill(node);
-      //}
+
+      
+      if(node && node->dependents.size()==0 && node->nhandles==0){ // may lead to orphan nodes 
+	//{CoutLock lk; cout<<"Autokill "<<node->ident()<<endl;} 
+	//tokill.erase(node);
+	//{CoutLock lk; cout<<"Tokill: "<<tokill.size()<<endl;}
+	kill(node);
+      }
+
+      if(ready.size()==0) 
+	ready_list_empty_cv.notify_one();
+
+      if(ready_batchers.size()==0) 
+	ready_batchers_empty_cv.notify_one();
+
     }
 
 
     void kill(Cnode* node){
       DEBUG_ENGINE({CoutLock lk; cout<<"    Killing "<<node->ident()<<endl;}); 
+      CENGINE_TRACE("Killing "+node->ident()); 
+
       //if(nodes.find(node)==nodes.end()){CoutLock lk; cout<<"Cannot find node "<<node->ident()<<"!!!"<<endl;}
-      if(node->dependents.size()>0) {CoutLock lk; cout<<"Caught dependent"<<endl; exit(-1); return;}
-      if(node->nhandles>0) {CoutLock lk; cout<<"Caught handle"<<endl; exit(-1); return;}
-      if(node->working){
-	{CoutLock lk; cout<<"Caught working N"<<node->id<<endl;} 
-	//exit(-1);
-	tokill.push_back(node);
-	return;
+
+      if(node->dependents.size()>0){
+	CENGINE_DUMP_TRACE();
+	CoutLock lk; cout<<"Caught dependent"<<endl; exit(-1);
       }
-      if(nodes.find(node)==nodes.end()){
-	{CoutLock lk; cout<<"Cannot find node "<<endl; cout<<"N"<<node->id<<endl;}
-	exit(-1);
+
+      if(node->nhandles>0){
+	CENGINE_DUMP_TRACE();
+	CoutLock lk; cout<<"Caught handle"<<endl; exit(-1); return;
       }
-      nodes.erase(node);
+
       {
 	lock_guard<mutex> lock(ready_mx);
 	auto it=find(ready.begin(), ready.end(),node);
 	if(it!=ready.end()) ready.erase(it);
       }
+
+      if(node->working){
+	//{CoutLock lk; cout<<"Caught working N"<<node->id<<endl;} 
+	//exit(-1);
+	//tokill.insert(node);
+	return;
+      }
+
+      if(nodes.find(node)==nodes.end()){
+	CENGINE_DUMP_TRACE();
+	CoutLock lk; cout<<"Cannot find node "<<endl; cout<<"N"<<node->id<<endl; exit(-1);
+      }
+
+      nodes.erase(node);
       delete node; 
+
      }
 
 
@@ -513,6 +535,7 @@ namespace Cengine{
 
     void flush(){ // not protected by done_mx 
       DEBUG_ENGINE({CoutLock lk; cout<<endl<<"    \e[1mFlushing engine...\e[0m"<<endl;});
+      CENGINE_TRACE("\e[1mFlushing engine...\e[0m");
       int h=0;
       bool all_done=false;
       while(true){
@@ -584,6 +607,7 @@ namespace Cengine{
 
       DEBUG_FLUSH({CoutLock lk; cout<<"done."<<endl<<endl;});
       DEBUG_ENGINE({CoutLock lk; cout<<"    \e[1mFlushed.\e[0m"<<endl<<endl;})
+      CENGINE_TRACE("\e[1mFlushed.\e[0m")
       return; 
     }
 
@@ -685,6 +709,7 @@ namespace Cengine{
       if(op){
 	DEBUG_ENGINE({CoutLock lk; 
 	    cout<<"    \e[1mWorker "<<id<<":\e[0m  "<<op->owner->ident()<<" <- "<<op->str()<<endl;});
+	CENGINE_TRACE("\e[1mWorker "+to_string(id)+":\e[0m  "+op->owner->ident()+" <- "+op->str());
 	op->exec();
 	owner->done(op->owner);
       }
@@ -697,14 +722,15 @@ namespace Cengine{
 #endif
 
 
+
+
     /*
-    void protected_kill(Cnode* node){
+    Cnode* enqueue(Coperator* op){ // Protected by done_mx
 #ifdef ENGINE_PRIORITY
-      priority_guard<3> lock(done_pmx,2); 
+      priority_guard<3> lock(done_pmx,0);
 #else
-      lock_guard<mutex> lock(done_mx);
+      lock_guard<mutex> lock(done_mx); 
 #endif
-      kill(node);
+      return enqueue_sub(op);
     }
     */
-

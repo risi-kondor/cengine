@@ -104,6 +104,18 @@ using namespace std;
 #define CTENSORB_DESTROY();
 #endif 
 
+#ifdef CENGINE_TRACEBACK_FLAG
+#define CENGINE_TRACE(msg) {traceback(msg);}
+#define CENGINE_ASSERT(condition)				\
+  if(!(condition)) {traceback.dump(); assert(condition);}
+#define CENGINE_DUMP_TRACE() traceback.dump();
+#else
+#define CENGINE_ASSERT(condition);
+#define CENGINE_TRACE(msg);
+#define CENGINE_DUMP_TRACE(); 
+#endif
+
+
 
 namespace Cengine{
 
