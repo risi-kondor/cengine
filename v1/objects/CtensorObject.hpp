@@ -5,7 +5,7 @@
 #include "ExprTemplates.hpp"
 #include "RscalarObject.hpp"
 #include "CscalarObject.hpp"
-#include "CtensorInterface.hpp"
+//#include "CtensorInterface.hpp"
 
 
 namespace Cengine{
@@ -33,74 +33,61 @@ namespace Cengine{
 
     CtensorObject(const Gdims& _dims): dims(_dims){
       hdl=Cengine_engine->push<new_ctensor_op>(_dims,-1,0);
-      //hdl=engine::new_ctensor(_dims,-1,0);
     }
 
     CtensorObject(const Gdims& _dims, const fill_raw& fill, const int device=0): dims(_dims){
       hdl=Cengine_engine->push<new_ctensor_op>(_dims,-1,device);
-      //hdl=engine::new_ctensor(_dims,-1,device);
     }
 
     CtensorObject(const Gdims& _dims, const fill_zero& fill, const int device=0): dims(_dims){
       hdl=Cengine_engine->push<new_ctensor_zero_op>(_dims,-1,device);
-      //hdl=engine::new_ctensor_zero(_dims,-1,device);
     }
 
     CtensorObject(const Gdims& _dims, const fill_identity& fill, const int device=0): dims(_dims){
       hdl=Cengine_engine->push<new_ctensor_identity_op>(_dims,-1,device);
-      //hdl=engine::new_ctensor_identity(_dims,-1,device);
     }
 
     CtensorObject(const Gdims& _dims, const fill_sequential& fill, const int device=0): dims(_dims){
       hdl=Cengine_engine->push<new_ctensor_sequential_op>(_dims,-1,device);
-      //hdl=engine::new_ctensor_sequential(_dims,-1,device);
     }
 
     CtensorObject(const Gdims& _dims, const fill_gaussian& fill, const int device=0): dims(_dims){
-      hdl=Cengine_engine->push<new_ctensor_gaussian_op>(_dims,-1,device);
-      //hdl=engine::new_ctensor_gaussian(_dims,-1,device);
+      hdl=Cengine_engine->push<new_ctensor_gaussian_op>(_dims,-1,fill.c,device);
     }
 
     CtensorObject(const Gdims& _dims, const int nbd=-1, const int device=0): 
       dims(_dims), nbu(nbd){
       hdl=Cengine_engine->push<new_ctensor_op>(_dims,nbd,device);
-      //hdl=engine::new_ctensor(_dims,nbd,device);
     }
 
     CtensorObject(const Gdims& _dims, const int nbd, const fill_raw& fill, const int device=0): 
       dims(_dims), nbu(nbd){
       hdl=Cengine_engine->push<new_ctensor_op>(_dims,nbd,device);
-      //hdl=engine::new_ctensor(_dims,nbd,device);
     }
 
     CtensorObject(const Gdims& _dims, const int nbd, const fill_zero& fill, const int device=0): 
       dims(_dims), nbu(nbd){
       hdl=Cengine_engine->push<new_ctensor_zero_op>(_dims,nbd,device);
-      //hdl=engine::new_ctensor_zero(_dims,nbd,device);
     }
 
     CtensorObject(const Gdims& _dims, const int nbd, const fill_ones& fill, const int device=0): 
       dims(_dims), nbu(nbd){
       hdl=Cengine_engine->push<new_ctensor_ones_op>(_dims,nbd,device);
-      //hdl=engine::new_ctensor_ones(_dims,nbd,device);
     }
 
     CtensorObject(const Gdims& _dims, const int nbd, const fill_identity& fill, const int device=0): 
       dims(_dims), nbu(nbd){
       hdl=Cengine_engine->push<new_ctensor_identity_op>(_dims,nbd,device);
-      //hdl=engine::new_ctensor_identity(_dims,nbd,device);
     }
 
     CtensorObject(const Gdims& _dims, const int nbd, const fill_sequential& fill, const int device=0): 
       dims(_dims), nbu(nbd){
       hdl=Cengine_engine->push<new_ctensor_sequential_op>(_dims,nbd,device);
-      //hdl=engine::new_ctensor_sequential(_dims,nbd,device);
     }
 
     CtensorObject(const Gdims& _dims, const int nbd, const fill_gaussian& fill, const int device=0): 
       dims(_dims), nbu(nbd){
-      hdl=Cengine_engine->push<new_ctensor_gaussian_op>(_dims,nbd,device);
-      //hdl=engine::new_ctensor_gaussian(_dims,nbd,device);
+      hdl=Cengine_engine->push<new_ctensor_gaussian_op>(_dims,nbd,fill.c,device);
     }
 
 
@@ -204,7 +191,7 @@ namespace Cengine{
 
 
     void clear(){
-      engine::ctensor_zero(hdl);
+      replace(hdl,Cengine_engine->push<ctensor_zero_op>(hdl));
     }
 
 
@@ -246,58 +233,58 @@ namespace Cengine{
 
 
     void add(const CtensorObject& x){
-      replace(hdl,engine::ctensor_add(hdl,x.hdl));
+      replace(hdl,Cengine_engine->push<ctensor_add_op>(hdl,x.hdl));
     }
 
     void add_conj(const CtensorObject& x){
-      replace(hdl,engine::ctensor_add_conj(hdl,x.hdl));
+      replace(hdl,Cengine_engine->push<ctensor_add_conj_op>(hdl,x.hdl));
     }
 
     void add_transp(const CtensorObject& x){
-      replace(hdl,engine::ctensor_add_transp(hdl,x.hdl));
+      replace(hdl,Cengine_engine->push<ctensor_add_transp_op>(hdl,x.hdl));
     }
 
     void add_herm(const CtensorObject& x){
-      replace(hdl,engine::ctensor_add_herm(hdl,x.hdl));
+      replace(hdl,Cengine_engine->push<ctensor_add_herm_op>(hdl,x.hdl));
     }
 
     void subtract(const CtensorObject& x){
-      replace(hdl,engine::ctensor_add(hdl,x.hdl));
+      replace(hdl,Cengine_engine->push<ctensor_add_op>(hdl,x.hdl));
     }
 
     void add(const CtensorObject& x, const float c){
-      replace(hdl,engine::ctensor_add_times_real(hdl,x.hdl,c));
+      replace(hdl,Cengine_engine->push<ctensor_add_times_real_op>(hdl,x.hdl,c));
     }
 
     void add(const CtensorObject& x, const complex<float> c){
-      replace(hdl,engine::ctensor_add_times_complex(hdl,x.hdl,c));
+      replace(hdl,Cengine_engine->push<ctensor_add_times_complex_op>(hdl,x.hdl,c));
     }
 
     void add(const CtensorObject& x, const RscalarObject& c){
-      replace(hdl,engine::ctensor_add_prod_rA(hdl,c.hdl,x.hdl));
+      replace(hdl,Cengine_engine->push<ctensor_add_prod_rA_op>(hdl,c.hdl,x.hdl));
     }
 
     void add(const CtensorObject& x, const CscalarObject& c){
-      replace(hdl,engine::ctensor_add_prod_cA(hdl,c.hdl,x.hdl));
+      replace(hdl,Cengine_engine->push<ctensor_add_prod_cA_op>(hdl,c.hdl,x.hdl));
     }
 
     void add_cconj(const CtensorObject& x, const CscalarObject& c){
-      replace(hdl,engine::ctensor_add_prod_cc_A(hdl,c.hdl,x.hdl));
+      replace(hdl,Cengine_engine->push<ctensor_add_prod_cc_A_op>(hdl,c.hdl,x.hdl));
     }
    
     void add_conj(const CtensorObject& x, const CscalarObject& c){
-      replace(hdl,engine::ctensor_add_prod_c_Ac(hdl,c.hdl,x.hdl));
+      replace(hdl,Cengine_engine->push<ctensor_add_prod_c_Ac_op>(hdl,c.hdl,x.hdl));
     }
 
     
     void add_plus(const CtensorObject& x, const CtensorObject& y){
-      replace(hdl,engine::ctensor_add(hdl,x.hdl));
-      replace(hdl,engine::ctensor_add(hdl,y.hdl));
+      replace(hdl,Cengine_engine->push<ctensor_add_op>(hdl,x.hdl));
+      replace(hdl,Cengine_engine->push<ctensor_add_op>(hdl,y.hdl));
     }
 
     void add_minus(const CtensorObject& x, const CtensorObject& y){
-      replace(hdl,engine::ctensor_add(hdl,x.hdl));
-      replace(hdl,engine::ctensor_subtract(hdl,y.hdl));
+      replace(hdl,Cengine_engine->push<ctensor_add_op>(hdl,x.hdl));
+      replace(hdl,Cengine_engine->push<ctensor_subtract_op>(hdl,y.hdl));
     }
 
 
@@ -336,11 +323,11 @@ namespace Cengine{
 
 
     void add_ReLU(const CtensorObject& x, const float c=0){
-      replace(hdl,engine::ctensor_add_ReLU(hdl,x.hdl,c));
+      replace(hdl,Cengine_engine->push<ctensor_add_ReLU_op>(hdl,x.hdl,c));
     }
 
     void add_ReLU_back(const CtensorObject& g, const CtensorObject& x, const float c=0){
-      replace(hdl,engine::ctensor_add_ReLU_back(hdl,g.hdl,x.hdl,c));
+      replace(hdl,Cengine_engine->push<ctensor_add_ReLU_back_op>(hdl,g.hdl,x.hdl,c));
     }
 
     

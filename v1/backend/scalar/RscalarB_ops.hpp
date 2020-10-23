@@ -55,14 +55,19 @@ namespace Cengine{
 
     int nbu;
     int device;
+    float c=1.0;
 
     new_rscalar_gaussian_op(const int _nbu=-1, const int _device=0):
       nbu(_nbu), device(_device){
     }
 
+    new_rscalar_gaussian_op(const int _nbu, const float _c, const int _device=0):
+      nbu(_nbu), device(_device), c(_c){
+    }
+
     virtual void exec(){
       assert(!owner->obj);
-      owner->obj=new RscalarB(nbu,fill::gaussian,device);
+      owner->obj=new RscalarB(nbu,fill::gaussian,c,device);
     }
     
     string str() const{

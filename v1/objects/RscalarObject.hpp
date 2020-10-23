@@ -39,7 +39,7 @@ namespace Cengine{
     }
 
     RscalarObject(const fill_gaussian& fill, const int device=0){
-      hdl=(*Cengine_engine)(new new_rscalar_zero_op(-1,device));
+      hdl=(*Cengine_engine)(new new_rscalar_gaussian_op(-1,fill.c,device));
     }
 
     RscalarObject(const int x){
@@ -67,7 +67,7 @@ namespace Cengine{
     }
 
     RscalarObject(const int nbd, const fill_gaussian& fill, const int device=0): nbu(nbd){
-      hdl=(*Cengine_engine)(new new_rscalar_gaussian_op(nbd,device));
+      hdl=(*Cengine_engine)(new new_rscalar_gaussian_op(nbd,fill.c,device));
     }
 
 

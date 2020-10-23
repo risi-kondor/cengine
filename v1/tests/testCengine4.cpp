@@ -3,13 +3,17 @@
 
 using namespace Cengine;
 
+typedef RscalarObject Rscalar;
 typedef CscalarObject Cscalar;
 typedef CtensorObject Ctensor;
 
 
 int main(int argc, char** argv){
 
-  Cscalar c(2);
+  Rscalar a(fill::gaussian(20));
+  print("a",a);
+
+  Cscalar c(2.0);
   cout<<"c="<<c<<endl;
 
   Ctensor A({4,4},fill::identity);

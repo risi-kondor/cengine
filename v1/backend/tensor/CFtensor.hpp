@@ -148,11 +148,11 @@ namespace Cengine{
       to_device(dev);
     }
 
-    CFtensor(const Gdims& _dims, const fill_gaussian& dummy, const int dev=0):
+    CFtensor(const Gdims& _dims, const fill_gaussian& dummy, const float c, const int dev=0):
       CFtensor(_dims){
       normal_distribution<double> distr;
-      for(int i=0; i<asize; i++) arr[i]=distr(rndGen);
-      for(int i=0; i<asize; i++) arrc[i]=distr(rndGen);
+      for(int i=0; i<asize; i++) arr[i]=c*distr(rndGen);
+      for(int i=0; i<asize; i++) arrc[i]=c*distr(rndGen);
       to_device(dev);
     }
 

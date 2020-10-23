@@ -58,6 +58,11 @@ namespace Cengine{
       CTENSORB_CREATE();
     }
 	  
+    CtensorB(const Gdims& _dims, const int _nbu, const fill_gaussian& fill, const float c, const int dev=0):
+      CFtensor(_dims.prepend(_nbu),fill,c,dev), dims(_dims), nbu(_nbu){
+      CTENSORB_CREATE();
+    }
+	  
 
   public: // ---- Copying -----------------------------------------------------------------------------------
 

@@ -61,9 +61,9 @@ namespace Cengine{
       RSCALARB_CREATE();
     }
  
-    RscalarB(const fill_gaussian& fill, const device_id& dev=0){
+    RscalarB(const fill_gaussian& fill, const float c, const device_id& dev=0){
       normal_distribution<float> distr;
-      val=distr(rndGen);
+      val=c*distr(rndGen);
       RSCALARB_CREATE();
     }
 
@@ -80,11 +80,11 @@ namespace Cengine{
       else std::fill(arr,arr+nbu,0);
     }
  
-    RscalarB(const int _nbu, const fill_gaussian& fill, const device_id& dev=0):
+    RscalarB(const int _nbu, const fill_gaussian& fill, const float c, const device_id& dev=0):
       RscalarB(_nbu,fill::raw){
       normal_distribution<float> distr;
-      if(nbu==-1) val=distr(rndGen);
-      else for(int i=0; i<nbu; i++) arr[i]=distr(rndGen);
+      if(nbu==-1) val=c*distr(rndGen);
+      else for(int i=0; i<nbu; i++) arr[i]=c*distr(rndGen);
     }
 
     RscalarB(const int _nbu, const float c, const device_id& dev=0): 

@@ -62,9 +62,9 @@ namespace Cengine{
       CSCALARB_CREATE();
     }
  
-    CscalarB(const fill_gaussian& fill, const device_id& dev=0){
+    CscalarB(const fill_gaussian& fill, const float c, const device_id& dev=0){
       normal_distribution<float> distr;
-      val=complex<float>(distr(rndGen),distr(rndGen));
+      val=complex<float>(distr(rndGen)*c,distr(rndGen)*c);
       CSCALARB_CREATE();
     }
 
@@ -81,11 +81,11 @@ namespace Cengine{
       else std::fill(arr,arr+nbu,0);
     }
  
-    CscalarB(const int _nbu, const fill_gaussian& fill, const device_id& dev=0):
+    CscalarB(const int _nbu, const fill_gaussian& fill, const float c, const device_id& dev=0):
       CscalarB(_nbu,fill::raw){
       normal_distribution<float> distr;
-      if(nbu==-1) val=complex<float>(distr(rndGen),distr(rndGen));
-      else for(int i=0; i<nbu; i++) arr[i]=complex<float>(distr(rndGen),distr(rndGen));
+      if(nbu==-1) val=complex<float>(distr(rndGen)*c,distr(rndGen)*c);
+      else for(int i=0; i<nbu; i++) arr[i]=complex<float>(distr(rndGen)*c,distr(rndGen))*c;
     }
 
     CscalarB(const int _nbu, const complex<float> c, const device_id& dev=0): 

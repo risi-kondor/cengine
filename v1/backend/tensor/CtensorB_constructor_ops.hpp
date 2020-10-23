@@ -127,14 +127,19 @@ namespace Cengine{
     Gdims dims;
     int nbu;
     int device;
+    float c;
 
     new_ctensor_gaussian_op(const Gdims& _dims, const int _nbu=-1, const int _device=0):
       dims(_dims), nbu(_nbu), device(_device){
     }
 
+    new_ctensor_gaussian_op(const Gdims& _dims, const int _nbu, const float _c, const int _device=0):
+      dims(_dims), nbu(_nbu), c(_c), device(_device){
+    }
+
     virtual void exec(){
       assert(!owner->obj);
-      owner->obj=new CtensorB(dims,nbu,fill::gaussian,device);
+      owner->obj=new CtensorB(dims,nbu,fill::gaussian,c,device);
     }
 
     string str() const{

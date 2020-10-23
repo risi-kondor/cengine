@@ -135,12 +135,23 @@ namespace Cengine{
   struct fill_identity: public fill_pattern{fill_identity(){}};
   struct fill_uniform: public fill_pattern{fill_uniform(){}};
   struct fill_tensor: public fill_pattern{fill_tensor(){}};
-  struct fill_gaussian: public fill_pattern{fill_gaussian(){}};
+
+  struct fill_gaussian: public fill_pattern{
+  public:
+    float c=1.0;
+    fill_gaussian(){}
+    explicit fill_gaussian(const float _c): c(_c){}
+    fill_gaussian operator()(const float _c) const {return fill_gaussian(_c);}
+  };
+
   struct fill_cgaussian: public fill_pattern{fill_cgaussian(){}};
+
   struct fill_bernoulli: public fill_pattern{
     double p=0.5;
     fill_bernoulli(){}
-    fill_bernoulli(const double _p):p(_p){}};
+    fill_bernoulli(const double _p):p(_p){}
+  };
+  
   struct fill_symm_bernoulli: public fill_pattern{
     double p=0.5;
     fill_symm_bernoulli(){}

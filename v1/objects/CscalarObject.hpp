@@ -4,8 +4,10 @@
 #include "Cengine_base.hpp"
 #include "ExprTemplates.hpp"
 #include "RscalarObject.hpp"
+#include "CscalarB_ops.hpp"
+#include "InterfaceBase.hpp"
 
-#include "CscalarInterface.hpp"
+//#include "CscalarInterface.hpp"
 
 extern Cengine::Cengine* Cengine_engine;
 
@@ -42,7 +44,7 @@ namespace Cengine{
     }
 
     CscalarObject(const fill_gaussian& fill, const int device=0){
-      hdl=Cengine_engine->push<new_cscalar_gaussian_op>(-1,device);
+      hdl=Cengine_engine->push<new_cscalar_gaussian_op>(-1,fill.c,device);
     }
 
     CscalarObject(const complex<float> x, const int device=0){
@@ -74,7 +76,7 @@ namespace Cengine{
     }
 
     CscalarObject(const int nbd, const fill_gaussian& fill, const int device=0): nbu(nbd){
-      hdl=Cengine_engine->push<new_cscalar_gaussian_op>(nbd,device);
+      hdl=Cengine_engine->push<new_cscalar_gaussian_op>(nbd,fill.c,device);
     }
 
 
@@ -182,7 +184,7 @@ namespace Cengine{
     }
 
     CscalarObject plus(const CscalarObject& x){
-      return CscalarObject(engine::cscalar_add(hdl,x.hdl));
+      return CscalarObject(Cengine_engine->push<cscalar_add_op>(hdl,x.hdl));
     }
 
 
@@ -241,27 +243,27 @@ namespace Cengine{
 
 
     void add_inp(const CscalarObject& x, const CscalarObject& y){
-      replace(hdl,engine::cscalar_add_prodc(hdl,x.hdl,y.hdl));
+      replace(hdl,Cengine_engine->push<cscalar_add_prodc_op>(hdl,x.hdl,y.hdl));
     }
 
     void add_div(const CscalarObject& x, const CscalarObject& y){
-      replace(hdl,engine::cscalar_add_div(hdl,x.hdl,y.hdl));
+      replace(hdl,Cengine_engine->push<cscalar_add_div_op>(hdl,x.hdl,y.hdl));
     }
 
     void add_div_back0(const CscalarObject& g, const CscalarObject& y){
-      replace(hdl,engine::cscalar_add_div_back0(hdl,g.hdl,y.hdl));
+      replace(hdl,Cengine_engine->push<cscalar_add_div_back0_op>(hdl,g.hdl,y.hdl));
     }
 
     void add_div_back1(const CscalarObject& g, const CscalarObject& x, const CscalarObject& y){
-      replace(hdl,engine::cscalar_add_div_back1(hdl,g.hdl,x.hdl,y.hdl));
+      replace(hdl,Cengine_engine->push<cscalar_add_div_back1_op>(hdl,g.hdl,x.hdl,y.hdl));
     }
 
     void add_abs(const CscalarObject& x){
-      replace(hdl,engine::cscalar_add_abs(hdl,x.hdl));
+      replace(hdl,Cengine_engine->push<cscalar_add_abs_op>(hdl,x.hdl));
     }
 
     void add_abs_back(const CscalarObject& g, const CscalarObject& x){
-      replace(hdl,engine::cscalar_add_abs_back(hdl,g.hdl,x.hdl));
+      replace(hdl,Cengine_engine->push<cscalar_add_abs_back_op>(hdl,g.hdl,x.hdl));
     }
 
     void add_norm2_back(const CscalarObject& g, const CscalarObject& x){
@@ -270,27 +272,27 @@ namespace Cengine{
     }
 
     void add_pow(const CscalarObject& x, const float p, const complex<float> c=1.0){
-      replace(hdl,engine::cscalar_add_pow(hdl,x.hdl,p,c));
+      replace(hdl,Cengine_engine->push<cscalar_add_pow_op>(hdl,x.hdl,p,c));
     }
 
     void add_exp(const CscalarObject& x){
-      replace(hdl,engine::cscalar_add_exp(hdl,x.hdl));
+      replace(hdl,Cengine_engine->push<cscalar_add_exp_op>(hdl,x.hdl));
     }
 
     void add_ReLU(const CscalarObject& x, const float c=0){
-      replace(hdl,engine::cscalar_add_ReLU(hdl,x.hdl,c));
+      replace(hdl,Cengine_engine->push<cscalar_add_ReLU_op>(hdl,x.hdl,c));
     }
 
     void add_ReLU_back(const CscalarObject& g, const CscalarObject& x, const float c=0){
-      replace(hdl,engine::cscalar_add_ReLU_back(hdl,g.hdl,x.hdl,c));
+      replace(hdl,Cengine_engine->push<cscalar_add_ReLU_back_op>(hdl,g.hdl,x.hdl,c));
     }
 
     void add_sigmoid(const CscalarObject& x){
-      replace(hdl,engine::cscalar_add_sigmoid(hdl,x.hdl));
+      replace(hdl,Cengine_engine->push<cscalar_add_sigmoid_op>(hdl,x.hdl));
     }
 
     void add_sigmoid_back(const CscalarObject& g, const CscalarObject& x){
-      replace(hdl,engine::cscalar_add_sigmoid_back(hdl,g.hdl,x.hdl));
+      replace(hdl,Cengine_engine->push<cscalar_add_sigmoid_back_op>(hdl,g.hdl,x.hdl));
     }
 
 
