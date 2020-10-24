@@ -9,12 +9,13 @@ void add_Mprod(const CFtensor& x, const CFtensor& y, const int nx=1, const int n
   const int K=x.combined_size(x.k-nx,x.k);
   assert(y.combined_size(0,ny)==K);
 
-  //cout<<dims<<endl; 
   const int I=x.combined_size(0,x.k-nx);
   const int J=y.combined_size(ny,y.k);
   assert(asize==I*J);
 
   if(device==0){
+    x.to_device(0);
+    y.to_device(0);
 
     const int istridex=K;
     const int istrider=J;
@@ -53,7 +54,7 @@ void add_Mprod(const CFtensor& x, const CFtensor& y, const int nx=1, const int n
     if (selector==0||selector==3) alpha1=-1.0;
     if (selector==2||selector==3) alpha2=-1.0;
     if (selector==1||selector==3) alpha3=-1.0;
-
+    
     CUBLAS_SAFE(cublasSgemm(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_N,J,I,K,&alpha0,
 	y.arrg,J,x.arrg,K,&beta,arrg,J)); 
     CUBLAS_SAFE(cublasSgemm(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_N,J,I,K,&alpha1,

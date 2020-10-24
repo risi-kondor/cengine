@@ -16,6 +16,7 @@ namespace Cengine{
 
     Gdims dims;
     int nbu=-1;
+    int device=0; 
 
     Chandle* hdl;
 
@@ -35,58 +36,63 @@ namespace Cengine{
       hdl=Cengine_engine->push<new_ctensor_op>(_dims,-1,0);
     }
 
-    CtensorObject(const Gdims& _dims, const fill_raw& fill, const int device=0): dims(_dims){
+    CtensorObject(const Gdims& _dims, const fill_raw& fill, const int _device=0): 
+      dims(_dims), device(_device){
       hdl=Cengine_engine->push<new_ctensor_op>(_dims,-1,device);
     }
 
-    CtensorObject(const Gdims& _dims, const fill_zero& fill, const int device=0): dims(_dims){
+    CtensorObject(const Gdims& _dims, const fill_zero& fill, const int _device=0): 
+      dims(_dims), device(_device){
       hdl=Cengine_engine->push<new_ctensor_zero_op>(_dims,-1,device);
     }
 
-    CtensorObject(const Gdims& _dims, const fill_identity& fill, const int device=0): dims(_dims){
+    CtensorObject(const Gdims& _dims, const fill_identity& fill, const int _device=0): 
+      dims(_dims), device(_device){
       hdl=Cengine_engine->push<new_ctensor_identity_op>(_dims,-1,device);
     }
 
-    CtensorObject(const Gdims& _dims, const fill_sequential& fill, const int device=0): dims(_dims){
+    CtensorObject(const Gdims& _dims, const fill_sequential& fill, const int _device=0): 
+      dims(_dims), device(_device){
       hdl=Cengine_engine->push<new_ctensor_sequential_op>(_dims,-1,device);
     }
 
-    CtensorObject(const Gdims& _dims, const fill_gaussian& fill, const int device=0): dims(_dims){
+    CtensorObject(const Gdims& _dims, const fill_gaussian& fill, const int _device=0): 
+      dims(_dims), device(_device){
       hdl=Cengine_engine->push<new_ctensor_gaussian_op>(_dims,-1,fill.c,device);
     }
 
-    CtensorObject(const Gdims& _dims, const int nbd=-1, const int device=0): 
-      dims(_dims), nbu(nbd){
+    CtensorObject(const Gdims& _dims, const int nbd=-1, const int _device=0): 
+      dims(_dims), nbu(nbd), device(_device){
       hdl=Cengine_engine->push<new_ctensor_op>(_dims,nbd,device);
     }
 
-    CtensorObject(const Gdims& _dims, const int nbd, const fill_raw& fill, const int device=0): 
-      dims(_dims), nbu(nbd){
+    CtensorObject(const Gdims& _dims, const int nbd, const fill_raw& fill, const int _device=0): 
+      dims(_dims), nbu(nbd), device(_device){
       hdl=Cengine_engine->push<new_ctensor_op>(_dims,nbd,device);
     }
 
-    CtensorObject(const Gdims& _dims, const int nbd, const fill_zero& fill, const int device=0): 
-      dims(_dims), nbu(nbd){
+    CtensorObject(const Gdims& _dims, const int nbd, const fill_zero& fill, const int _device=0): 
+      dims(_dims), nbu(nbd), device(_device){
       hdl=Cengine_engine->push<new_ctensor_zero_op>(_dims,nbd,device);
     }
 
-    CtensorObject(const Gdims& _dims, const int nbd, const fill_ones& fill, const int device=0): 
-      dims(_dims), nbu(nbd){
+    CtensorObject(const Gdims& _dims, const int nbd, const fill_ones& fill, const int _device=0): 
+      dims(_dims), nbu(nbd), device(_device){
       hdl=Cengine_engine->push<new_ctensor_ones_op>(_dims,nbd,device);
     }
 
-    CtensorObject(const Gdims& _dims, const int nbd, const fill_identity& fill, const int device=0): 
-      dims(_dims), nbu(nbd){
+    CtensorObject(const Gdims& _dims, const int nbd, const fill_identity& fill, const int _device=0): 
+      dims(_dims), nbu(nbd), device(_device){
       hdl=Cengine_engine->push<new_ctensor_identity_op>(_dims,nbd,device);
     }
 
-    CtensorObject(const Gdims& _dims, const int nbd, const fill_sequential& fill, const int device=0): 
-      dims(_dims), nbu(nbd){
+    CtensorObject(const Gdims& _dims, const int nbd, const fill_sequential& fill, const int _device=0): 
+      dims(_dims), nbu(nbd), device(_device){
       hdl=Cengine_engine->push<new_ctensor_sequential_op>(_dims,nbd,device);
     }
 
-    CtensorObject(const Gdims& _dims, const int nbd, const fill_gaussian& fill, const int device=0): 
-      dims(_dims), nbu(nbd){
+    CtensorObject(const Gdims& _dims, const int nbd, const fill_gaussian& fill, const int _device=0): 
+      dims(_dims), nbu(nbd), device(_device){
       hdl=Cengine_engine->push<new_ctensor_gaussian_op>(_dims,nbd,fill.c,device);
     }
 
@@ -374,7 +380,7 @@ namespace Cengine{
     }
 
     CtensorObject operator*(const CscalarObject& c){
-      CtensorObject R(dims,nbu,fill::zero);
+      CtensorObject R(dims,nbu,fill::zero,device);
       R.add(*this,c);
       return R;
     }
@@ -382,7 +388,7 @@ namespace Cengine{
     CtensorObject operator*(const CtensorObject& y){
       int I=dims.combined(0,dims.k()-1);
       int J=y.dims.combined(1,y.dims.k());
-      CtensorObject R({I,J},fill::zero);
+      CtensorObject R({I,J},fill::zero,device);
       R.add_Mprod(*this,y);
       return R;
     }
@@ -390,14 +396,14 @@ namespace Cengine{
     CtensorObject operator*(const Transpose<CtensorObject>& y){
       int I=dims.combined(0,dims.k()-1);
       int J=y.obj.dims.combined(0,y.obj.dims.k()-1);
-      CtensorObject R({I,J},fill::zero);
+      CtensorObject R({I,J},fill::zero,device);
       R.add_Mprod_AT(*this,y.obj);
       return R;
     }
 
     CtensorObject column_norms() const{
       assert(dims.size()>=2);
-      CtensorObject R(dims.remove(dims.size()-2),nbu,fill::zero);
+      CtensorObject R(dims.remove(dims.size()-2),nbu,fill::zero,device);
       R.add_column_norms(*this);
       return R;
     }

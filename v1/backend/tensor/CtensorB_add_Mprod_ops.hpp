@@ -48,7 +48,7 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       CtensorB& obj=asCtensorB(owner,__PRETTY_FUNCTION__); 
-      if(Tsel==0) obj.add_Mprod<0>(asCtensorB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
+      if(Tsel==0) obj.add_Mprod<Csel>(asCtensorB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
       if(Tsel==1) obj.add_Mprod_TA<Csel>(asCtensorB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
       if(Tsel==2) obj.add_Mprod_AT<Csel>(asCtensorB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
     }
@@ -63,9 +63,10 @@ namespace Cengine{
       CtensorBpack X(nodes,1);
       CtensorBpack Y(nodes,2);
 
-      R.to_device(0);
-      X.to_device(0);
-      Y.to_device(0);
+      //int dev=R.device;
+      //R.to_device(0);
+      //X.to_device(dev);
+      //Y.to_device(dev);
       
       if(Tsel==0) R.add_Mprod<Csel>(X,Y);
       if(Tsel==1) R.add_Mprod_TA<Csel>(X,Y);
@@ -73,10 +74,11 @@ namespace Cengine{
 
       const int N=nodes.size();
       for(int i=0; i<N; i++)
-	nodes[i]->op->owner->obj=R.pack[i];
+      nodes[i]->op->owner->obj=R.pack[i];
 
-      for(int i=0; i<N; i++)
+      for(int i=0; i<N; i++){
 	engine->done(nodes[i]);
+      }
 
       DEBUG_ENGINE({CoutLock lk; cout<<"    \e[1mDone.\e[0m"<<endl;});
     }

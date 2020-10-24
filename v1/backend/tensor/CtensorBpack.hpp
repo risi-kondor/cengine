@@ -28,15 +28,18 @@ namespace Cengine{
       const int N=x.size();
       assert(N>0);
       assert(dynamic_cast<CtensorB*>(x[0]->op->inputs[s]->obj));
+      device=dynamic_cast<CtensorB*>(x[0]->op->inputs[s]->obj)->device;
       pack.resize(N);
-      for(int i=0; i<N; i++)
+      for(int i=0; i<N; i++){
 	pack[i]=dynamic_cast<CtensorB*>(x[i]->op->inputs[s]->obj);
+	pack[i]->to_device(device);
+      }
     }
 
 
     ~CtensorBpack(){
       if(parr) CUDA_SAFE(cudaFree(parr));
-      if(parrc) CUDA_SAFE(cudaFree(parr));
+      if(parrc) CUDA_SAFE(cudaFree(parrc));
     }
 
 
@@ -92,6 +95,7 @@ namespace Cengine{
     void renew_parr() const{
 
       if(parr) CUDA_SAFE(cudaFree(parr));
+      if(parrc) CUDA_SAFE(cudaFree(parrc));
 
       to_device(1);
       const int N=pack.size(); 
@@ -115,9 +119,9 @@ namespace Cengine{
     void to_device(const device_id& _dev) const{
       if(_dev.id()==device) return; 
       parr_valid=false; 
-      for(auto p: pack)
-	p->to_device(_dev.id());
       device=_dev.id();
+      for(auto p: pack)
+	p->to_device(device);
     }
 
 

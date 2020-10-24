@@ -127,7 +127,7 @@ namespace Cengine{
     Gdims dims;
     int nbu;
     int device;
-    float c;
+    float c=1.0;
 
     new_ctensor_gaussian_op(const Gdims& _dims, const int _nbu=-1, const int _device=0):
       dims(_dims), nbu(_nbu), device(_device){

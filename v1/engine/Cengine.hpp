@@ -449,10 +449,14 @@ namespace Cengine{
       if(dynamic_cast<BatcherExecutor*>(op)){
 	delete node; // changed!
 	node=nullptr;
-	{lock_guard<mutex> lock(active_batchers_mx); active_batchers--;}
+	//cout<<"p"<<endl;
+	{lock_guard<mutex> lock(active_batchers_mx); active_batchers--;}//why was this wrong?
+	//active_batchers--;
+	//cout<<"u"<<endl;
 	if(active_batchers==0) active_batchers_cv.notify_one();
+	//cout<<"w"<<endl;
       }
-
+      //cout<<"s"<<endl;
       
       if(node && node->dependents.size()==0 && node->nhandles==0){ // may lead to orphan nodes 
 	//{CoutLock lk; cout<<"Autokill "<<node->ident()<<endl;} 
@@ -466,6 +470,7 @@ namespace Cengine{
 
       if(ready_batchers.size()==0) 
 	ready_batchers_empty_cv.notify_one();
+      //cout<<"u"<<endl;
 
     }
 
@@ -558,20 +563,25 @@ namespace Cengine{
 	  //{CoutLock lk; cout<<"...done"<<endl;}
 	}
 
-	unique_lock<mutex> block(active_batchers_mx);
-	active_batchers_cv.wait(block,[this](){
-	    DEBUG_FLUSH(if(active_batchers>0) 
-		{CoutLock lk; cout<<"Waiting for "<<active_batchers<<" active batchers"<<endl;});
-	    return active_batchers==0;
-	  });
+	{
+	  unique_lock<mutex> block(active_batchers_mx);
+	  active_batchers_cv.wait(block,[this](){
+	      DEBUG_FLUSH(if(active_batchers>0) 
+		  {CoutLock lk; cout<<"Waiting for "<<active_batchers<<" active batchers"<<endl;});
+	      return active_batchers==0;
+	    });
+	}
 	//cout<<"."<<endl; 
 
-	unique_lock<mutex> wlock(active_workers_mx);
-	active_workers_cv.wait(wlock,[this](){
-	    DEBUG_FLUSH(if(active_workers>0)
-		{CoutLock lk; cout<<"Waiting for "<<active_workers<<" workers"<<endl;});
-	    return active_workers==0;
-	  });
+	{
+	  unique_lock<mutex> wlock(active_workers_mx);
+	  active_workers_cv.wait(wlock,[this](){
+	      DEBUG_FLUSH(if(active_workers>0)
+		  {CoutLock lk; cout<<"Waiting for "<<active_workers<<" workers"<<endl;});
+	      return active_workers==0;
+	    });
+	}
+
 	DEBUG_FLUSH(cout<<"."<<endl;);
 
 	for(auto p:batchers)
@@ -657,12 +667,14 @@ namespace Cengine{
       Coperator* op; 
 
       worker->working=false; 
-      {lock_guard<mutex> lock(active_workers_mx); active_workers--;}
+      {lock_guard<mutex> lock(active_workers_mx); active_workers--;} // probably don't need lock
+      //{CoutLock lk; cout<<"d"<<worker->id<<"("<<active_workers<<")"<<endl;}
       //cout<<active_workers<<endl;
       if(active_workers==0) active_workers_cv.notify_one();
       
       unique_lock<mutex> lock(get_task_mx);
       get_task_cv.wait(lock,[this](){return ready.size()>0 || ready_batchers.size()>0 || shutdown;});
+
       {
 #ifdef ENGINE_PRIORITY
 	priority_guard<3> lock(done_pmx,2); 
@@ -671,8 +683,7 @@ namespace Cengine{
 #endif
 	lock_guard<mutex> lock2(ready_mx);
 
-	{lock_guard<mutex> lock(active_workers_mx); 
-	  active_workers++;}
+	{lock_guard<mutex> lock(active_workers_mx); active_workers++;}
 
 	if(ready_batchers.size()>0){
 	  worker->working=true;
@@ -694,6 +705,7 @@ namespace Cengine{
 	}
 	
 	return nullptr;
+
       }
 
     }      
@@ -712,6 +724,7 @@ namespace Cengine{
 	CENGINE_TRACE("\e[1mWorker "+to_string(id)+":\e[0m  "+op->owner->ident()+" <- "+op->str());
 	op->exec();
 	owner->done(op->owner);
+	//{CoutLock lk; cout<<id<<"."<<endl;}
       }
     }
   }

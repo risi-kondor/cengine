@@ -10,8 +10,9 @@ void add_Mprod(const CtensorBpack& x, const CtensorBpack& y, const int nx=1, con
   if(device==0){
     x.to_device(0);
     y.to_device(0);
-    for(int i=0; i<N; i++)
+    for(int i=0; i<N; i++){
       pack[i]->add_Mprod<selector>(*x.pack[i],*y.pack[i],nx,ny);
+    }
     return; 
   }
 
@@ -27,7 +28,6 @@ void add_Mprod(const CtensorBpack& x, const CtensorBpack& y, const int nx=1, con
 
   const int I=x.pack[0]->combined_size(0,xk-nx);
   const int J=y.pack[0]->combined_size(ny,yk);
-  //assert(asize==I*J);
 
   float alpha0=1.0;
   float alpha1=1.0;
@@ -38,6 +38,10 @@ void add_Mprod(const CtensorBpack& x, const CtensorBpack& y, const int nx=1, con
   if (selector==0||selector==3) alpha1=-1.0;
   if (selector==2||selector==3) alpha2=-1.0;
   if (selector==1||selector==3) alpha3=-1.0;
+
+  get_parr();
+  x.get_parr();
+  y.get_parr();
 
   CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_N,J,I,K,&alpha0,
       const_cast<const float**>(y.parr),J,const_cast<const float**>(x.parr),K,&beta,parr,J,N)); 
@@ -90,6 +94,10 @@ void add_Mprod_AT(const CtensorBpack& x, const CtensorBpack& y, const int nx=1, 
   if (selector==2||selector==3) alpha2=-1.0;
   if (selector==1||selector==3) alpha3=-1.0;
 
+  get_parr();
+  x.get_parr();
+  y.get_parr();
+
   CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,K,&alpha0,
       const_cast<const float**>(y.parr),J,const_cast<const float**>(x.parr),K,&beta,parr,J,N)); 
   CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,K,&alpha1,
@@ -140,6 +148,10 @@ void add_Mprod_TA(const CtensorBpack& x, const CtensorBpack& y, const int nx=1, 
   if (selector==0||selector==3) alpha1=-1.0;
   if (selector==2||selector==3) alpha2=-1.0;
   if (selector==1||selector==3) alpha3=-1.0;
+
+  get_parr();
+  x.get_parr();
+  y.get_parr();
 
   CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_T,J,I,K,&alpha0,
       const_cast<const float**>(y.parr),J,const_cast<const float**>(x.parr),K,&beta,parr,J,N)); 
