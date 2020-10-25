@@ -427,7 +427,7 @@ namespace Cengine{
       lock_guard<mutex> lock(done_mx);
 #endif
 
-      //DEBUG_ENGINE({CoutLock lk; cout<<"    Done "<<node->ident()<<endl;});
+      DEBUG_ENGINE({CoutLock lk; cout<<"    Done "<<node->ident()<<endl;});
 
       Coperator* op=node->op; 
       if(op){
@@ -685,6 +685,8 @@ namespace Cengine{
 
 	{lock_guard<mutex> lock(active_workers_mx); active_workers++;}
 
+	//{CoutLock lock; cout<<"-"<<worker->id<<endl;}
+
 	if(ready_batchers.size()>0){
 	  worker->working=true;
 	  op=ready_batchers.front()->op;
@@ -692,6 +694,7 @@ namespace Cengine{
 	  op->owner->working=true; 
 	  get_task_cv.notify_one();
 	  active_batchers++;
+	  //cout<<"a"<<endl;
 	  return op;      
 	}
 
@@ -701,6 +704,7 @@ namespace Cengine{
 	  ready.pop_front();
 	  op->owner->working=true; 
 	  get_task_cv.notify_one();
+	  //cout<<"b"<<endl;
 	  return op;      
 	}
 	

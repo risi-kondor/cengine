@@ -83,7 +83,7 @@ namespace Cengine{
 
 
     void check_status(){ // protected by done_mx 
-      if(ready.size()>=10){
+      if(ready.size()>=64){
 	release();
       }
     }

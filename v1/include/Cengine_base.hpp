@@ -617,6 +617,10 @@ public:
 };
 
 
+//template<typename TYPE>
+//allGPUornone(TYPE& x, TYPE& y){
+//if()
+//}
 
 
 #define SO3PART_CGPRODUCTOP_INDEX 1;

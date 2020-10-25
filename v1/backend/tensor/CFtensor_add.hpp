@@ -1,6 +1,10 @@
 
 void add(const CFtensor& x){
   assert(asize==x.asize);
+  if(device!=1 || x.device!=1){
+    to_device(0);
+    x.to_device(0);
+  }
   if(device==0){
     for(int i=0; i<asize; i++) arr[i]+=x.arr[i];
     for(int i=0; i<asize; i++) arrc[i]+=x.arrc[i];
@@ -257,6 +261,10 @@ void add_conj(const CFtensor& x, const complex<float> c){
 
 void subtract(const CFtensor& x){
   assert(asize==x.asize);
+  if(device!=1 || x.device!=1){
+    to_device(0);
+    x.to_device(0);
+  }
   if(device==0){
     for(int i=0; i<asize; i++) arr[i]-=x.arr[i];
     for(int i=0; i<asize; i++) arrc[i]-=x.arrc[i];

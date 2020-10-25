@@ -27,6 +27,7 @@ namespace Cengine{
       CENGINE_TRACE("Deleting handle to "+node->ident());
       node->engine->dec_handle(node);
       CHANDLE_DESTROY();
+      //cout<<"."<<endl;
     }
 
     Chandle(const Chandle& x){

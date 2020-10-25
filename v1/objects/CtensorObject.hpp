@@ -18,7 +18,7 @@ namespace Cengine{
     int nbu=-1;
     int device=0; 
 
-    Chandle* hdl;
+    Chandle* hdl=nullptr;
 
     ~CtensorObject(){
       delete hdl; 
@@ -103,11 +103,14 @@ namespace Cengine{
     CtensorObject(const CtensorObject& x):
       dims(x.dims),
       nbu(x.nbu),
+      device(x.device),
       hdl(Cengine_engine->push<ctensor_copy_op>(x.hdl)){}
     
     CtensorObject(CtensorObject&& x):
       dims(std::move(x.dims)),
-      nbu(x.nbu){
+      nbu(x.nbu),
+      device(x.device)
+    {
       hdl=x.hdl;
       x.hdl=nullptr;
     }
@@ -115,14 +118,17 @@ namespace Cengine{
     CtensorObject& operator=(const CtensorObject& x){
       dims=x.dims;
       nbu=x.nbu;
+      device=x.device;
       delete hdl;
       hdl=Cengine_engine->push<ctensor_copy_op>(x.hdl);
       return *this;
     }
 
     CtensorObject& operator=(CtensorObject&& x){
+      //cout<<"a"<<endl; 
       dims=x.dims;
       nbu=x.nbu;
+      device=x.device;
       delete hdl;
       hdl=x.hdl;
       x.hdl=nullptr;
@@ -192,6 +198,24 @@ namespace Cengine{
       ctensor_get(hdl);
     }
 
+    CtensorObject& to_device(const device_id& _dev){
+      device=_dev.id();
+      replace(hdl,Cengine_engine->push<ctensor_to_device_op>(hdl,_dev.id()));
+      return *this; 
+    }
+
+    CtensorObject& to(const device_id& _dev){
+      device=_dev.id();
+      replace(hdl,Cengine_engine->push<ctensor_to_device_op>(hdl,_dev.id()));
+      return *this; 
+    }
+
+    CtensorObject& to(const int dev){
+      device=dev;
+      replace(hdl,Cengine_engine->push<ctensor_to_device_op>(hdl,device));
+      return *this; 
+    }
+
 
   public: // ---- In-place operations ------------------------------------------------------------------------
 
@@ -255,7 +279,7 @@ namespace Cengine{
     }
 
     void subtract(const CtensorObject& x){
-      replace(hdl,Cengine_engine->push<ctensor_add_op>(hdl,x.hdl));
+      replace(hdl,Cengine_engine->push<ctensor_subtract_op>(hdl,x.hdl));
     }
 
     void add(const CtensorObject& x, const float c){

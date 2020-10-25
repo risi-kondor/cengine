@@ -56,6 +56,7 @@ namespace Cengine{
 }
 
 
+/*
 #ifdef _WITH_CUDA
 __device__ __constant__ unsigned char cg_cmem[CG_CONST_MEM_SIZE];
 #endif 
@@ -65,4 +66,4 @@ __device__ __constant__ unsigned char cg_cmem[CG_CONST_MEM_SIZE];
 cublasHandle_t Cengine_cublas;
 //cublasCreate(&Cengine_cublas);
 #endif 
-
+*/
