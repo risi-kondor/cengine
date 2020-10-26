@@ -14,8 +14,8 @@ namespace Cengine{
     mutable int device=0;
 
     vector<CtensorB*> pack;
-    float** parr=nullptr;
-    float** parrc=nullptr;
+    mutable float** parr=nullptr;
+    mutable float** parrc=nullptr;
     mutable bool parr_valid=false;
     
     CtensorBpack(const Gdims& _dims, const int _nbu=-1, const int dev=0):
@@ -93,8 +93,8 @@ namespace Cengine{
 
     void renew_parr() const{
 
-      if(parr) CUDA_SAFE(cudaFree(parr));
-      if(parrc) CUDA_SAFE(cudaFree(parrc));
+      if(parr) CUDA_SAFE(cudaFree(parr)); parr=nullptr;
+      if(parrc) CUDA_SAFE(cudaFree(parrc)); parrc=nullptr;
 
       to_device(1);
       const int N=pack.size(); 
@@ -118,6 +118,8 @@ namespace Cengine{
     void to_device(const device_id& _dev) const{
       if(_dev.id()==device) return; 
       parr_valid=false; 
+      if(parr) CUDA_SAFE(cudaFree(parr)); parr=nullptr;
+      if(parrc) CUDA_SAFE(cudaFree(parrc)); parrc=nullptr;
       device=_dev.id();
       for(auto p: pack)
 	p->to_device(device);

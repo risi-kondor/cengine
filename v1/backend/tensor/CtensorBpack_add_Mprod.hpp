@@ -7,6 +7,9 @@ void add_Mprod(const CtensorBpack& x, const CtensorBpack& y, const int nx=1, con
   assert(x.pack.size()==N);
   assert(y.pack.size()==N);
 
+
+  //{CoutLock lk; cout<<"Mprod Dev="<<device<<endl;}
+
   if(device==0){
     x.to_device(0);
     y.to_device(0);
@@ -43,6 +46,8 @@ void add_Mprod(const CtensorBpack& x, const CtensorBpack& y, const int nx=1, con
   x.get_parr();
   y.get_parr();
 
+  //cout<<"Batched Mprod"<<endl;
+
   CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_N,J,I,K,&alpha0,
       const_cast<const float**>(y.parr),J,const_cast<const float**>(x.parr),K,&beta,parr,J,N)); 
   CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_N,J,I,K,&alpha1,
@@ -61,6 +66,8 @@ void add_Mprod_AT(const CtensorBpack& x, const CtensorBpack& y, const int nx=1, 
   const int N=pack.size();
   assert(x.pack.size()==N);
   assert(y.pack.size()==N);
+
+  //{CoutLock lk; cout<<"Mprod_AT Dev="<<device<<endl;}
 
   if(device==0){
     x.to_device(0);
@@ -98,14 +105,16 @@ void add_Mprod_AT(const CtensorBpack& x, const CtensorBpack& y, const int nx=1, 
   x.get_parr();
   y.get_parr();
 
+  //cout<<"Batched Mprod_AT"<<endl;
+
   CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,K,&alpha0,
-      const_cast<const float**>(y.parr),J,const_cast<const float**>(x.parr),K,&beta,parr,J,N)); 
+      const_cast<const float**>(y.parr),K,const_cast<const float**>(x.parr),K,&beta,parr,J,N)); 
   CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,K,&alpha1,
-      const_cast<const float**>(y.parrc),J,const_cast<const float**>(x.parrc),K,&beta,parr,J,N)); 
+      const_cast<const float**>(y.parrc),K,const_cast<const float**>(x.parrc),K,&beta,parr,J,N)); 
   CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,K,&alpha2,
-      const_cast<const float**>(y.parrc),J,const_cast<const float**>(x.parr),K,&beta,parrc,J,N)); 
+      const_cast<const float**>(y.parrc),K,const_cast<const float**>(x.parr),K,&beta,parrc,J,N)); 
   CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,K,&alpha3,
-      const_cast<const float**>(y.parr),J,const_cast<const float**>(x.parrc),K,&beta,parrc,J,N)); 
+      const_cast<const float**>(y.parr),K,const_cast<const float**>(x.parrc),K,&beta,parrc,J,N)); 
 
 }
 
@@ -116,6 +125,8 @@ void add_Mprod_TA(const CtensorBpack& x, const CtensorBpack& y, const int nx=1, 
   const int N=pack.size();
   assert(x.pack.size()==N);
   assert(y.pack.size()==N);
+
+  //{CoutLock lk; cout<<"Mprod_TA Dev="<<device<<endl;}
 
   if(device==0){
     x.to_device(0);
@@ -153,13 +164,15 @@ void add_Mprod_TA(const CtensorBpack& x, const CtensorBpack& y, const int nx=1, 
   x.get_parr();
   y.get_parr();
 
+  //cout<<"Batched Mprod_TA"<<endl;
+
   CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_T,J,I,K,&alpha0,
-      const_cast<const float**>(y.parr),J,const_cast<const float**>(x.parr),K,&beta,parr,J,N)); 
+      const_cast<const float**>(y.parr),J,const_cast<const float**>(x.parr),I,&beta,parr,J,N)); 
   CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_T,J,I,K,&alpha1,
-      const_cast<const float**>(y.parrc),J,const_cast<const float**>(x.parrc),K,&beta,parr,J,N)); 
+      const_cast<const float**>(y.parrc),J,const_cast<const float**>(x.parrc),I,&beta,parr,J,N)); 
   CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_T,J,I,K,&alpha2,
-      const_cast<const float**>(y.parrc),J,const_cast<const float**>(x.parr),K,&beta,parrc,J,N)); 
+      const_cast<const float**>(y.parrc),J,const_cast<const float**>(x.parr),I,&beta,parrc,J,N)); 
   CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_T,J,I,K,&alpha3,
-      const_cast<const float**>(y.parr),J,const_cast<const float**>(x.parrc),K,&beta,parrc,J,N)); 
+      const_cast<const float**>(y.parr),J,const_cast<const float**>(x.parrc),I,&beta,parrc,J,N)); 
 
 }

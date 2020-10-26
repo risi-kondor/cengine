@@ -55,6 +55,8 @@ void add_Mprod(const CFtensor& x, const CFtensor& y, const int nx=1, const int n
     if (selector==2||selector==3) alpha2=-1.0;
     if (selector==1||selector==3) alpha3=-1.0;
     
+    //cout<<"Mprod"<<endl;
+
     CUBLAS_SAFE(cublasSgemm(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_N,J,I,K,&alpha0,
 	y.arrg,J,x.arrg,K,&beta,arrg,J)); 
     CUBLAS_SAFE(cublasSgemm(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_N,J,I,K,&alpha1,
@@ -122,6 +124,8 @@ void add_Mprod_AT(const CFtensor& x, const CFtensor& y, const int nx=1, const in
     if (selector==0||selector==3) alpha1=-1.0;
     if (selector==2||selector==3) alpha2=-1.0;
     if (selector==1||selector==3) alpha3=-1.0;
+
+    //cout<<"Mprod_AT"<<endl;
 
     CUBLAS_SAFE(cublasSgemm(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,K,&alpha0,
 	y.arrg,K,x.arrg,K,&beta,arrg,J)); 
@@ -191,6 +195,8 @@ void add_Mprod_TA(const CFtensor& x, const CFtensor& y, const int nx=1, const in
     if (selector==0||selector==3) alpha1=-1.0;
     if (selector==2||selector==3) alpha2=-1.0;
     if (selector==1||selector==3) alpha3=-1.0;
+
+    //cout<<"Mprod_TA"<<endl;
 
     CUBLAS_SAFE(cublasSgemm(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_T,J,I,K,&alpha0,
 	y.arrg,J,x.arrg,I,&beta,arrg,J)); 
