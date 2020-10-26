@@ -15,7 +15,7 @@ CUDA_EXTERNS=
 
 ifdef WITH_CUDA
 INCLUDE+=-I$(CUDA_HOME)/include
-CUDA_EXTERNS+=
+CUDA_EXTERNS+=$(INCLUDEDIR)/Cengine_base.cu 
 endif 
 
 

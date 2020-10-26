@@ -37,6 +37,11 @@ namespace Cengine{
   public: // ---- Constructors ------------------------------------------------------------------------------
 
     
+    CtensorB(const Gtensor<complex<float> >& x, const int dev=0): 
+      CFtensor(x), dims(x.dims), nbu(-1){
+      CTENSORB_CREATE();
+    }
+
     CtensorB(const Gtensor<complex<float> >& x, const device_id& dev=0): 
       CFtensor(x), dims(x.dims), nbu(-1){
       CTENSORB_CREATE();
@@ -96,7 +101,6 @@ namespace Cengine{
       CTENSORB_CREATE();
     }
 
-
     void to_device(const int _dev) const{
       CFtensor::to_device(_dev);
     }
@@ -152,7 +156,6 @@ namespace Cengine{
 	FCG_UNIMPL();
       }
     }
-
  
     void add_prod(const CscalarB& c, const CtensorB& A){
       if(c.nbu==-1){
@@ -179,18 +182,28 @@ namespace Cengine{
     }
  
     void add_inp_into(CscalarB& r, const CtensorB& A){
-      assert(nbu==-1);
-      r.val+=inp(A);
+      if(nbu==-1){
+	r.val+=inp(A);
+      }else{
+	FCG_UNIMPL();
+      }
     }
 
     void add_element_into(CscalarB& r, const Gindex& ix){
-      assert(nbu==-1);
-      r.val+=get(ix);
+      if(nbu==-1){
+	r.val+=get(ix);
+      }else{
+	FCG_UNIMPL();
+      }
     }
 
     void add_to_element(const Gindex& ix, CscalarB& r){
       assert(nbu==-1);
-      inc(ix,r.val);
+      if(nbu==-1){
+	inc(ix,r.val);
+      }else{
+	FCG_UNIMPL();
+      }
     }
 
     void mix_into(CscalarB& r, const CscalarB& x) const{
@@ -253,6 +266,7 @@ namespace Cengine{
       stringstream oss;
       return oss.str();
     }
+
    
   };
 
@@ -271,6 +285,7 @@ namespace Cengine{
 
 
 #define CTENSORB(x) asCtensorB(x,__PRETTY_FUNCTION__) 
+
 
 }
 

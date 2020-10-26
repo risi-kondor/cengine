@@ -36,7 +36,6 @@ namespace Cengine{
       }
     }
 
-
     ~CtensorBpack(){
       if(parr) CUDA_SAFE(cudaFree(parr));
       if(parrc) CUDA_SAFE(cudaFree(parrc));

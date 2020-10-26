@@ -10,28 +10,40 @@ void add(const CFtensor& x){
     for(int i=0; i<asize; i++) arrc[i]+=x.arrc[i];
     return; 
   }
-  const float alpha = 1.0;
-  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrg, 1, arrg, 1));
-  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrgc, 1, arrgc, 1));
+  if(device==1){
+    const float alpha = 1.0;
+    CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrg, 1, arrg, 1));
+    CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrgc, 1, arrgc, 1));
+  }
 }
 
 
 void add_conj(const CFtensor& x){
   assert(asize==x.asize);
+  if(device!=1 || x.device!=1){
+    to_device(0);
+    x.to_device(0);
+  }
   if(device==0){
     for(int i=0; i<asize; i++) arr[i]+=x.arr[i];
     for(int i=0; i<asize; i++) arrc[i]-=x.arrc[i];
     return; 
   }
-  const float alpha = 1.0;
-  const float malpha = -1.0;
-  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrg, 1, arrg, 1));
-  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &malpha, x.arrgc, 1, arrgc, 1));
+  if(device==1){
+    const float alpha = 1.0;
+    const float malpha = -1.0;
+    CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrg, 1, arrg, 1));
+    CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &malpha, x.arrgc, 1, arrgc, 1));
+  }
 }
 
 
 void add_transp(const CFtensor& x, const int n=1) const{
   assert(asize==x.asize);
+  if(device!=1 || x.device!=1){
+    to_device(0);
+    x.to_device(0);
+  }
   const int J=x.combined_size(0,n);
   const int I=x.asize/J;
   if(device==0){
@@ -42,17 +54,23 @@ void add_transp(const CFtensor& x, const int n=1) const{
       }
     return;
   }
-  const float alpha = 1.0;
-  const float beta = 1.0;
-  CUBLAS_SAFE(cublasSgeam(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,
-      &alpha,x.arrg,I,&beta,arrg,J,arrg,J));
-  CUBLAS_SAFE(cublasSgeam(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,
-      &alpha,x.arrgc,I,&beta,arrgc,J,arrgc,J));
+  if(device==1){
+    const float alpha = 1.0;
+    const float beta = 1.0;
+    CUBLAS_SAFE(cublasSgeam(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,
+	&alpha,x.arrg,I,&beta,arrg,J,arrg,J));
+    CUBLAS_SAFE(cublasSgeam(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,
+	&alpha,x.arrgc,I,&beta,arrgc,J,arrgc,J));
+  }
 }
 
 
 void add_herm(const CFtensor& x, const int n=1) const{
   assert(asize==x.asize);
+  if(device!=1 || x.device!=1){
+    to_device(0);
+    x.to_device(0);
+  }
   const int J=x.combined_size(0,n);
   const int I=x.asize/J;
   if(device==0){
@@ -63,13 +81,15 @@ void add_herm(const CFtensor& x, const int n=1) const{
       }
     return;
   }
-  const float alpha = 1.0;
-  const float malpha = -1.0;
-  const float beta = 1.0;
-  CUBLAS_SAFE(cublasSgeam(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,
-      &alpha,x.arrg,I,&beta,arrg,J,arrg,J));
-  CUBLAS_SAFE(cublasSgeam(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,
-      &malpha,x.arrgc,I,&beta,arrgc,J,arrgc,J));
+  if(device==1){
+    const float alpha = 1.0;
+    const float malpha = -1.0;
+    const float beta = 1.0;
+    CUBLAS_SAFE(cublasSgeam(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,
+	&alpha,x.arrg,I,&beta,arrg,J,arrg,J));
+    CUBLAS_SAFE(cublasSgeam(Cengine_cublas,CUBLAS_OP_T,CUBLAS_OP_N,J,I,
+	&malpha,x.arrgc,I,&beta,arrgc,J,arrgc,J));
+  }
 }
 
 
@@ -214,45 +234,63 @@ void add_chunk(const CFtensor& x, const int ix, const int offs, const int n){
 
 void add(const CFtensor& x, const float c){
   assert(asize==x.asize);
+  if(device!=1 || x.device!=1){
+    to_device(0);
+    x.to_device(0);
+  }
   if(device==0){
     for(int i=0; i<asize; i++) arr[i]+=x.arr[i]*c;
     for(int i=0; i<asize; i++) arrc[i]+=x.arrc[i]*c;
     return;
   }
-  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &c, x.arrg, 1, arrg, 1));
-  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &c, x.arrgc, 1, arrgc, 1));
+  if(device==1){
+    CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &c, x.arrg, 1, arrg, 1));
+    CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &c, x.arrgc, 1, arrgc, 1));
+  }
 }
 
 void add(const CFtensor& x, const complex<float> c){
   assert(asize==x.asize);
   float cr=std::real(c);
   float ci=std::imag(c);
+  if(device!=1 || x.device!=1){
+    to_device(0);
+    x.to_device(0);
+  }
   if(device==0){
     for(int i=0; i<asize; i++) arr[i]+=x.arr[i]*cr-x.arrc[i]*ci;
     for(int i=0; i<asize; i++) arrc[i]+=x.arrc[i]*cr+x.arr[i]*ci;
     return;
   }
-  const float mci=-ci; 
-  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &cr, x.arrg, 1, arrg, 1));
-  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &mci, x.arrgc, 1, arrg, 1));
-  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &ci, x.arrg, 1, arrgc, 1));
-  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &cr, x.arrgc, 1, arrgc, 1));
+  if(device==1){
+    const float mci=-ci; 
+    CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &cr, x.arrg, 1, arrg, 1));
+    CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &mci, x.arrgc, 1, arrg, 1));
+    CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &ci, x.arrg, 1, arrgc, 1));
+    CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &cr, x.arrgc, 1, arrgc, 1));
+  }
 }
 
 void add_conj(const CFtensor& x, const complex<float> c){
   assert(asize==x.asize);
   float cr=std::real(c);
   float ci=-std::imag(c);
+  if(device!=1 || x.device!=1){
+    to_device(0);
+    x.to_device(0);
+  }
   if(device==0){
     for(int i=0; i<asize; i++) arr[i]+=x.arr[i]*cr-x.arrc[i]*ci;
     for(int i=0; i<asize; i++) arrc[i]+=x.arrc[i]*cr+x.arr[i]*ci;
     return;
   }
-  const float mci=-ci; 
-  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &cr, x.arrg, 1, arrg, 1));
-  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &ci, x.arrgc, 1, arrg, 1));
-  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &mci, x.arrg, 1, arrgc, 1));
-  CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &cr, x.arrgc, 1, arrgc, 1));
+  if(device==1){
+    const float mci=-ci; 
+    CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &cr, x.arrg, 1, arrg, 1));
+    CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &ci, x.arrgc, 1, arrg, 1));
+    CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &mci, x.arrg, 1, arrgc, 1));
+    CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &cr, x.arrgc, 1, arrgc, 1));
+  }
 }
 
 
@@ -277,6 +315,10 @@ void subtract(const CFtensor& x){
 
 void subtract(const CFtensor& x, const float c){
   assert(asize==x.asize);
+  if(device!=1 || x.device!=1){
+    to_device(0);
+    x.to_device(0);
+  }
   if(device==0){
     for(int i=0; i<asize; i++) arr[i]-=x.arr[i]*c;
     for(int i=0; i<asize; i++) arrc[i]-=x.arrc[i]*c;
@@ -290,6 +332,10 @@ void subtract(const CFtensor& x, const complex<float> c){
   assert(asize==x.asize);
   float cr=std::real(c);
   float ci=std::imag(c);
+  if(device!=1 || x.device!=1){
+    to_device(0);
+    x.to_device(0);
+  }
   if(device==0){
     for(int i=0; i<asize; i++) arr[i]-=x.arr[i]*cr-x.arrc[i]*ci;
     for(int i=0; i<asize; i++) arrc[i]-=x.arrc[i]*cr+x.arr[i]*ci;
@@ -306,6 +352,10 @@ void subtractc(const CFtensor& x, const complex<float> c){
   assert(asize==x.asize);
   float cr=std::real(c);
   float ci=std::imag(c);
+  if(device!=1 || x.device!=1){
+    to_device(0);
+    x.to_device(0);
+  }
   if(device==0){
     for(int i=0; i<asize; i++) arr[i]-=x.arr[i]*cr+x.arrc[i]*ci;
     for(int i=0; i<asize; i++) arrc[i]-=x.arrc[i]*cr+x.arr[i]*ci;

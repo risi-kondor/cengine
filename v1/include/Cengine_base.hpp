@@ -50,7 +50,7 @@ using namespace std;
 #define FCG_NOTIMPL() printf("Cengine error: function \"%s\" not implemented.\n",__PRETTY_FUNCTION__);
 #define FCG_CPUONLY() if(device>0) {printf("Cengine error: CUDA code for \"%s\" not implemented.\n",__PRETTY_FUNCTION__); exit(-1);}
 
-#define FCG_DEPRECATED() printf("Cengine warning: function \"%s\" is deprecated.\n",__PRETTY_FUNCTION__);
+#define CENGINE_DEPRECATED() printf("Cengine warning: function \"%s\" is deprecated.\n",__PRETTY_FUNCTION__);
 //#define FCG_DEPRECATED(message) printf("Warning: %s is deprecated.\n",(message));
 
 #define FCG_WARNING(message) printf("Warning: %s.\n",(message));
@@ -87,7 +87,7 @@ using namespace std;
 #define RSCALARB_DESTROY() ::Cengine::RscalarB_count--; //cout<<::Cengine::RscalarB_count<<endl;
 #define CSCALARB_CREATE() ::Cengine::CscalarB_count++; //cout<<::Cengine::CscalarB_count<<endl;
 #define CSCALARB_DESTROY() ::Cengine::CscalarB_count--; //cout<<::Cengine::CscalarB_count<<endl;
-#define CTENSORB_CREATE() ::Cengine::CtensorB_count++; //cout<<::Cengine::CtensorB_count<<endl;
+#define CTENSORB_CREATE() ::Cengine::CtensorB_count++; // {CoutLock lk; cout<<"CtensorB("<<dims<<","<<nbu<<","<<device<<")"<<endl;} 
 #define CTENSORB_DESTROY() ::Cengine::CtensorB_count--; //cout<<::Cengine::CtensorB_count<<endl;
 #else
 #define CNODE_CREATE();
