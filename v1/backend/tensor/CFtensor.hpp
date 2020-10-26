@@ -538,10 +538,10 @@ namespace Cengine{
       float cr=std::real(c);
       float ci=std::imag(c);
       float mci=-std::imag(c);
-      cublasSaxpy(Cengine_cublas, asize, &cr, arrg, 1, R.arrg, 1);
-      cublasSaxpy(Cengine_cublas, asize, &mci, arrgc, 1, R.arrg, 1);
-      cublasSaxpy(Cengine_cublas, asize, &cr, arrgc, 1, R.arrgc, 1);
-      cublasSaxpy(Cengine_cublas, asize, &ci, arrg, 1, R.arrgc, 1);
+      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &cr, arrg, 1, R.arrg, 1));
+      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &mci, arrgc, 1, R.arrg, 1));
+      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &cr, arrgc, 1, R.arrgc, 1));
+      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &ci, arrg, 1, R.arrgc, 1));
       return R;
     }
 
