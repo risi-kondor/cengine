@@ -229,7 +229,7 @@ void add_chunk(const CFtensor& x, const int ix, const int offs, const int n){
 
 
 
-// ---- With cronstants -----------------------------------------------------------------------------------
+// ---- With constants -----------------------------------------------------------------------------------
 
 
 void add(const CFtensor& x, const float c){
