@@ -190,6 +190,12 @@ namespace Cengine{
       return *arr[i*strides[0]+j*strides[1]+_k];
     }
 
+
+    OBJ* getp(const int i){
+      return arr[i];
+    }
+
+
   public: // ---- I/O ----------------------------------------------------------------------------------------
 
     /*

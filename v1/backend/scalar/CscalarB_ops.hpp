@@ -179,6 +179,27 @@ namespace Cengine{
   };
   
 
+  class cscalar_sum_op: public Coperator{
+  public:
+
+    cscalar_sum_op(const vector<Cnode*> x):
+      Coperator(x){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      vector<CscalarB*> v(inputs.size());
+      for(int i=0; i<inputs.size(); i++) 
+	v[i]=&asCscalarB(inputs[i],__PRETTY_FUNCTION__);
+      owner->obj=CscalarB::sum(v);
+    }
+
+    string str() const{
+      return "cscalar_sum"+inp_str();
+    }
+
+  };
+  
+
   // ---- In-place operators  --------------------------------------------------------------------------------
 
   
@@ -255,6 +276,28 @@ namespace Cengine{
 
     string str() const{
       return "cscalar_add"+inp_str();
+    }
+
+  };
+  
+
+  class cscalar_add_sum_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
+  public:
+
+    cscalar_add_sum_op(Cnode* r, const vector<Cnode*> x):
+      Coperator(r,x){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=inputs[0]->obj;
+      vector<CscalarB*> v(inputs.size()-1);
+      for(int i=0; i<inputs.size()-1; i++) 
+	v[i]=&asCscalarB(inputs[i+1],__PRETTY_FUNCTION__);
+      asCscalarB(owner,__PRETTY_FUNCTION__).add_sum(v);
+    }
+
+    string str() const{
+      return "add_cscalar_sum"+inp_str();
     }
 
   };

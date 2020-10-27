@@ -182,6 +182,19 @@ namespace Cengine{
       else for(int i=0; i<nbu; i++) arr[i]+=c*x.arr[i];
     }
 
+    void add_sum(const vector<RscalarB*> v){
+      const int N=v.size();
+      if(N==0) return; 
+      const int nbu=v[0]->nbu;
+      if(nbu==-1){
+	for(int i=0; i<N; i++)
+	  val+=v[i]->val;
+      }else{
+	FCG_UNIMPL();
+      }
+    }
+
+
     void subtract(const RscalarB& x){
       assert(nbu==x.nbu);
       if(nbu==-1) val-=x.val;

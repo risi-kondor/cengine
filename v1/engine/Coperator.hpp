@@ -47,6 +47,11 @@ namespace Cengine{
       COPERATOR_CREATE();
     }
 
+    Coperator(vector<Cnode*> v){
+      inputs=v;
+      COPERATOR_CREATE();
+    }
+
     Coperator(Cnode* x0, vector<Cnode*> v1){
       inputs.push_back(x0);
       for(auto p:v1) inputs.push_back(p);

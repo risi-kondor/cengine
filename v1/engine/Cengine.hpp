@@ -127,6 +127,21 @@ namespace Cengine{
       return new_handle(enqueue_for_handle(new OP(nodeof(h0),nodeof(h1),nodeof(h2),nodeof(h3))));
     }
 
+    template<typename OP>
+    Chandle* push(vector<Chandle*> v){
+      vector<Cnode*> n(v.size());
+      for(int i=0; i<v.size(); i++) n[i]=v[i]->node;
+      return enqueue_for_handle(new OP(n));
+    }
+
+    template<typename OP>
+    Chandle* push(Chandle* h0, vector<Chandle*> v){
+      vector<Cnode*> n(v.size());
+      for(int i=0; i<v.size(); i++) n[i]=v[i]->node;
+      return enqueue_for_handle(new OP(nodeof(h0),n));
+    }
+
+
     // ---- 1 arg
 
     template<typename OP, typename ARG0>

@@ -167,6 +167,28 @@ namespace Cengine{
   };
   
 
+  class rscalar_add_sum_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
+  public:
+
+    rscalar_add_sum_op(Cnode* r, const vector<Cnode*> x):
+      Coperator(r,x){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=inputs[0]->obj;
+      vector<RscalarB*> v(inputs.size()-1);
+      for(int i=0; i<inputs.size()-1; i++) 
+	v[i]=&asRscalarB(inputs[i+1],__PRETTY_FUNCTION__);
+      asRscalarB(owner,__PRETTY_FUNCTION__).add_sum(v);
+    }
+
+    string str() const{
+      return "add_rscalar_sum"+inp_str();
+    }
+
+  };
+  
+
   class rscalar_add_times_real_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
   public:
 

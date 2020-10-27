@@ -83,6 +83,28 @@ namespace Cengine{
   };
   
 
+  class ctensor_add_sum_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
+  public:
+
+    ctensor_add_sum_op(Cnode* r, const vector<Cnode*> x):
+      Coperator(r,x){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=inputs[0]->obj;
+      vector<CFtensor*> v(inputs.size()-1);
+      for(int i=0; i<inputs.size()-1; i++) 
+	v[i]=&asCtensorB(inputs[i+1],__PRETTY_FUNCTION__);
+      asCtensorB(owner,__PRETTY_FUNCTION__).add_sum(v);
+    }
+
+    string str() const{
+      return "add_ctensor_sum"+inp_str();
+    }
+
+  };
+  
+
   class ctensor_add_to_slice_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
   public:
 

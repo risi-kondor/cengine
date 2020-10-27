@@ -93,6 +93,24 @@ void add_herm(const CFtensor& x, const int n=1) const{
 }
 
 
+void add_sum(const vector<CFtensor*> v){
+  const int N=v.size();
+  if(N==0) return; 
+  if(device==0){
+    for(int i=0; i<N; i++){
+      const CFtensor& o=*v[i];
+      assert(o.asize==asize);
+      for(int j=0; j<asize; j++){
+	arr[j]+=o.arr[j];
+	arrc[j]+=o.arrc[j];
+      }
+    }
+    return;
+  }
+  FCG_UNIMPL();
+}
+
+
 void add_to_slice(const CFtensor& x, const int ix, const int offs){
   assert(k==x.k+1);
   for(int i=0; i<ix; i++) assert(dims[i]==x.dims[i]);

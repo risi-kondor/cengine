@@ -192,6 +192,21 @@ namespace Cengine{
       return R;
     }
 
+    static CscalarB* sum(const vector<CscalarB*> v){
+      const int N=v.size();
+      if(N==0) return new CscalarB(0);
+      const int nbu=v[0]->nbu;
+      if(nbu==-1){
+	complex<float> s=0;
+	for(int i=0; i<N; i++)
+	  s+=v[i]->val;
+	return new CscalarB(s);
+      }else{
+	FCG_UNIMPL();
+	return new CscalarB(0);
+      }
+    }
+
 
   public: // ---- Cumulative Operations ----------------------------------------------------------------------
 
@@ -231,6 +246,19 @@ namespace Cengine{
       if(nbu==-1) val+=std::conj(x.val);
       else for(int i=0; i<nbu; i++) arr[i]+=std::conj(x.arr[i]);
     }
+
+    void add_sum(const vector<CscalarB*> v){
+      const int N=v.size();
+      if(N==0) return; 
+      const int nbu=v[0]->nbu;
+      if(nbu==-1){
+	for(int i=0; i<N; i++)
+	  val+=v[i]->val;
+      }else{
+	FCG_UNIMPL();
+      }
+    }
+
 
     void subtract(const CscalarB& x){
       assert(nbu==x.nbu);
