@@ -10,6 +10,8 @@ namespace Cengine{
   class Batcher{
   public:
 
+    //Cengine* engine;
+
     virtual ~Batcher(){}
 
     virtual void push(Coperator* op)=0;

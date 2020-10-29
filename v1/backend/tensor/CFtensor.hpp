@@ -227,7 +227,15 @@ namespace Cengine{
       to_device(dev);
     }
 
-    CFtensor(const Gdims& _dims, const fill_gaussian& dummy, const float c, const int dev=0):
+    CFtensor(const Gdims& _dims, const fill_gaussian& dummy, const int dev):
+      CFtensor(_dims,fill::raw,0){
+      normal_distribution<double> distr;
+      for(int i=0; i<asize; i++) arr[i]=distr(rndGen);
+      for(int i=0; i<asize; i++) arrc[i]=distr(rndGen);
+      to_device(dev);
+    }
+
+    CFtensor(const Gdims& _dims, const fill_gaussian& dummy, const float c, const int dev):
       CFtensor(_dims,fill::raw,0){
       normal_distribution<double> distr;
       for(int i=0; i<asize; i++) arr[i]=c*distr(rndGen);

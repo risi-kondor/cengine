@@ -262,10 +262,9 @@ namespace Cengine{
   public: // ---- I/O ----------------------------------------------------------------------------------------
 
 
-    string str(const string indent="") const{
-      stringstream oss;
-      return oss.str();
-    }
+    //string str(const string indent="") const{
+    //return Gtensor<complex<float> >(*this);
+    //}
 
    
   };

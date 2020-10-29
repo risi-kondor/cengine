@@ -25,7 +25,8 @@ namespace Cengine{
     
     string str() const{
       if(nodes.size()==0)  return "exec_batcher_op";
-      return "exec_batcher_op<"+nodes[0]->op->str()+">";
+      return "exec_batcher_op<"+dynamic_cast<BatchedOperator*>(nodes[0]->op)->batcher_name()+">";
+      //return "exec_batcher_op<"+nodes[0]->op->batcher_name()+">";
     }
 
   };
@@ -40,8 +41,8 @@ namespace Cengine{
 
     set<Cnode*> waiting;
     vector<Cnode*> ready;
-    bool working=false; 
-    mutex mx; 
+    //bool working=false; 
+    //mutex mx; 
 
     BatcherA(BasicCnodeEngine* _engine):
       engine(_engine){
@@ -91,7 +92,7 @@ namespace Cengine{
     
     void release(){ // protected by done_mx 
       DEBUG_ENGINE({CoutLock lk; cout<<"  Releasing batcher "<<name<<" ["<<ready.size()<<"]"<<endl;});
-      working=true;
+      //working=true;
       Cnode* node=engine->new_node(new exec_batcher_op<OP>(ready));
       engine->release_batcher(node);
       ready.clear();
@@ -99,7 +100,7 @@ namespace Cengine{
 
     
     int flush(){ // protected_by done_mx 
-      DEBUG_ENGINE({CoutLock lk; cout<<"    Flushing batcher "<<name<<". "<<waiting.size()<<" "<<ready.size()<<endl;});
+      //DEBUG_ENGINE({CoutLock lk; cout<<"    Flushing batcher "<<name<<". "<<waiting.size()<<" "<<ready.size()<<endl;});
       if(ready.size()>0) release();
       return waiting.size(); 
     }

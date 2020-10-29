@@ -7,6 +7,7 @@
 namespace Cengine{
 
 
+  /*
   class ctensor_add_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
   public:
 
@@ -24,6 +25,7 @@ namespace Cengine{
     }
     
   };
+  */
   
 
   class ctensor_add_conj_op: public Coperator, public CumulativeOperator, public InPlaceOperator{

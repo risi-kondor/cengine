@@ -8,6 +8,7 @@
 
 namespace Cengine{
 
+  class GatherGroup; 
 
   class BasicCnodeEngine{
   public:
@@ -27,6 +28,7 @@ namespace Cengine{
 
     BasicCnodeEngine* engine=nullptr;
     Batcher* batcher=nullptr; 
+    GatherGroup* ggroup=nullptr;
 
     Coperator* op=nullptr;
     Cobject* obj=nullptr;
