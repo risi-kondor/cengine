@@ -12,6 +12,7 @@
 #include "Chandle.hpp"
 #include "Cworker.hpp"
 #include "MetaBatcher.hpp"
+#include "MetaRbatcher.hpp"
 #include "CengineHelpers.hpp"
 
 namespace Cengine{
@@ -59,6 +60,9 @@ namespace Cengine{
     mutex ready_batchers_mx;
     mutex ready_batchers_empty_mx;
     condition_variable ready_batchers_empty_cv;
+
+    int nrbatchers;
+    vector<Rbatcher_base*> rbatchers;
 
     thread* sentinel;
 
@@ -294,8 +298,7 @@ namespace Cengine{
       Cnode* r=enqueue_sub(op);
       Chandle* hdl=new Chandle(r);
       nhandles++;
-      hdl->id=nhandles-1; //++;
-      //r->nhandles=1; // debug!!
+      hdl->id=nhandles-1;
       return hdl;
     }
 
@@ -304,8 +307,10 @@ namespace Cengine{
       Cnode* node=new_node(op);
       node->engine=this;
       Cnode* rnode=node;
+      Cnode* sibling=nullptr; 
 
-      // An in-place operator is dependent on on all dependents of its self-argument
+      // An in-place operator is dependent on on 
+      // all dependents of its self-argument
       if(dynamic_cast<InPlaceOperator*>(op)){
 	for(auto p: op->inputs[0]->dependents){
 	  if((p->dependents.insert(node)).second){
@@ -314,7 +319,7 @@ namespace Cengine{
 	}
       }
 
-      // Delegate to batched operator, if it exists 
+      // Delegate to batched operator  
       if(dynamic_cast<BatchedOperator*>(op) && batching){
 	BatchedOperator* bop=dynamic_cast<BatchedOperator*>(op);
 	if(bop->batcher_id()==0){
@@ -335,48 +340,57 @@ namespace Cengine{
       }
 
       // Make diamond to reflect commutativity of cumulative operators 
-      Cnode* sibling=nullptr; 
       if(dynamic_cast<CumulativeOperator*>(op)){
 	Cnode* father=op->inputs[0];
-	//lock_guard<mutex> lock(done_mx);
+	Coperator* father_op=father->op; 
 	if(!father->computed && !father->working){
-	  CENGINE_ASSERT(father->op);
-	  if(dynamic_cast<CumulativeOperator*>(father->op)){
-	    DEBUG_ENGINE({CoutLock lk; cout<<"    Creating diamond"<<endl;});
+
+	  if(dynamic_cast<CumulativeOperator*>(father_op)){
+	    DEBUG_ENGINE2("    Creating diamond");
 	    CENGINE_TRACE("Creating diamond");
 	    Cnode* grandfather=father->father();
 	    for(auto& p:op->inputs)
 	      if(p==father) p=grandfather;
 	    sibling=father;
+
+	    if(dynamic_cast<RbatchedOperator*>(op) && typeid(father_op)==typeid(op))
+	      rbatch_with_sibling(father,node);
 	  }
-	  if(dynamic_cast<diamond_op*>(father->op) && !father->released){ 
-	    DEBUG_ENGINE({CoutLock lk; cout<<"    Extending diamond"<<endl;});
+
+	  if(dynamic_cast<diamond_op*>(father_op) && !father->released){ 
+	    DEBUG_ENGINE2("    Extending diamond");
 	    CENGINE_TRACE("Extending diamond");
 	    Cnode* greatgrandfather=father->father()->father();
 	    for(auto& p:op->inputs)
 	      if(p==father) p=greatgrandfather;
 	    node->dependents.insert(father);
 	    node->is_view=true;
-	    father->op->inputs.push_back(node);
+	    father_op->inputs.push_back(node);
 	    father->nblockers++;
 	    rnode=father;
+	    
+	    if(dynamic_cast<RbatchedOperator*>(op))
+	      for(int i=0; i<father_op->inputs.size()-1; i++)
+		if(typeid(father_op->inputs[i]->op)==typeid(op)){
+		  rbatch_with_sibling(father_op->inputs[i],node);
+		  break;
+		}
 	  }
 	}
       }
 
-      if(dynamic_cast<InPlaceOperator*>(op)){ // Fix this!!!!
+      if(dynamic_cast<InPlaceOperator*>(op)){
 	//node->obj=op->inputs[0]->obj;
 	op->inputs[0]->is_view=true; 
       }
 
       for(auto p: op->inputs){
 	if((p->dependents.insert(node)).second){
-	  //cout<<p->ident()<<":"<<p->computed<<endl; 
 	  if(!p->computed) node->nblockers++;
 	}
       }
 
-      DEBUG_ENGINE({CoutLock lk; cout<<"    Enqueuing "<<node->ident()<<" ["<<node->op->str()<<"] "<<endl;});
+      DEBUG_ENGINE2("    Enqueuing "<<node->ident()<<" ["<<node->op->str()<<"] ");
       CENGINE_TRACE("Enqueuing "+node->ident()+" ["+node->op->str()+"] ");
       nodes.insert(node);
 
@@ -674,6 +688,28 @@ namespace Cengine{
       //delete hdl;
     //}
 
+    
+
+  public: // ---- Rbatching ----------------------------------------------------------------------------------
+
+
+    void rbatch_with_sibling(Cnode* sibling, Cnode* node){
+
+      if(sibling->rbatcher){
+	sibling->rbatcher->push(node); 
+	return;
+      }
+
+      RbatchedOperator* bop=dynamic_cast<RbatchedOperator*>(node->op);
+      if(bop->rbatcher_id()==0){
+	bop->set_rbatcher_id(++nrbatchers);
+	rbatchers.push_back(bop->spawn_rbatcher(this));
+      }
+      rbatchers[bop->rbatcher_id()-1]->push(sibling); 
+      rbatchers[bop->rbatcher_id()-1]->push(node);
+      
+    }     
+
 
   public: // ---- Backend ------------------------------------------------------------------------------------
 
@@ -766,3 +802,4 @@ namespace Cengine{
       return enqueue_sub(op);
     }
     */
+      //DEBUG_ENGINE({CoutLock lk; cout<<"    Enqueuing "<<node->ident()<<" ["<<node->op->str()<<"] "<<endl;});

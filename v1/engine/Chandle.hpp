@@ -17,13 +17,13 @@ namespace Cengine{
 
     Chandle(Cnode* _node): node(_node){
       node->nhandles++; // Changed!
-      DEBUG_ENGINE({CoutLock lk; cout<<"    Creating handle to "<<node->ident()<<endl;});
+      //DEBUG_ENGINE({CoutLock lk; cout<<"    Creating handle to "<<node->ident()<<endl;});
       CENGINE_TRACE("Creating handle to "+node->ident());
       CHANDLE_CREATE();
     }
     
     ~Chandle(){
-      DEBUG_ENGINE({CoutLock lk; cout<<"    Deleting handle to "<<node->ident()<<endl;});
+      //DEBUG_ENGINE({CoutLock lk; cout<<"    Deleting handle to "<<node->ident()<<endl;});
       CENGINE_TRACE("Deleting handle to "+node->ident());
       node->engine->dec_handle(node);
       CHANDLE_DESTROY();

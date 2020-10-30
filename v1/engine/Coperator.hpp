@@ -6,7 +6,8 @@ namespace Cengine{
 
   class Cnode;
   class Batcher; 
-
+  class Rbatcher_base; 
+  class BasicCnodeEngine;
 
   class Coperator{
   public:
@@ -102,8 +103,17 @@ namespace Cengine{
     virtual int batcher_id() const=0;
     virtual void set_batcher_id(const int i)=0;
     virtual Batcher* spawn_batcher() const=0;
-    //virtual Batcher* spawn_batcher(Cengine* _engine) const=0;
     virtual string batcher_name() const {return "";}
+  };
+
+  class RbatchedOperator{
+  public: 
+    virtual int rbatcher_id() const=0;
+    virtual void set_rbatcher_id(const int i)=0;
+    virtual Rbatcher_base* spawn_rbatcher(BasicCnodeEngine* _engine) const=0;
+    virtual string rbatcher_name() const {return "";}
+    virtual void rbatched_exec(const vector<Cnode*>& nodes)=0; 
+
   };
 
   class BatcherExecutor{};

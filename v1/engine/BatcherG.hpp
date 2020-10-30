@@ -13,8 +13,9 @@ namespace Cengine{
   class GatheringBatchedOperator: public BatchedOperator{
   public:
 
-    virtual void batched_exec(BasicCnodeEngine* engine, const vector<GatherGroup*>& ggroup, 
-      const vector<Cnode*>& nodes)=0;
+    //virtual void batched_exec(BasicCnodeEngine* engine, const vector<GatherGroup*>& ggroup, 
+    //const vector<Cnode*>& nodes)=0;
+    virtual void batched_exec(const vector<GatherGroup*>& ggroup, const vector<Cnode*>& nodes)=0;
 
   };
 
@@ -63,10 +64,10 @@ namespace Cengine{
     void exec(){
       if(nodes.size()==0 && ggroups.size()==0){CoutLock lk; cout<<"\e[1mEmpty batcherg\e[0m"<<endl; return;}
       if(nodes.size()>0){
-	dynamic_cast<GatheringBatchedOperator*>(nodes[0]->op)->batched_exec(engine,ggroups,nodes); 
+	dynamic_cast<GatheringBatchedOperator*>(nodes[0]->op)->batched_exec(ggroups,nodes); 
       }else{
 	if(ggroups.size()>0 && ggroups[0]->ready.size()>0){
-	  dynamic_cast<GatheringBatchedOperator*>(ggroups[0]->ready[0]->op)->batched_exec(engine,ggroups,nodes); 
+	  dynamic_cast<GatheringBatchedOperator*>(ggroups[0]->ready[0]->op)->batched_exec(ggroups,nodes); 
 	}
       }
     }

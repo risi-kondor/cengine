@@ -60,8 +60,10 @@ using namespace std;
 
 #ifdef DEBUG_ENGINE_FLAG
 #define DEBUG_ENGINE(cmd) cmd;
+#define DEBUG_ENGINE2(cmd) {CoutLock lk; cout<<cmd<<endl;}
 #else
 #define DEBUG_ENGINE(cmd);
+#define DEBUG_ENGINE2(cmd);
 #endif 
 
 #ifdef DEBUG_FLUSH_FLAG

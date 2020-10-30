@@ -4,6 +4,7 @@
 #include "Coperator.hpp"
 #include "Cobject.hpp"
 #include "Batcher.hpp"
+#include "Rbatcher_base.hpp"
 
 
 namespace Cengine{
@@ -28,6 +29,7 @@ namespace Cengine{
 
     BasicCnodeEngine* engine=nullptr;
     Batcher* batcher=nullptr; 
+    Rbatcher_base* rbatcher=nullptr; 
     GatherGroup* ggroup=nullptr;
 
     Coperator* op=nullptr;
