@@ -353,8 +353,9 @@ namespace Cengine{
 	      if(p==father) p=grandfather;
 	    sibling=father;
 
-	    if(dynamic_cast<RbatchedOperator*>(op) && typeid(father_op)==typeid(op) && !father->released)
+	    if(dynamic_cast<RbatchedOperator*>(op) && typeid(*father_op)==typeid(*op) && !father->released){
 	      rbatch_with_sibling(father,node); // if father is released should really wait on it 
+	    }
 	  }
 
 	  if(dynamic_cast<diamond_op*>(father_op) && !father->released){ 
@@ -368,11 +369,11 @@ namespace Cengine{
 	    father_op->inputs.push_back(node);
 	    father->nblockers++;
 	    rnode=father;
-	    
+
 	    if(dynamic_cast<RbatchedOperator*>(op))
 	      for(int i=0; i<father_op->inputs.size()-1; i++){
 		Cnode* grandfather=father_op->inputs[i];
-		if(typeid(grandfather->op)==typeid(op) && !grandfather->released){
+		if(typeid(*grandfather->op)==typeid(*op) && !grandfather->released){
 		  rbatch_with_sibling(grandfather,node);
 		  break;
 		}
@@ -382,7 +383,6 @@ namespace Cengine{
       }
 
       if(dynamic_cast<InPlaceOperator*>(op)){
-	//node->obj=op->inputs[0]->obj;
 	op->inputs[0]->is_view=true; 
       }
 
@@ -395,7 +395,7 @@ namespace Cengine{
       // Complete diamond 
       if(sibling){
 	Cnode* nnode=enqueue_sub(new diamond_op(sibling,node));
-	nnode->obj=node->obj;
+	//nnode->obj=node->obj;
 	node->is_view=true;
 	sibling->is_view=true;
 	rnode=nnode; 
@@ -413,7 +413,7 @@ namespace Cengine{
 	}
       }else{
 	if(node->nblockers==0){
-	  rnode->batcher->release(node);
+	  node->rbatcher->release(node);
 	}
       }  
 
@@ -473,6 +473,8 @@ namespace Cengine{
 #endif
 
       //DEBUG_ENGINE2("    Done "<<node->ident());
+
+      //waiting.erase(node);
 
       Coperator* op=node->op; 
       if(op){
@@ -609,14 +611,18 @@ namespace Cengine{
 	    });
 	}
 
-	DEBUG_FLUSH2(".");
+	//DEBUG_FLUSH2(".");
 
 	for(auto p:batchers)
-	  if(p->npending()>0){all_done=false; break;}
+	  if(p->npending()>0){
+	    //cout<<"a:"<<p->npending()<<endl; 
+	    all_done=false; break;
+	  }
 	if(ready.size()>0) all_done=false;
 	if(ready_batchers.size()>0) all_done=false;
 	if(waiting.size()>0) all_done=false;
 	if(all_done) break;
+	//COUT(ready.size()<<" "<<ready_batchers.size()<<" "<<waiting.size());
 
 	if(h++>100){
 	  CoutLock lk; cout<<"Timeout. "<<endl; 
@@ -692,7 +698,7 @@ namespace Cengine{
     void rbatch_with_sibling(Cnode* sibling, Cnode* node){
 
       if(sibling->rbatcher){
-	sibling->rbatcher->push(node); 
+	sibling->rbatcher->push(node);
 	return;
       }
 
@@ -703,10 +709,12 @@ namespace Cengine{
 	meta=bop->spawn_metarbatcher(this);
 	metarbatchers.push_back(meta);
       }
+
+      meta=metarbatchers[bop->metarbatcher_id()-1];
       meta->push(sibling);
       waiting.erase(sibling); 
       sibling->rbatcher->push(node);
-      
+  
     }     
 
 

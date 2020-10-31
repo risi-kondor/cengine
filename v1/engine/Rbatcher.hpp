@@ -44,8 +44,8 @@ namespace Cengine{
 
     Rbatcher(BasicCnodeEngine* _engine, const string _name):
       engine(_engine), name(_name){
-      DEBUG_ENGINE2("    \e[1mNew Huddle "<<id<<" for "<<name<<"\e[0m") 
-	}
+      DEBUG_ENGINE2("    \e[1mNew Huddle for "<<name<<"\e[0m");
+    }
 
     ~Rbatcher(){}
 
@@ -66,6 +66,8 @@ namespace Cengine{
       //DEBUG_ENGINE2("    Releasing "<<node->ident()<<" in huddle");
       ready.push_back(node);
       waiting.erase(node); 
+      dynamic_cast<Cengine*>(engine)->waiting.erase(node);
+      node->released=true;
       check_status(); 
     }
 

@@ -64,7 +64,7 @@ namespace Cengine{
       float* temp_base;
       //int cst=roundup(model->cst*sizeof(float),128);
       //int memsize=roundup(model->memsize*sizeof(float),128);
-      CUDA_SAFE(cudaMalloc((void **)&temp_base, memsize*N));
+      CUDA_SAFE(cudaMalloc((void **)&temp_base, memsize*N*sizeof(float)));
 
       float* arr[N]; 
       float* arrc[N]; 
