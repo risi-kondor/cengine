@@ -57,6 +57,7 @@ using namespace std;
 
 #define GENET_UNIMPL() printf("Cengine error: function \"%s\" not implemented.\n",__PRETTY_FUNCTION__);
 
+#define COUT(cmd) {CoutLock lk; cout<<cmd<<endl;}
 
 #ifdef DEBUG_ENGINE_FLAG
 #define DEBUG_ENGINE(cmd) cmd;
@@ -68,8 +69,10 @@ using namespace std;
 
 #ifdef DEBUG_FLUSH_FLAG
 #define DEBUG_FLUSH(cmd) cmd;
+#define DEBUG_FLUSH2(cmd) {CoutLock lk; cout<<cmd<<endl;}
 #else
 #define DEBUG_FLUSH(cmd);
+#define DEBUG_FLUSH2(cmd);
 #endif 
 
 //const int explicitL=3;

@@ -8,7 +8,9 @@ namespace Cengine{
 
     virtual ~Rbatcher_base(){}
 
+    int id;
     virtual void push(Cnode* node)=0;
+    //virtual void new_gang(Cnode* node){}
     virtual void release(Cnode* node)=0;
     virtual void kill(Cnode* node)=0;
 

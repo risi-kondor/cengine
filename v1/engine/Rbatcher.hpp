@@ -10,14 +10,15 @@ namespace Cengine{
   class exec_rbatcher_op: public Coperator, public BatcherExecutor{
   public:
 
+    BasicCnodeEngine* engine;
     vector<Cnode*> nodes;
     
-    exec_rbatcher_op(const vector<Cnode*>& _nodes): 
-      nodes(std::move(_nodes)){};
+    exec_rbatcher_op(BasicCnodeEngine* _engine, const vector<Cnode*>& _nodes): 
+      engine(_engine), nodes(std::move(_nodes)){};
 
     void exec(){
       assert(nodes.size()>0);
-      dynamic_cast<RbatchedOperator*>(nodes[0]->op)->rbatched_exec(nodes); 
+      dynamic_cast<RbatchedOperator*>(nodes[0]->op)->rbatched_exec(engine,nodes); 
     }
     
     string str() const{
@@ -43,7 +44,8 @@ namespace Cengine{
 
     Rbatcher(BasicCnodeEngine* _engine, const string _name):
       engine(_engine), name(_name){
-    }
+      DEBUG_ENGINE2("    \e[1mNew Huddle "<<id<<" for "<<name<<"\e[0m") 
+	}
 
     ~Rbatcher(){}
 
@@ -51,18 +53,17 @@ namespace Cengine{
 
 
     void push(Cnode* node){ // protected by done_mx 
-      //Cnode* node=op->owner;
-      //DEBUG_ENGINE({CoutLock lk; cout<<"    Batching "<<node->ident()<<" ["<<node->op->str()<<"] "<<endl;});
-      DEBUG_ENGINE2("    Rbatching "<<node->ident()<<" ["<<node->op->str()<<"] in "<<name);
-      if(node->nblockers==0) ready.push_back(node);
-      else waiting.insert(node);
+      DEBUG_ENGINE2("    Queuing "<<node->ident()<<" ["<<node->op->str()<<"] in huddle "<<id);
+      //if(node->nblockers==0){ready.push_back(node); COUT("ready.")}
+      //else waiting.insert(node);
+      waiting.insert(node);
       node->rbatcher=this; 
-      check_status();
+      //check_status();
     }
 
 
     void release(Cnode* node){ // protected by done_mx 
-      //DEBUG_ENGINE({CoutLock lk; cout<<"    Releasing "<<node->ident()<<" in batcher"<<endl;});
+      //DEBUG_ENGINE2("    Releasing "<<node->ident()<<" in huddle");
       ready.push_back(node);
       waiting.erase(node); 
       check_status(); 
@@ -70,8 +71,7 @@ namespace Cengine{
 
 
     void kill(Cnode* node){
-      DEBUG_ENGINE({CoutLock lk; cout<<"    Killing "<<node->ident()<<" in batcher"<<endl;});
-      //{CoutLock lk; cout<<"\e[1mKill "<<node->ident()<<" \e[0m"<<endl;} 
+      DEBUG_ENGINE2("    Killing "<<node->ident()<<" in huddle");
     }
 
 
@@ -83,16 +83,15 @@ namespace Cengine{
 
     
     void release(){ // protected by done_mx 
-      DEBUG_ENGINE({CoutLock lk; cout<<"  Releasing batcher "<<name<<" ["<<ready.size()<<"]"<<endl;});
-      //working=true;
-      Cnode* node=engine->new_node(new exec_rbatcher_op(ready));
+      DEBUG_ENGINE2("    Releasing huddle "<<name<<" ["<<ready.size()<<"]");
+      Cnode* node=engine->new_node(new exec_rbatcher_op(engine,ready));
       engine->release_batcher(node);
       ready.clear();
     }
 
     
     int flush(){ // protected_by done_mx 
-      //DEBUG_ENGINE({CoutLock lk; cout<<"    Flushing batcher "<<name<<". "<<waiting.size()<<" "<<ready.size()<<endl;});
+      //DEBUG_ENGINE2("    Flushing huddle "<<name<<". "<<waiting.size()<<" "<<ready.size);
       if(ready.size()>0) release();
       return waiting.size(); 
     }

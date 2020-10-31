@@ -13,16 +13,17 @@ namespace Cengine{
 
     BasicCnodeEngine* engine;
 
-    unordered_map<SUBINDEX,Rbatcher_base*> batchers;
+    //unordered_map<SUBINDEX,Rbatcher_base*> batchers;
+    int batchercount=0;
+    set<Rbatcher_base*> batchers;
 
     MetaRbatcher(BasicCnodeEngine* _engine): 
       engine(_engine){
-      DEBUG_ENGINE({CoutLock lk; 
-	  cout<<"    \e[1mNew MetaRbatcher for "<<OP::classname()<<"\e[0m"<<endl;}) 
+      DEBUG_ENGINE2("    \e[1mNew MetaRbatcher for "<<OP::classname()<<"\e[0m") 
     }
 
     virtual ~MetaRbatcher(){
-      for(auto& p: batchers) delete p.second;
+      for(auto& p: batchers) delete p; //.second;
     }
 
 
@@ -30,23 +31,16 @@ namespace Cengine{
 
     void push(Cnode* node){
       OP* op=static_cast<OP*>(node->op);
-      SUBINDEX ix=op->rsignature();
-
-      auto it=batchers.find(ix);
-      if(it!=batchers.end()){
-	it->second->push(node);
-      }else{
-	Rbatcher_base* sub=new RBATCHER(engine,op->rbatcher_name());
-	batchers[ix]=sub;
-	sub->push(node);
-      }
+      Rbatcher_base* sub=new RBATCHER(engine,op->rbatcher_name());
+      sub->id=batchercount++;
+      batchers.insert(sub);
+      sub->push(node);
     }
-
-
+    
     int flush(){
       int nwaiting=0; 
       for(auto p:batchers)
-	nwaiting+=p.second->flush();
+	nwaiting+=p->flush();
       return nwaiting; 
     }
 
@@ -73,3 +67,16 @@ namespace Cengine{
     //return t;
     //}
     
+    /*
+      SUBINDEX ix=op->rsignature();
+
+      auto it=batchers.find(ix);
+      if(it!=batchers.end()){
+	it->second->push(node);
+      }else{
+	Rbatcher_base* sub=new RBATCHER(engine,op->rbatcher_name());
+	batchers[ix]=sub;
+	sub->push(node);
+      }
+    */
+

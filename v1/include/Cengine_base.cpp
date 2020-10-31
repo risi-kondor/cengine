@@ -27,7 +27,7 @@ mutex Cengine::CoutLock::mx;
 Cengine::Cengine* Cengine_engine=new Cengine::Cengine();
 
 int Cengine::ctensor_add_op::_batcher_id=0; 
-int Cengine::ctensor_add_op::_rbatcher_id=0; 
+int Cengine::ctensor_add_op::_metarbatcher_id=0; 
 
 template<> int Cengine::ctensor_add_Mprod_op<0,0>::_batcher_id=0; 
 template<> int Cengine::ctensor_add_Mprod_op<0,1>::_batcher_id=0; 

@@ -17,7 +17,7 @@ namespace Cengine{
   public:
 
     Gdims dims; 
-    Cengine* engine;
+    //Cengine* engine;
 
     ctensor_add_op(Cnode* r, Cnode* x, const Gdims& _dims):
       Coperator(r,x), dims(_dims){}
@@ -29,7 +29,7 @@ namespace Cengine{
       this_thread::sleep_for(chrono::milliseconds(50)); 
     }
 
-    void batched_exec(const vector<GatherGroup*>& ggroup, const vector<Cnode*>& nodes){
+    void batched_exec(const vector<GatherGroup*>& ggroup, const vector<Cnode*>& nodes){ // TODO 
       DEBUG_ENGINE({CoutLock lk; cout<<"    Running batched ctensor_add..."<<endl;});
 
       for(auto p:ggroup){
@@ -40,7 +40,7 @@ namespace Cengine{
 	  CTENSORB(nodes[i]).add(CTENSORB(nodes[i]->op->inputs[1]));
 	}
 	for(int i=0; i<N; i++){
-	  engine->done(nodes[i]);
+	  //engine->done(nodes[i]);
 	}
       }
 
@@ -50,14 +50,35 @@ namespace Cengine{
 	CTENSORB(nodes[i]).add(CTENSORB(nodes[i]->op->inputs[1]));
       }
       for(int i=0; i<N; i++){
-	engine->done(nodes[i]);
+	//engine->done(nodes[i]);
       }
 
       DEBUG_ENGINE({CoutLock lk; cout<<"    \e[1mDone.\e[0m"<<endl;});
 
     }
 
-    void rbatched_exec(const vector<Cnode*>& nodes){
+    void rbatched_exec(BasicCnodeEngine* _engine, const vector<Cnode*>& nodes){
+      //engine=_engine;
+      const int N=nodes.size();
+      if(N==0) return; 
+      int dev=CTENSORB(nodes[0]->op->inputs[0]).device;
+
+      if(dev==0){
+	for(int i=0; i<N; i++){
+	  nodes[i]->obj=nodes[i]->op->inputs[0]->obj;
+	  CTENSORB(nodes[i]).add(CTENSORB(nodes[i]->op->inputs[1]));
+	}
+	for(int i=0; i<N; i++){
+	  _engine->done(nodes[i]);
+	}
+      }
+
+      if(dev==1){
+	CtensorBpack R(N,CTENSORB(nodes[0]->op->inputs[0]),fill::raw);
+	CtensorBpack X(nodes,1);
+	R.add(X);
+	R.sum_into(CTENSORB(nodes[0]));
+      }
     }
 
     ctensor_signature signature() const{
@@ -70,11 +91,12 @@ namespace Cengine{
       return ctensor_signature(dims);
     }
 
-    Batcher* spawn_batcher() const{
-      return new MetaBatcher<ctensor_add_op,ctensor_signature,BatcherG>(engine);
+    //Batcher* spawn_batcher(BasicCnodeEngine* _engine) const{
+    Batcher* spawn_batcher(BasicCnodeEngine* _engine) const{ // fix this 
+      return new MetaBatcher<ctensor_add_op,ctensor_signature,BatcherG>(inputs[0]->engine);
     }
 
-    Rbatcher_base* spawn_rbatcher(BasicCnodeEngine* _engine) const{
+    Rbatcher_base* spawn_metarbatcher(BasicCnodeEngine* _engine) const{
       return new MetaRbatcher<ctensor_add_op,ctensor_signature,Rbatcher>(_engine);
     }
 
@@ -93,9 +115,9 @@ namespace Cengine{
     int batcher_id() const{return _batcher_id;}
     string batcher_name() const{return "ctensor_add<"+rsignature().str()+">";}
     
-    static int _rbatcher_id;
-    void set_rbatcher_id(const int i){_rbatcher_id=i;}
-    int rbatcher_id() const{return _rbatcher_id;}
+    static int _metarbatcher_id;
+    void set_metarbatcher_id(const int i){_metarbatcher_id=i;}
+    int metarbatcher_id() const{return _metarbatcher_id;}
     string rbatcher_name() const{return "ctensor_add<"+rsignature().str()+">";}
     
     

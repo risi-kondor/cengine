@@ -27,7 +27,7 @@ namespace Cengine{
   class Cnode{
   public:
 
-    BasicCnodeEngine* engine=nullptr;
+    BasicCnodeEngine* engine=nullptr; // get rid of this 
     Batcher* batcher=nullptr; 
     Rbatcher_base* rbatcher=nullptr; 
     GatherGroup* ggroup=nullptr;
@@ -66,8 +66,9 @@ namespace Cengine{
     void remove_blocker(Cnode* blocker){ // protected_by done_mx 
       nblockers--;
       if(nblockers==0){
-	if(batcher) batcher->release(this); 
-	else engine->release(this);
+	if(batcher){batcher->release(this); return;}
+	if(rbatcher){rbatcher->release(this); return;}
+	engine->release(this);
       }
     }
     
@@ -75,6 +76,7 @@ namespace Cengine{
       if(dependents.find(dependent)==dependents.end()){
 	CoutLock lk; cout<<"\e[1mDependent not found \e[0m"<<ident()<<" "<<dependent->op->str()<<endl;}
       dependents.erase(dependent);
+      //cout<<ident()<<endl; 
       if(dependents.size()==0 && nhandles==0){
 	if(batcher) batcher->kill(this);
 	else engine->kill(this);
