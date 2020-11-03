@@ -58,6 +58,7 @@ namespace Cengine{
       DEBUG_ENGINE({CoutLock lk; cout<<"    Running batched ctensor_add_Mprod..."<<endl;});
       assert(nodes.size()>0);
       BasicCnodeEngine* engine=nodes[0]->engine;
+      const int N=nodes.size();
 
       CtensorBpack R(nodes,0);
       CtensorBpack X(nodes,1);
@@ -72,7 +73,6 @@ namespace Cengine{
       if(Tsel==1) R.add_Mprod_TA<Csel>(X,Y);
       if(Tsel==2) R.add_Mprod_AT<Csel>(X,Y);
 
-      const int N=nodes.size();
       for(int i=0; i<N; i++)
       nodes[i]->op->owner->obj=R.pack[i];
 

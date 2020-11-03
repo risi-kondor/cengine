@@ -13,7 +13,6 @@ namespace Cengine{
 
     BasicCnodeEngine* engine;
 
-    //unordered_map<SUBINDEX,Rbatcher_base*> batchers;
     int batchercount=0;
     set<Rbatcher_base*> batchers;
 
@@ -58,25 +57,4 @@ namespace Cengine{
 
 
 #endif
-
-
-    //int npending() const{
-    //int t=0;
-    //for(auto p:subengines)
-    //t+=p.second->npending();
-    //return t;
-    //}
-    
-    /*
-      SUBINDEX ix=op->rsignature();
-
-      auto it=batchers.find(ix);
-      if(it!=batchers.end()){
-	it->second->push(node);
-      }else{
-	Rbatcher_base* sub=new RBATCHER(engine,op->rbatcher_name());
-	batchers[ix]=sub;
-	sub->push(node);
-      }
-    */
 

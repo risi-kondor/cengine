@@ -49,7 +49,7 @@ namespace Cengine{
       }
 
       unique_lock<mutex> gate_lock(mx.gate_mx[0]); // only uses gate_mx[0]!
-      mx.gates[level].wait_for(gate_lock,chrono::milliseconds(10),[this](){
+      mx.gates[level].wait_for(gate_lock,chrono::nanoseconds(100),[this](){
 	  //return !mx.locked;
 	  lock_guard<mutex> lock(mx.guard_mx);
 	  if(!mx.locked){mx.locked=true; return true;}

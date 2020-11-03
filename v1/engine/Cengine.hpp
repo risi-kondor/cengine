@@ -778,6 +778,7 @@ namespace Cengine{
 	DEBUG_ENGINE({CoutLock lk; 
 	    cout<<"    \e[1mWorker "<<id<<":\e[0m  "<<op->owner->ident()<<" <- "<<op->str()<<endl;});
 	CENGINE_TRACE("\e[1mWorker "+to_string(id)+":\e[0m  "+op->owner->ident()+" <- "+op->str());
+	//if(dynamic_cast<BatcherExecutor*>(op)) op->exec();
 	op->exec();
 	owner->done(op->owner);
       }

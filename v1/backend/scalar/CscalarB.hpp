@@ -436,30 +436,3 @@ namespace Cengine{
 #endif
 
 
-   //assert(x->obj);
-    //if(!dynamic_cast<CscalarB*>(x->obj))
-    //cerr<<"Cengine error: Cobject is of type "<<x->obj->classname()<<" instead of CscalarB."<<endl;
-    //assert(dynamic_cast<CscalarB*>(x->obj));
-    //return static_cast<CscalarB&>(*x->obj);
-
-    //if(!dynamic_cast<CscalarB*>(x))
-    //cerr<<"Cengine error: Cobject is of type "<<x->classname()<<" instead of CscalarB."<<endl;
-    //assert(dynamic_cast<CscalarB*>(x));
-    //return static_cast<CscalarB&>(*x);
-    //assert(x.obj);
-    //if(!dynamic_cast<CscalarB*>(x.obj))
-    //cerr<<"Cengine error: Cobject is of type "<<x.obj->classname()<<" instead of CscalarB."<<endl;
-    //assert(dynamic_cast<CscalarB*>(x.obj));
-    //return static_cast<CscalarB&>(*x.obj);
-  //inline CscalarB& asCscalarB(Cobject* x){
-  //return downcast<CscalarB>(x,"");
-  //}
-
-  //inline CscalarB& asCscalarB(Cnode* x){
-  //return downcast<CscalarB>(x,"");
-  //}
-
-  //inline CscalarB& asCscalarB(Cnode& x){
-  //return downcast<CscalarB>(x,"");
-  //}
-
