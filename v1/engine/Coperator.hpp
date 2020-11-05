@@ -109,9 +109,9 @@ namespace Cengine{
 
   class RbatchedOperator{
   public: 
-    virtual int metarbatcher_id() const=0;
-    virtual void set_metarbatcher_id(const int i)=0;
-    virtual Rbatcher_base* spawn_metarbatcher(BasicCnodeEngine* _engine) const=0;
+    virtual int rbatcher_id() const=0;
+    virtual void set_rbatcher_id(const int i)=0;
+    virtual Rbatcher_base* spawn_rbatcher(BasicCnodeEngine* _engine) const=0;
     virtual string rbatcher_name() const {return "";}
     virtual void rbatched_exec(BasicCnodeEngine* _engine, const vector<Cnode*>& nodes)=0; 
 

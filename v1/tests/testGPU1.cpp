@@ -19,7 +19,9 @@ int main(int argc, char** argv){
   const int dev=1;
 
   CengineSession engine;
+#ifdef WITH_CUBLAS
   cublasCreate(&Cengine_cublas);
+#endif 
 
   Cscalar c(2);
   cout<<"c="<<c<<endl;

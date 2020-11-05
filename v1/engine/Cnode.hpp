@@ -27,10 +27,10 @@ namespace Cengine{
   class Cnode{
   public:
 
-    BasicCnodeEngine* engine=nullptr; // get rid of this 
+    BasicCnodeEngine* engine=nullptr; // get rid of this? 
     Batcher* batcher=nullptr; 
     Rbatcher_base* rbatcher=nullptr; 
-    GatherGroup* ggroup=nullptr;
+    //GatherGroup* ggroup=nullptr;
 
     Coperator* op=nullptr;
     Cobject* obj=nullptr;
@@ -54,7 +54,7 @@ namespace Cengine{
 
     ~Cnode(){
       if(nhandles>0){CoutLock lk; cout<<"Error: attempting to delete node "<<ident()<<" that has a handle."<<endl;exit(0);}
-      // DEBUG_ENGINE({CoutLock lk; cout<<"Deleting "<<ident()<<endl;});
+      // DEBUG_ENGINE2("Deleting "<<ident());
       delete op;
       if(!is_view) delete obj;
       CNODE_DESTROY();
@@ -63,6 +63,7 @@ namespace Cengine{
     
   public:
 
+    /*
     void remove_blocker(Cnode* blocker){ // protected_by done_mx 
       nblockers--;
       if(nblockers==0){
@@ -71,7 +72,9 @@ namespace Cengine{
 	engine->release(this);
       }
     }
-    
+    */
+
+    /*
     void remove_dependent(Cnode* dependent){ // protected by done_mx
       if(dependents.find(dependent)==dependents.end()){
 	CoutLock lk; cout<<"\e[1mDependent not found \e[0m"<<ident()<<" "<<dependent->op->str()<<endl;}
@@ -82,12 +85,15 @@ namespace Cengine{
 	else engine->kill(this);
       }
     }
+    */
 
+    /*
     Cnode* father(){ // protected by done_mx 
       assert(op);
       assert(op->inputs.size()>0);
       return op->inputs[0];
     }
+    */
 
 
   public:

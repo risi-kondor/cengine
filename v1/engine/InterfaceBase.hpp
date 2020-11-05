@@ -27,8 +27,11 @@ namespace Cengine{
   
   vector<complex<float> > cscalar_get(Chandle* hdl){
     Cengine_engine->flush(hdl->node);
+#ifdef CENGINE_DRY_RUN
+    return vector<complex<float> >(0); 
+#else
     return asCscalarB(hdl->node->obj,__PRETTY_FUNCTION__);
-    //return vector<complex<float> >(1); 
+#endif 
   }
   
   Gtensor<complex<float> > ctensor_get(Chandle* hdl){

@@ -24,6 +24,29 @@
 
 using namespace std; 
 
+#define CG_CONST_MEM_SIZE 32276
+
+
+// ---- DEBUGGING -------------------------------------------------------------------------------------------
+
+
+//#define CENGINE_DRY_RUN
+
+#ifdef DEBUG_ENGINE_FLAG
+#define DEBUG_ENGINE(cmd) cmd;
+#define DEBUG_ENGINE2(cmd) {CoutLock lk; cout<<cmd<<endl;}
+#else
+#define DEBUG_ENGINE(cmd);
+#define DEBUG_ENGINE2(cmd);
+#endif 
+
+#ifdef DEBUG_FLUSH_FLAG
+#define DEBUG_FLUSH(cmd) cmd;
+#define DEBUG_FLUSH2(cmd) {CoutLock lk; cout<<cmd<<endl;}
+#else
+#define DEBUG_FLUSH(cmd);
+#define DEBUG_FLUSH2(cmd);
+#endif 
 
 //#define COPY_WARNING
 #define COPY_WARNING cout<<"\e[1mWarning:\e[0m "<<classname()<<" copied."<<endl;
@@ -59,26 +82,12 @@ using namespace std;
 
 #define COUT(cmd) {CoutLock lk; cout<<cmd<<endl;}
 
-#ifdef DEBUG_ENGINE_FLAG
-#define DEBUG_ENGINE(cmd) cmd;
-#define DEBUG_ENGINE2(cmd) {CoutLock lk; cout<<cmd<<endl;}
-#else
-#define DEBUG_ENGINE(cmd);
-#define DEBUG_ENGINE2(cmd);
-#endif 
-
-#ifdef DEBUG_FLUSH_FLAG
-#define DEBUG_FLUSH(cmd) cmd;
-#define DEBUG_FLUSH2(cmd) {CoutLock lk; cout<<cmd<<endl;}
-#else
-#define DEBUG_FLUSH(cmd);
-#define DEBUG_FLUSH2(cmd);
-#endif 
+//#define WAITING_OPT(cmd) cmd
+#define WAITING_OPT(cmd)
 
 //const int explicitL=3;
 //const int inline_explicitL=5;
 
-#define CG_CONST_MEM_SIZE 32276
 
 
 #ifdef CENGINE_OBJ_COUNT

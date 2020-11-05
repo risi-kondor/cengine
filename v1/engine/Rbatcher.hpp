@@ -17,8 +17,13 @@ namespace Cengine{
       engine(_engine), nodes(std::move(_nodes)){};
 
     void exec(){
-      assert(nodes.size()>0);
+#ifndef CENGINE_DRY_RUN
       dynamic_cast<RbatchedOperator*>(nodes[0]->op)->rbatched_exec(engine,nodes); 
+#endif
+      const int N=nodes.size();
+      for(int i=0; i<N; i++){
+	engine->done(nodes[i]);
+      }
     }
     
     string str() const{
@@ -63,10 +68,10 @@ namespace Cengine{
 
 
     void release(Cnode* node){ // protected by done_mx 
-      //DEBUG_ENGINE2("    Releasing "<<node->ident()<<" in huddle");
+      DEBUG_ENGINE2("    Releasing "<<node->ident()<<" in huddle");
       ready.push_back(node);
       waiting.erase(node); 
-      dynamic_cast<Cengine*>(engine)->waiting.erase(node);
+      WAITING_OPT(dynamic_cast<Cengine*>(engine)->waiting.erase(node););
       node->released=true;
       check_status(); 
     }
@@ -85,7 +90,7 @@ namespace Cengine{
 
     
     void release(){ // protected by done_mx 
-      DEBUG_ENGINE2("    Releasing huddle "<<name<<" ["<<ready.size()<<"]");
+      DEBUG_ENGINE2("    Releasing rbatcher for "<<name<<" ["<<ready.size()<<"]");
       Cnode* node=engine->new_node(new exec_rbatcher_op(engine,ready));
       engine->release_batcher(node);
       ready.clear();

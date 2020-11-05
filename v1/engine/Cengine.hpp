@@ -15,6 +15,7 @@
 #include "MetaRbatcher.hpp"
 #include "CengineHelpers.hpp"
 
+
 namespace Cengine{
 
 
@@ -24,12 +25,9 @@ namespace Cengine{
     int nbatchers;
 
     set<Cnode*> nodes;
-    set<Cnode*> waiting;
-    //set<Cnode*> tokill;
+    WAITING_OPT(set<Cnode*> waiting;);
     
     vector<Cworker*> workers;
-    vector<Batcher*> batchers;
-    bool batching=true; 
     bool shutdown=false; 
 
     int nnodes=0;
@@ -56,15 +54,18 @@ namespace Cengine{
     mutex ready_list_empty_mx;
     condition_variable ready_list_empty_cv;
 
+    vector<Batcher*> batchers;
     deque<Cnode*> ready_batchers;
     mutex ready_batchers_mx;
     mutex ready_batchers_empty_mx;
     condition_variable ready_batchers_empty_cv;
+    bool batching=false; 
 
-    int nmetarbatchers;
-    vector<Rbatcher_base*> metarbatchers;
+    int nrbatchers;
+    vector<Rbatcher_base*> rbatchers;
 
     thread* sentinel;
+
 
   public:
 
@@ -93,6 +94,7 @@ namespace Cengine{
       get_task_cv.notify_all();
       for(auto p:workers) delete p;
       for(auto p:batchers) delete p;
+      for(auto p:rbatchers) delete p;
       for(auto p:nodes) delete p;
     }
 
@@ -107,163 +109,7 @@ namespace Cengine{
       return node;
     }
 
-
-  public: // ---- Push templates -----------------------------------------------------------------------------
-
-
-    template<typename OP>
-    Chandle* push(Chandle* h0){
-      return new_handle(enqueue_for_handle(new OP(nodeof(h0))));
-    }
-
-    template<typename OP>
-    Chandle* push(Chandle* h0, Chandle* h1){
-      return new_handle(enqueue_for_handle(new OP(nodeof(h0),nodeof(h1))));
-    }
-
-    template<typename OP>
-    Chandle* push(Chandle* h0, Chandle* h1, Chandle* h2){
-      return new_handle(enqueue_for_handle(new OP(nodeof(h0),nodeof(h1),nodeof(h2))));
-    }
-
-    template<typename OP>
-    Chandle* push(Chandle* h0, Chandle* h1, Chandle* h2, Chandle* h3){
-      return new_handle(enqueue_for_handle(new OP(nodeof(h0),nodeof(h1),nodeof(h2),nodeof(h3))));
-    }
-
-    template<typename OP>
-    Chandle* push(vector<Chandle*> v){
-      vector<Cnode*> n(v.size());
-      for(int i=0; i<v.size(); i++) n[i]=v[i]->node;
-      return enqueue_for_handle(new OP(n));
-    }
-
-    template<typename OP>
-    Chandle* push(Chandle* h0, vector<Chandle*> v){
-      vector<Cnode*> n(v.size());
-      for(int i=0; i<v.size(); i++) n[i]=v[i]->node;
-      return enqueue_for_handle(new OP(nodeof(h0),n));
-    }
-
-
-    // ---- 1 arg
-
-    template<typename OP, typename ARG0>
-    Chandle* push(const ARG0& arg0){ // changed!!
-      return new_handle(enqueue_for_handle(new OP(arg0)));
-    }
-
-    template<typename OP, typename ARG0>
-    Chandle* push(Chandle* h0, const ARG0 arg0){
-      return new_handle(enqueue_for_handle(new OP(nodeof(h0),arg0)));
-    }
-
-    template<typename OP, typename ARG0>
-    Chandle* push(Chandle* h0, Chandle* h1, const ARG0 arg0){
-      return new_handle(enqueue_for_handle(new OP(nodeof(h0),nodeof(h1),arg0)));
-    }
-
-    template<typename OP, typename ARG0>
-    Chandle* push(Chandle* h0, Chandle* h1, Chandle* h2, const ARG0 arg0){
-      return new_handle(enqueue_for_handle(new OP(nodeof(h0),nodeof(h1),nodeof(h2),arg0)));
-    }
-
-    template<typename OP, typename ARG0>
-    Chandle* push(Chandle* h0, vector<const Chandle*> _v1, const ARG0 arg0){
-      vector<Cnode*> v1(_v1.size());
-      for(int i=0; i<_v1.size(); i++) v1[i]=nodeof(_v1[i]);
-      return new_handle(enqueue_for_handle(new OP(nodeof(h0),v1,arg0)));
-    }
-
-    // ----  2 args
-    
-    template<typename OP, typename ARG0, typename ARG1>
-    Chandle* push(const ARG0 arg0, const ARG1 arg1){
-      return new_handle(enqueue_for_handle(new OP(arg0,arg1)));
-    }
-
-    template<typename OP, typename ARG0, typename ARG1>
-    Chandle* push(Chandle* h0, const ARG0 arg0, const ARG1 arg1){
-      return new_handle(enqueue_for_handle(new OP(nodeof(h0), arg0,arg1)));
-    }
-
-    template<typename OP, typename ARG0, typename ARG1>
-    Chandle* push(Chandle* h0, Chandle* h1, const ARG0 arg0, const ARG1 arg1){
-      return new_handle(enqueue_for_handle(new OP(nodeof(h0), nodeof(h1), arg0, arg1)));
-    }
-
-    template<typename OP, typename ARG0, typename ARG1>
-    Chandle* push(Chandle* h0, Chandle* h1, Chandle* h2, const ARG0 arg0, const ARG1 arg1){
-      return new_handle(enqueue_for_handle(new OP(nodeof(h0), nodeof(h1), nodeof(h2), arg0, arg1)));
-    }
-
-    // ---- 3 args 
-
-    template<typename OP, typename ARG0, typename ARG1, typename ARG2>
-    Chandle* push(const ARG0 arg0, const ARG1 arg1, const ARG2 arg2){
-      return new_handle(enqueue_for_handle(new OP(arg0,arg1,arg2)));
-    }
-
-    template<typename OP, typename ARG0, typename ARG1, typename ARG2>
-    Chandle* push(Chandle* h0, const ARG0 arg0, const ARG1 arg1, const ARG2 arg2){
-      return new_handle(enqueue_for_handle(new OP(nodeof(h0),arg0,arg1,arg2)));
-    }
-
-    template<typename OP, typename ARG0, typename ARG1, typename ARG2>
-    Chandle* push(Chandle* h0, Chandle* h1, const ARG0 arg0, const ARG1 arg1, const ARG2 arg2){
-      return new_handle(enqueue_for_handle(new OP(nodeof(h0),nodeof(h1),arg0,arg1,arg2)));
-    }
-
-    template<typename OP, typename ARG0, typename ARG1, typename ARG2>
-    Chandle* push(Chandle* h0, Chandle* h1, Chandle* h2, const ARG0 arg0, const ARG1 arg1, const ARG2 arg2){
-      return new_handle(enqueue_for_handle(new OP(nodeof(h0),nodeof(h1),nodeof(h2),arg0,arg1,arg2)));
-    }
-
-    // ---- 4 args 
-
-    template<typename OP, typename ARG0, typename ARG1, typename ARG2, typename ARG3>
-    Chandle* push(const ARG0 arg0, const ARG1 arg1, const ARG2 arg2, const ARG3 arg3){
-      return new_handle(enqueue_for_handle(new OP(arg0,arg1,arg2,arg3)));
-    }
-
-    template<typename OP, typename ARG0, typename ARG1, typename ARG2, typename ARG3>
-    Chandle* push(Chandle* h0, const ARG0 arg0, const ARG1 arg1, const ARG2 arg2, const ARG3 arg3){
-      return new_handle(enqueue_for_handle(new OP(nodeof(h0),arg0,arg1,arg2,arg3)));
-    }
-
-    template<typename OP, typename ARG0, typename ARG1, typename ARG2, typename ARG3>
-    Chandle* push(Chandle* h0, Chandle* h1, const ARG0 arg0, const ARG1 arg1, const ARG2 arg2, const ARG3 arg3){
-      return new_handle(enqueue_for_handle(new OP(nodeof(h0),nodeof(h1),arg0,arg1,arg2,arg3)));
-    }
-
-    template<typename OP, typename ARG0, typename ARG1, typename ARG2, typename ARG3>
-    Chandle* push(Chandle* h0, Chandle* h1, Chandle* h2, const ARG0 arg0, const ARG1 arg1, const ARG2 arg2, const ARG3 arg3){
-      return new_handle(enqueue_for_handle(new OP(nodeof(h0),nodeof(h1),nodeof(h2),arg0,arg1,arg2,arg3)));
-    }
-
-
-    // ---- 5 args 
-
-    template<typename OP, typename ARG0, typename ARG1, typename ARG2, typename ARG3, typename ARG4>
-    Chandle* push(const ARG0 arg0, const ARG1 arg1, const ARG2 arg2, const ARG3 arg3, const ARG4 arg4){
-      return new_handle(enqueue_for_handle(new OP(arg0,arg1,arg2,arg3,arg4)));
-    }
-
-
-    // ---- 6 args 
-
-    template<typename OP, typename ARG0, typename ARG1, typename ARG2, typename ARG3, typename ARG4, typename ARG5>
-    Chandle* push(const ARG0 arg0, const ARG1 arg1, const ARG2 arg2, const ARG3 arg3, const ARG4 arg4, const ARG5 arg5){
-      return new_handle(enqueue_for_handle(new OP(arg0,arg1,arg2,arg3,arg4,arg5)));
-    }
-
-
-    // ---- 7 args 
-
-    template<typename OP, typename ARG0, typename ARG1, typename ARG2, typename ARG3, typename ARG4, typename ARG5, typename ARG6>
-    Chandle* push(const ARG0 arg0, const ARG1 arg1, const ARG2 arg2, const ARG3 arg3, const ARG4 arg4, const ARG5 arg5, const ARG6 arg6){
-      return new_handle(enqueue_for_handle(new OP(arg0,arg1,arg2,arg3,arg4,arg5,arg6)));
-    }
+#include "Cengine_push_templates.hpp"
 
 
     // ---- Direct access ------------------------------------------------------------------------------------
@@ -348,7 +194,7 @@ namespace Cengine{
 	  if(dynamic_cast<CumulativeOperator*>(father_op)){
 	    DEBUG_ENGINE2("    Creating diamond");
 	    CENGINE_TRACE("Creating diamond");
-	    Cnode* grandfather=father->father();
+	    Cnode* grandfather=father->op->inputs[0];
 	    for(auto& p:op->inputs)
 	      if(p==father) p=grandfather;
 	    sibling=father;
@@ -361,7 +207,7 @@ namespace Cengine{
 	  if(dynamic_cast<diamond_op*>(father_op) && !father->released){ 
 	    DEBUG_ENGINE2("    (Extending diamond)");
 	    CENGINE_TRACE("(Extending diamond)");
-	    Cnode* greatgrandfather=father->father()->father();
+	    Cnode* greatgrandfather=father->op->inputs[0]->op->inputs[0]; //father()->father();
 	    for(auto& p:op->inputs)
 	      if(p==father) p=greatgrandfather;
 	    node->dependents.insert(father);
@@ -407,7 +253,7 @@ namespace Cengine{
 	  DEBUG_ENGINE2("    Early   "<<node->ident()<<" ["<<node->op->str()<<"]");
 	  CENGINE_TRACE("Early      "+node->ident()+" ["+node->op->str()+"] ");
 	}else{
-	  waiting.insert(node);
+	  WAITING_OPT(waiting.insert(node););
 	  DEBUG_ENGINE2("    Queuing "<<node->ident()<<" ["<<node->op->str()<<"]");
 	  CENGINE_TRACE("Queuing    "+node->ident()+" ["+node->op->str()+"] ");
 	}
@@ -421,19 +267,15 @@ namespace Cengine{
       return rnode;
     }
 
+
     // ---- Releasing nodes ----------------------------------------------------------------------------------
 
 
     void release(Cnode* node){ // visited by workers but protected by done_mx
       //DEBUG_ENGINE2("    Releasing "<<node->ident());
 
-      if(waiting.find(node)!=waiting.end()) waiting.erase(node);
+      WAITING_OPT(if(waiting.find(node)!=waiting.end()) waiting.erase(node););
       node->released=true;
-
-      //if(node->rbatcher){ // if rbatched do not put on ready_list 
-      //node->rbatcher->release(node);
-      //return; 
-      //}
 
       {
 	lock_guard<mutex> lock(ready_mx);
@@ -441,7 +283,6 @@ namespace Cengine{
 	if(it!=ready.end()) ready.erase(it);
 	ready.push_back(node);
       }
-      //{CoutLock lk; for(auto p:ready) cout<<p->ident()<<" "; cout<<endl;}
       get_task_cv.notify_one();
     }
 
@@ -482,12 +323,30 @@ namespace Cengine{
 	  Cnode* p=op->inputs[i];
 	  for(int j=0; j<i; j++) 
 	    if(op->inputs[j]==p){p=nullptr;}
-	  if(p!=nullptr) p->remove_dependent(node);
+	  if(p!=nullptr){
+	    //p->remove_dependent(node);
+	    if(p->dependents.find(node)==p->dependents.end()){
+	      COUT("\e[1mDependent not found \e[0m"<<p->ident()<<" "<<node->op->str())
+	    }
+	    p->dependents.erase(node);
+	    if(p->dependents.size()==0 && p->nhandles==0){
+	      if(p->batcher) p->batcher->kill(p);
+	      else kill(p);
+	    }
+	  }
 	}
       }
 
       for(auto p: node->dependents){
-	p->remove_blocker(node);
+	//p->remove_blocker(node);
+	p->nblockers--;
+	if(p->nblockers==0){
+	  if(p->batcher) p->batcher->release(p);
+	  else{
+	    if(p->rbatcher) p->rbatcher->release(p);
+	    else release(p);
+	  }
+	}
       }
 
       node->computed=true;
@@ -563,7 +422,7 @@ namespace Cengine{
 #endif
       for(auto p:batchers)
 	p->flush(); 
-      for(auto p:metarbatchers)
+      for(auto p:rbatchers)
 	p->flush(); 
     }
 
@@ -620,13 +479,13 @@ namespace Cengine{
 	  }
 	if(ready.size()>0) all_done=false;
 	if(ready_batchers.size()>0) all_done=false;
-	if(waiting.size()>0) all_done=false;
+	WAITING_OPT(if(waiting.size()>0) all_done=false;)
 	if(all_done) break;
 	//COUT(ready.size()<<" "<<ready_batchers.size()<<" "<<waiting.size());
 
 	if(h++>100){
 	  CoutLock lk; cout<<"Timeout. "<<endl; 
-	  for(auto p:waiting) cout<<p->str()<<endl;
+	  WAITING_OPT(for(auto p:waiting) cout<<p->str()<<endl;)
 	  cout<<"---"<<endl;
 	  for(auto p:ready) cout<<p->str()<<endl;
 	  exit(0);
@@ -704,15 +563,15 @@ namespace Cengine{
 
       RbatchedOperator* bop=dynamic_cast<RbatchedOperator*>(node->op);
       Rbatcher_base* meta;
-      if(bop->metarbatcher_id()==0){
-	bop->set_metarbatcher_id(++nmetarbatchers);
-	meta=bop->spawn_metarbatcher(this);
-	metarbatchers.push_back(meta);
+      if(bop->rbatcher_id()==0){
+	bop->set_rbatcher_id(++nrbatchers);
+	meta=bop->spawn_rbatcher(this);
+	rbatchers.push_back(meta);
       }
 
-      meta=metarbatchers[bop->metarbatcher_id()-1];
+      meta=rbatchers[bop->rbatcher_id()-1];
       meta->push(sibling);
-      waiting.erase(sibling); 
+      WAITING_OPT(waiting.erase(sibling);) 
       sibling->rbatcher->push(node);
   
     }     
@@ -778,8 +637,11 @@ namespace Cengine{
 	DEBUG_ENGINE({CoutLock lk; 
 	    cout<<"    \e[1mWorker "<<id<<":\e[0m  "<<op->owner->ident()<<" <- "<<op->str()<<endl;});
 	CENGINE_TRACE("\e[1mWorker "+to_string(id)+":\e[0m  "+op->owner->ident()+" <- "+op->str());
-	//if(dynamic_cast<BatcherExecutor*>(op)) op->exec();
+#ifndef CENGINE_DRY_RUN
 	op->exec();
+#else
+	if(dynamic_cast<BatcherExecutor*>(op)) op->exec();
+#endif
 	owner->done(op->owner);
       }
     }

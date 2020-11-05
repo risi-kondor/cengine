@@ -241,7 +241,7 @@ namespace Cengine{
     }
 
     CtensorObject plus(const CtensorObject& x){
-      return CtensorObject(Cengine_engine->push<ctensor_add_op>(hdl,x.hdl),dims,nbu);
+      return CtensorObject(Cengine_engine->push<ctensor_add_op>(hdl,x.hdl,dims),dims,nbu);
     }
 
     CscalarObject mix(const CscalarObject& x){
@@ -263,7 +263,7 @@ namespace Cengine{
 
 
     void add(const CtensorObject& x){
-      replace(hdl,Cengine_engine->push<ctensor_add_op>(hdl,x.hdl));
+      replace(hdl,Cengine_engine->push<ctensor_add_op>(hdl,x.hdl,dims));
     }
 
     void add_conj(const CtensorObject& x){
@@ -308,12 +308,12 @@ namespace Cengine{
 
     
     void add_plus(const CtensorObject& x, const CtensorObject& y){
-      replace(hdl,Cengine_engine->push<ctensor_add_op>(hdl,x.hdl));
-      replace(hdl,Cengine_engine->push<ctensor_add_op>(hdl,y.hdl));
+      replace(hdl,Cengine_engine->push<ctensor_add_op>(hdl,x.hdl,dims));
+      replace(hdl,Cengine_engine->push<ctensor_add_op>(hdl,y.hdl,dims));
     }
 
     void add_minus(const CtensorObject& x, const CtensorObject& y){
-      replace(hdl,Cengine_engine->push<ctensor_add_op>(hdl,x.hdl));
+      replace(hdl,Cengine_engine->push<ctensor_add_op>(hdl,x.hdl,dims));
       replace(hdl,Cengine_engine->push<ctensor_subtract_op>(hdl,y.hdl));
     }
 
