@@ -5,7 +5,7 @@
 #include "Cobject.hpp"
 #include "Batcher.hpp"
 #include "Rbatcher_base.hpp"
-
+#include "TinySet.hpp"
 
 namespace Cengine{
 
@@ -35,7 +35,12 @@ namespace Cengine{
     Coperator* op=nullptr;
     Cobject* obj=nullptr;
 
+#ifdef WITH_TINYSET
+    TinySet<Cnode*> dependents;
+#else
     set<Cnode*> dependents; 
+#endif 
+
     int nblockers=0;
     int nhandles=0;
     bool released=false; 

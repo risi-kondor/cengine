@@ -155,14 +155,22 @@ namespace Cengine{
       Cnode* rnode=node;
       Cnode* sibling=nullptr; 
 
-      // An in-place operator is dependent on on 
+      // An in-place operator is dependent on  
       // all dependents of its self-argument
       if(dynamic_cast<InPlaceOperator*>(op)){
+#ifdef WITH_TINYSET
+	op->inputs[0]->dependents.map([&](Cnode* p){
+	    if(p->dependents.insert(node)){
+	      if(!p->computed) node->nblockers++;
+	    }
+	  });
+#else
 	for(auto p: op->inputs[0]->dependents){
 	  if((p->dependents.insert(node)).second){
 	    if(!p->computed) node->nblockers++;
 	  }
 	}
+#endif 
       }
 
       // Delegate to batched operator  
@@ -175,11 +183,19 @@ namespace Cengine{
 	if(dynamic_cast<InPlaceOperator*>(op)){
 	  op->inputs[0]->is_view=true; 
 	}
+#ifdef WITH_TINYSET
+	for(auto p: op->inputs){
+	  if(p->dependents.insert(node)){
+	    if(!p->computed) node->nblockers++;
+	  }
+	}
+#else
 	for(auto p: op->inputs){
 	  if((p->dependents.insert(node)).second){
 	    if(!p->computed) node->nblockers++;
 	  }
-	} 
+	}
+#endif  
 	batchers[bop->batcher_id()-1]->push(op);
 	nodes.insert(node);
 	return rnode;
@@ -233,9 +249,15 @@ namespace Cengine{
       }
 
       for(auto p: op->inputs){
+#ifdef WITH_TINYSET
+	if(p->dependents.insert(node)){ //changed
+	  if(!p->computed) {node->nblockers++;}// COUT(">>"<<p->ident());}
+	}
+#else
 	if((p->dependents.insert(node)).second){ //changed
 	  if(!p->computed) {node->nblockers++;}// COUT(">>"<<p->ident());}
 	}
+#endif
       }
 
       // Complete diamond 
@@ -325,9 +347,15 @@ namespace Cengine{
 	    if(op->inputs[j]==p){p=nullptr;}
 	  if(p!=nullptr){
 	    //p->remove_dependent(node);
+#ifdef WITH_TINYSET
+	    if(!p->dependents.find(node)){
+	      COUT("\e[1mDependent not found \e[0m"<<p->ident()<<" "<<node->op->str())
+	    }
+#else
 	    if(p->dependents.find(node)==p->dependents.end()){
 	      COUT("\e[1mDependent not found \e[0m"<<p->ident()<<" "<<node->op->str())
 	    }
+#endif
 	    p->dependents.erase(node);
 	    if(p->dependents.size()==0 && p->nhandles==0){
 	      if(p->batcher) p->batcher->kill(p);
@@ -337,6 +365,19 @@ namespace Cengine{
 	}
       }
 
+#ifdef WITH_TINYSET
+      node->dependents.map([&](Cnode* p){
+	//p->remove_blocker(node);
+	  p->nblockers--;
+	  if(p->nblockers==0){
+	    if(p->batcher) p->batcher->release(p);
+	    else{
+	      if(p->rbatcher) p->rbatcher->release(p);
+	      else release(p);
+	    }
+	  }
+	});
+#else
       for(auto p: node->dependents){
 	//p->remove_blocker(node);
 	p->nblockers--;
@@ -348,6 +389,7 @@ namespace Cengine{
 	  }
 	}
       }
+#endif
 
       node->computed=true;
       node->working=false;
@@ -640,6 +682,7 @@ namespace Cengine{
 #ifndef CENGINE_DRY_RUN
 	op->exec();
 #else
+	//this_thread::sleep_for(chrono::milliseconds(10)); 
 	if(dynamic_cast<BatcherExecutor*>(op)) op->exec();
 #endif
 	owner->done(op->owner);

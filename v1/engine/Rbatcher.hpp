@@ -2,6 +2,7 @@
 #define _Rbatcher
 
 #include "Cnode.hpp"
+#include "TinySet.hpp"
 
 
 namespace Cengine{
@@ -40,7 +41,12 @@ namespace Cengine{
     BasicCnodeEngine* engine;
     string name; 
 
+#ifdef WITH_TINYSET
+    TinySet<Cnode*> waiting;
+#else
     set<Cnode*> waiting;
+#endif
+
     vector<Cnode*> ready;
 
     Rbatcher(BasicCnodeEngine* _engine):
