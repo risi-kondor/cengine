@@ -3,7 +3,7 @@
 
 #include "Cnode.hpp"
 #include "TinySet.hpp"
-
+#include "MetaRbatcher.hpp"
 
 namespace Cengine{
 
@@ -14,12 +14,12 @@ namespace Cengine{
     BasicCnodeEngine* engine;
     vector<Cnode*> nodes;
     
-    exec_rbatcher_op(BasicCnodeEngine* _engine, const vector<Cnode*>& _nodes): 
+    exec_rbatcher_op(BasicCnodeEngine* _engine, const vector<Cnode*>&& _nodes): 
       engine(_engine), nodes(std::move(_nodes)){};
 
     void exec(){
 #ifndef CENGINE_DRY_RUN
-      dynamic_cast<RbatchedOperator*>(nodes[0]->op)->rbatched_exec(engine,nodes); 
+      dynamic_cast<RbatchedOperator*>(nodes[0]->op)->rbatched_exec(nodes); 
 #endif
       const int N=nodes.size();
       for(int i=0; i<N; i++){
@@ -55,7 +55,7 @@ namespace Cengine{
 
     Rbatcher(BasicCnodeEngine* _engine, const string _name):
       engine(_engine), name(_name){
-      DEBUG_ENGINE2("    \e[1mNew Huddle for "<<name<<"\e[0m");
+      DEBUG_ENGINE2("    \e[1mNew Rbatcher for "<<name<<"\e[0m");
     }
 
     ~Rbatcher(){}
@@ -64,7 +64,7 @@ namespace Cengine{
 
 
     void push(Cnode* node){ // protected by done_mx 
-      DEBUG_ENGINE2("    Queuing "<<node->ident()<<" ["<<node->op->str()<<"] in huddle "<<id);
+      DEBUG_ENGINE2("    Queuing "<<node->ident()<<" ["<<node->op->str()<<"] in Rbatcher "<<id);
       //if(node->nblockers==0){ready.push_back(node); COUT("ready.")}
       //else waiting.insert(node);
       waiting.insert(node);
@@ -74,7 +74,7 @@ namespace Cengine{
 
 
     void release(Cnode* node){ // protected by done_mx 
-      DEBUG_ENGINE2("    Releasing "<<node->ident()<<" in huddle");
+      DEBUG_ENGINE2("    Releasing "<<node->ident()<<" in Rbatcher");
       ready.push_back(node);
       waiting.erase(node); 
       WAITING_OPT(dynamic_cast<Cengine*>(engine)->waiting.erase(node););
@@ -84,7 +84,7 @@ namespace Cengine{
 
 
     void kill(Cnode* node){
-      DEBUG_ENGINE2("    Killing "<<node->ident()<<" in huddle");
+      DEBUG_ENGINE2("    Killing "<<node->ident()<<" in Rbatcher");
     }
 
 
@@ -96,22 +96,26 @@ namespace Cengine{
 
     
     void release(){ // protected by done_mx 
-      DEBUG_ENGINE2("    Releasing rbatcher for "<<name<<" ["<<ready.size()<<"]");
-      Cnode* node=engine->new_node(new exec_rbatcher_op(engine,ready));
+      DEBUG_ENGINE2("    Releasing Rbatcher for "<<name<<" ["<<ready.size()<<"]");
+      Cnode* node=engine->new_node(new exec_rbatcher_op(engine,std::move(ready)));
       engine->release_batcher(node);
       ready.clear();
     }
 
     
     int flush(){ // protected_by done_mx 
-      //DEBUG_ENGINE2("    Flushing huddle "<<name<<". "<<waiting.size()<<" "<<ready.size);
+      DEBUG_ENGINE2("    Flushing Rbatcher "<<name<<". "<<waiting.size()<<" "<<ready.size());
       if(ready.size()>0) release();
       return waiting.size(); 
     }
 
-    //int npending() const{
-    //return waiting.size()+ready.size(); 
-    //}
+    int npending() const{
+      return waiting.size()+ready.size(); 
+    }
+
+    int nwaiting() const{
+      return waiting.size(); 
+    }
 
   };
 

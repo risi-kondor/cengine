@@ -335,7 +335,7 @@ namespace Cengine{
       lock_guard<mutex> lock(done_mx);
 #endif
 
-      //DEBUG_ENGINE2("    Done "<<node->ident());
+      DEBUG_ENGINE2("    Done "<<node->ident());
 
       //waiting.erase(node);
 
@@ -357,7 +357,7 @@ namespace Cengine{
 	    }
 #endif
 	    p->dependents.erase(node);
-	    if(p->dependents.size()==0 && p->nhandles==0){
+	    if(p->dependents.size()==0 && p->nhandles==0){//cout<<"ss"<<endl;
 	      if(p->batcher) p->batcher->kill(p);
 	      else kill(p);
 	    }
@@ -415,7 +415,7 @@ namespace Cengine{
 
 
     void kill(Cnode* node){
-      //DEBUG_ENGINE2("    Killing "<<node->ident()); 
+      DEBUG_ENGINE2("    Killing "<<node->ident()); 
       CENGINE_TRACE("Killing "+node->ident()); 
 
       if(node->dependents.size()>0){
@@ -519,6 +519,11 @@ namespace Cengine{
 	    //cout<<"a:"<<p->npending()<<endl; 
 	    all_done=false; break;
 	  }
+	for(auto p:rbatchers)
+	  if(p->npending()>0){
+	    //cout<<"a:"<<p->npending()<<endl; 
+	    all_done=false; break;
+	  }
 	if(ready.size()>0) all_done=false;
 	if(ready_batchers.size()>0) all_done=false;
 	WAITING_OPT(if(waiting.size()>0) all_done=false;)
@@ -538,7 +543,7 @@ namespace Cengine{
       }
 
       while(active_workers>0){
-	{CoutLock lk; cout<<"/"<<endl;}
+	{CoutLock lk; cout<<"active workers"<<endl;}
 	/*
 	bool all_done=true;
 	for(auto p:workers){

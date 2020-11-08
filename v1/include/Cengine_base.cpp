@@ -44,6 +44,21 @@ template<> int Cengine::ctensor_add_Mprod_op<2,1>::_batcher_id=0;
 template<> int Cengine::ctensor_add_Mprod_op<2,2>::_batcher_id=0; 
 template<> int Cengine::ctensor_add_Mprod_op<2,3>::_batcher_id=0; 
 
+template<> int Cengine::ctensor_add_Mprod_op<0,0>::_rbatcher_id=0; 
+template<> int Cengine::ctensor_add_Mprod_op<0,1>::_rbatcher_id=0; 
+template<> int Cengine::ctensor_add_Mprod_op<0,2>::_rbatcher_id=0; 
+template<> int Cengine::ctensor_add_Mprod_op<0,3>::_rbatcher_id=0; 
+
+template<> int Cengine::ctensor_add_Mprod_op<1,0>::_rbatcher_id=0; 
+template<> int Cengine::ctensor_add_Mprod_op<1,1>::_rbatcher_id=0; 
+template<> int Cengine::ctensor_add_Mprod_op<1,2>::_rbatcher_id=0; 
+template<> int Cengine::ctensor_add_Mprod_op<1,3>::_rbatcher_id=0; 
+
+template<> int Cengine::ctensor_add_Mprod_op<2,0>::_rbatcher_id=0; 
+template<> int Cengine::ctensor_add_Mprod_op<2,1>::_rbatcher_id=0; 
+template<> int Cengine::ctensor_add_Mprod_op<2,2>::_rbatcher_id=0; 
+template<> int Cengine::ctensor_add_Mprod_op<2,3>::_rbatcher_id=0; 
+
 #ifdef _WITH_CUDA
 //__device__ __constant__ unsigned char cg_cmem[CG_CONST_MEM_SIZE];
 #endif

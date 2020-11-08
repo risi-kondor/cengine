@@ -113,7 +113,8 @@ namespace Cengine{
     virtual void set_rbatcher_id(const int i)=0;
     virtual Rbatcher_base* spawn_rbatcher(BasicCnodeEngine* _engine) const=0;
     virtual string rbatcher_name() const {return "";}
-    virtual void rbatched_exec(BasicCnodeEngine* _engine, const vector<Cnode*>& nodes)=0; 
+    //virtual void rbatched_exec(BasicCnodeEngine* _engine, const vector<Cnode*>& nodes)=0; 
+    virtual void rbatched_exec(const vector<Cnode*>& nodes)=0; 
 
   };
 

@@ -22,11 +22,10 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       CTENSORB(owner).add(CTENSORB(inputs[1]));
-      //this_thread::sleep_for(chrono::milliseconds(50)); 
+      this_thread::sleep_for(chrono::milliseconds(5)); 
     }
 
-    void rbatched_exec(BasicCnodeEngine* _engine, const vector<Cnode*>& nodes){
-      //engine=_engine;
+    void rbatched_exec(const vector<Cnode*>& nodes){
       const int N=nodes.size();
       if(N==0) return; 
       int dev=CTENSORB(nodes[0]->op->inputs[0]).device;
@@ -36,9 +35,6 @@ namespace Cengine{
 	  nodes[i]->obj=nodes[i]->op->inputs[0]->obj;
 	  CTENSORB(nodes[i]).add(CTENSORB(nodes[i]->op->inputs[1]));
 	}
-	//for(int i=0; i<N; i++){
-	  //_engine->done(nodes[i]);
-	//}
       }
 
       if(dev==1){

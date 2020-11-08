@@ -16,8 +16,9 @@ namespace Cengine{
 
     virtual void release()=0; 
     virtual int flush()=0; 
-    //virtual int npending() const=0; 
+    virtual int npending() const=0; 
 
+    
   };
 
 }

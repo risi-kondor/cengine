@@ -11,23 +11,15 @@ namespace Cengine{
 
   template<int Tsel, int Csel>
   class ctensor_add_Mprod_op: public Coperator, public CumulativeOperator, public InPlaceOperator, 
-    public BatchedOperator{
+			      public BatchedOperator, public RbatchedOperator{
   public:
 
     Gdims dims1;
     Gdims dims2;
 
-    static int _batcher_id;
-
-    //ctensor_add_Mprod_op(Cnode* R, Cnode* A, Cnode* B):
-    //Coperator(R,A,B){}
-
     ctensor_add_Mprod_op(Cnode* R, Cnode* A, Cnode* B, const Gdims& _dims1, const Gdims& _dims2):
       Coperator(R,A,B), dims1(_dims1), dims2(_dims2){}
 
-    void set_batcher_id(const int i){_batcher_id=i;}
-
-    int batcher_id() const{return _batcher_id;}
 
     static string classname(){
       if(Tsel==0) return "ctensor_add_Mprod<"+to_string(Csel)+">";
@@ -35,13 +27,6 @@ namespace Cengine{
       if(Tsel==2) return "ctensor_add_Mprod_AT<"+to_string(Csel)+">";
     }
     
-    string batcher_name() const{
-      if(Tsel==0) return "ctensor_add_Mprod<"+to_string(Csel)+">"+signature().str();
-      if(Tsel==1) return "ctensor_add_Mprod_TA<"+to_string(Csel)+">"+signature().str();
-      if(Tsel==2) return "ctensor_add_Mprod_AT<"+to_string(Csel)+">"+signature().str();
-    }
-    
-
   public:
 
     virtual void exec(){
@@ -80,7 +65,7 @@ namespace Cengine{
 	engine->done(nodes[i]);
       }
 
-      DEBUG_ENGINE({CoutLock lk; cout<<"    \e[1mDone.\e[0m"<<endl;});
+      DEBUG_ENGINE2("    \e[1mDone.\e[0m");
     }
 
     ctensor_Mprod_signature signature() const{
@@ -92,12 +77,69 @@ namespace Cengine{
     }
 
 
+    virtual void rbatched_exec(const vector<Cnode*>& nodes){
+      DEBUG_ENGINE({CoutLock lk; cout<<"    Running batched ctensor_add_Mprod..."<<endl;});
+      assert(nodes.size()>0);
+      BasicCnodeEngine* engine=nodes[0]->engine;
+      const int N=nodes.size();
+
+      CtensorBpack R(nodes,0);
+      CtensorBpack X(nodes,1);
+      CtensorBpack Y(nodes,2);
+
+      //int dev=R.device;
+      //R.to_device(0);
+      //X.to_device(dev);
+      //Y.to_device(dev);
+      
+      if(Tsel==0) R.add_Mprod<Csel>(X,Y);
+      if(Tsel==1) R.add_Mprod_TA<Csel>(X,Y);
+      if(Tsel==2) R.add_Mprod_AT<Csel>(X,Y);
+
+      for(int i=0; i<N; i++)
+      nodes[i]->op->owner->obj=R.pack[i];
+
+      for(int i=0; i<N; i++){
+	engine->done(nodes[i]);
+      }
+
+      DEBUG_ENGINE2("    \e[1mDone.\e[0m");
+    }
+
+    ctensor_Mprod_signature rsignature() const{
+      return ctensor_Mprod_signature(dims1,dims2);
+    }
+
+    Rbatcher_base* spawn_rbatcher(BasicCnodeEngine* _engine) const{
+      return new MetaRbatcher<ctensor_add_Mprod_op,ctensor_Mprod_signature,Rbatcher>(_engine);
+    }
+
+
   public:
 
     string str() const{
       return "ctensor_add_Mprod"+inp_str();
     }
 
+    static int _batcher_id;
+    int batcher_id() const{return _batcher_id;}
+    void set_batcher_id(const int i){_batcher_id=i;}
+    string batcher_name() const{
+      if(Tsel==0) return "ctensor_add_Mprod<"+to_string(Csel)+">"+signature().str();
+      if(Tsel==1) return "ctensor_add_Mprod_TA<"+to_string(Csel)+">"+signature().str();
+      if(Tsel==2) return "ctensor_add_Mprod_AT<"+to_string(Csel)+">"+signature().str();
+    }
+
+    static int _rbatcher_id;
+    void set_rbatcher_id(const int i){_rbatcher_id=i;}
+    int rbatcher_id() const{return _rbatcher_id;}
+    string rbatcher_name() const{
+      if(Tsel==0) return "ctensor_add_Mprod<"+to_string(Csel)+">"+signature().str();
+      if(Tsel==1) return "ctensor_add_Mprod_TA<"+to_string(Csel)+">"+signature().str();
+      if(Tsel==2) return "ctensor_add_Mprod_AT<"+to_string(Csel)+">"+signature().str();
+    }
+    
+    
   };
 
 }
