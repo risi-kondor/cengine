@@ -26,6 +26,7 @@ void add_Mprod(const CFtensor& x, const CFtensor& y, const int nx=1, const int n
 	float tr=0; 
 	float ti=0;
 	for(int p=0; p<K; p++){
+	  //cout<<i<<" "<<j<<" "<<p<<endl;
 	  int qx=i*istridex+p;
 	  int qy=p*pstridey+j;
 	  float xr=x.arr[qx];

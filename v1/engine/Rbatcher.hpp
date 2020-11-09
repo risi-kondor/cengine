@@ -24,6 +24,7 @@ namespace Cengine{
 #ifndef CENGINE_DRY_RUN
       int dev=nodes[0]->op->inputs[0]->obj->get_device();
       if(dev==0){
+	//COUT("CPU rbatched "<<N);
 	for(int i=0; i<N; i++)
 	  nodes[i]->op->exec();
       }else{

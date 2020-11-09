@@ -36,6 +36,7 @@ namespace Cengine{
       if(Tsel==0) obj.add_Mprod<Csel>(asCtensorB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
       if(Tsel==1) obj.add_Mprod_TA<Csel>(asCtensorB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
       if(Tsel==2) obj.add_Mprod_AT<Csel>(asCtensorB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
+      //cout<<79<<endl;
     }
 
 
@@ -66,6 +67,7 @@ namespace Cengine{
       const int N=nodes.size();
       int dev=CTENSORB(nodes[0]->op->inputs[0]).device;
       assert(dev==0);
+      //cout<<78<<endl;
 
       CtensorBreducer R(N,CTENSORB(nodes[0]));
       CtensorBpack X(nodes,1);

@@ -24,7 +24,7 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       CTENSORB(owner).add(CTENSORB(inputs[1]));
-      this_thread::sleep_for(chrono::milliseconds(5)); 
+      //this_thread::sleep_for(chrono::milliseconds(5)); 
     }
 
     void rbatched_exec(const vector<Cnode*>& nodes){
@@ -80,7 +80,7 @@ namespace Cengine{
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
       CTENSORB(owner).add_prod(CSCALARB(inputs[1]),CTENSORB(inputs[2]));
-      this_thread::sleep_for(chrono::milliseconds(5)); 
+      //this_thread::sleep_for(chrono::milliseconds(5)); 
     }
 
     void rbatched_exec(const vector<Cnode*>& nodes){
