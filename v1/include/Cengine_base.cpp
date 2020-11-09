@@ -19,8 +19,9 @@ namespace Cengine{
 }
 
 #include "Cengine.hpp"
-#include "CtensorB_add_Mprod_ops.hpp"
-#include "CtensorB_rbatched_ops.hpp"
+#include "ctensor_add_Mprod_ops.hpp"
+#include "ctensor_add_ops.hpp"
+#include "ctensor_add_inp_op.hpp"
 
 std::default_random_engine rndGen;
 mutex Cengine::CoutLock::mx;
@@ -28,6 +29,10 @@ Cengine::Cengine* Cengine_engine=new Cengine::Cengine();
 
 int Cengine::ctensor_add_op::_batcher_id=0; 
 int Cengine::ctensor_add_op::_rbatcher_id=0; 
+
+int Cengine::ctensor_add_prod_c_A_op::_rbatcher_id=0; 
+
+int Cengine::ctensor_add_inp_op::_rbatcher_id=0; 
 
 template<> int Cengine::ctensor_add_Mprod_op<0,0>::_batcher_id=0; 
 template<> int Cengine::ctensor_add_Mprod_op<0,1>::_batcher_id=0; 

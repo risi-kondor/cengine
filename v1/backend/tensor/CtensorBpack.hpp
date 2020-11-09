@@ -2,6 +2,7 @@
 #define _CtensorBpack
 
 #include "CtensorB.hpp"
+#include "CscalarBpack.hpp"
 #include "Cnode.hpp"
 
 namespace Cengine{
@@ -9,87 +10,69 @@ namespace Cengine{
   class CtensorBpack{
   public:
 
+    int N;
     Gdims dims; 
     int nbu=-1;
-    mutable int device=0;
+    mutable int device=1;
 
     vector<CtensorB*> pack;
     mutable float** parr=nullptr;
     mutable float** parrc=nullptr;
     mutable bool parr_valid=false;
 
-    int N;
-    bool temp=false;
-    float* temp_base;
-    
-    CtensorBpack(const Gdims& _dims, const int _nbu=-1, const int dev=0):
-      dims(_dims), nbu(_nbu), device(dev){}
+    CtensorBpack(const int _N, const Gdims& _dims, const int _nbu=-1, const int dev=1):
+      N(_N), dims(_dims), nbu(_nbu), device(dev){
+      CUDA_SAFE(cudaMalloc((void ***)&parr, N*sizeof(float*)));
+      CUDA_SAFE(cudaMalloc((void ***)&parrc, N*sizeof(float*)));
+      parr_valid=true;
+    }
+
+    CtensorBpack(const int _N, const CtensorB& x):
+      CtensorBpack(_N,x.dims,x.nbu,x.device){}
 
     CtensorBpack(const CtensorB& x):
       dims(x.dims), nbu(x.nbu), device(x.device){}
-
-    CtensorBpack(const vector<Cnode*>& x, const int s){
-      const int N=x.size();
-      assert(N>0);
-      assert(dynamic_cast<CtensorB*>(x[0]->op->inputs[s]->obj));
-      device=dynamic_cast<CtensorB*>(x[0]->op->inputs[s]->obj)->device;
+    
+    CtensorBpack(const vector<CtensorB*>& v):
+      CtensorBpack(v.size(),*v[0]){
       pack.resize(N);
       for(int i=0; i<N; i++){
-	pack[i]=dynamic_cast<CtensorB*>(x[i]->op->inputs[s]->obj);
+	pack[i]=v[i];
 	pack[i]->to_device(device);
       }
+      float* arr[N]; 
+      float* arrc[N]; 
+      for(int i=0; i<N; i++){
+	arr[i]=pack[i]->arrg;
+	arrc[i]=pack[i]->arrgc;
+      }
+      CUDA_SAFE(cudaMemcpy(parr,arr,N*sizeof(float*),cudaMemcpyHostToDevice));  
+      CUDA_SAFE(cudaMemcpy(parrc,arrc,N*sizeof(float*),cudaMemcpyHostToDevice));  
+    }
+
+    CtensorBpack(const vector<Cnode*>& v, const int s):
+      CtensorBpack(v.size(),*dynamic_cast<CtensorB*>(v[0]->op->inputs[s]->obj)){
+      pack.resize(N);
+      for(int i=0; i<N; i++){
+	pack[i]=dynamic_cast<CtensorB*>(v[i]->op->inputs[s]->obj);
+	pack[i]->to_device(device);
+      }
+      float* arr[N]; 
+      float* arrc[N]; 
+      for(int i=0; i<N; i++){
+	arr[i]=pack[i]->arrg;
+	arrc[i]=pack[i]->arrgc;
+      }
+      CUDA_SAFE(cudaMemcpy(parr,arr,N*sizeof(float*),cudaMemcpyHostToDevice));  
+      CUDA_SAFE(cudaMemcpy(parrc,arrc,N*sizeof(float*),cudaMemcpyHostToDevice));  
     }
 
     ~CtensorBpack(){
       if(parr) CUDA_SAFE(cudaFree(parr));
       if(parrc) CUDA_SAFE(cudaFree(parrc));
-      if(temp) CUDA_SAFE(cudaFree(temp_base));
     }
-
-
-  public: // -------------------------------------------------------------------------------------------------
-
-
-    CtensorBpack(const int N, const Gdims& _dims, const int _nbu, const fill_raw& dummy, const int dev=0):
-      dims(_dims), nbu(_nbu), device(dev){
-      assert(dev==1);
-      
-    }
-
-    CtensorBpack(const int _N, const CtensorB& model, const fill_raw& dummy, const int dev=1):
-      dims(model.dims), nbu(model.nbu), device(dev), N(_N){
-      assert(dev==1);
-      int cst=model.cst;
-      int memsize=model.memsize;
-      float* temp_base;
-      //int cst=roundup(model->cst*sizeof(float),128);
-      //int memsize=roundup(model->memsize*sizeof(float),128);
-      CUDA_SAFE(cudaMalloc((void **)&temp_base, memsize*N*sizeof(float)));
-
-      float* arr[N]; 
-      float* arrc[N]; 
-      for(int i=0; i<N; i++){
-	arr[i]=temp_base+i*memsize;
-	arrc[i]=temp_base+i*memsize+cst;
-      }
-      
-      CUDA_SAFE(cudaMalloc((void ***)&parr, N*sizeof(float*)));
-      CUDA_SAFE(cudaMalloc((void ***)&parrc, N*sizeof(float*)));
-      CUDA_SAFE(cudaMemcpy(parr,arr,N*sizeof(float*),cudaMemcpyHostToDevice));  
-      CUDA_SAFE(cudaMemcpy(parrc,arrc,N*sizeof(float*),cudaMemcpyHostToDevice));  
-
-      device=1;
-      parr_valid=true;
-      temp=true;
-    }
-
-
-
-  public: // -------------------------------------------------------------------------------------------------
-
 
     CtensorBpack(const CtensorBpack& x)=delete;
-
     CtensorBpack& operator=(const CtensorBpack& x)=delete;
 
 
@@ -106,8 +89,8 @@ namespace Cengine{
     }
 
 
+    /*
     void push_back(CtensorB* x){
-      assert(!temp);
       assert(x->dims==dims);
       assert(x->nbu==nbu);
       pack.push_back(x);
@@ -116,13 +99,12 @@ namespace Cengine{
 
 
     void push_back(CtensorB& x){
-      assert(!temp);
       assert(x.dims==dims);
       assert(x.nbu==nbu);
       pack.push_back(&x);
       parr_valid=false;
     }
-
+    */
 
     float** get_parr() const{
       if(!parr || !parr_valid) renew_parr();
@@ -137,7 +119,6 @@ namespace Cengine{
 
 
     void renew_parr() const{
-      assert(!temp);
       if(parr) CUDA_SAFE(cudaFree(parr)); parr=nullptr;
       if(parrc) CUDA_SAFE(cudaFree(parrc)); parrc=nullptr;
 
@@ -161,7 +142,7 @@ namespace Cengine{
 
 
     void to_device(const device_id& _dev) const{
-      assert(!temp);
+      assert(false); 
       if(_dev.id()==device) return; 
       parr_valid=false; 
       if(parr) CUDA_SAFE(cudaFree(parr)); parr=nullptr;
@@ -181,8 +162,11 @@ namespace Cengine{
     void sum_into_cu(const CtensorB& R, const cudaStream_t& stream);
 #endif 
 
+    void add_prod(const CscalarBpack& c, const CtensorBpack& A){
+    }
+
+
     void copy(const CtensorBpack& x){
-      assert(temp);
       assert(x.pack.size()==N);
 
       if(device==0){
@@ -203,7 +187,6 @@ namespace Cengine{
     }
     
     void add(const CtensorBpack& x){
-      assert(!temp);
       const int N=pack.size();
       assert(x.pack.size()==N);
 
@@ -219,7 +202,7 @@ namespace Cengine{
     }
 
     void sum_into(CtensorB& R){
-      assert(temp);
+      //assert(temp);
 
       if(device==0){
 	FCG_UNIMPL(); 
@@ -246,3 +229,46 @@ namespace Cengine{
 }
 
 #endif
+    //bool temp=false; // eliminate these
+    //float* temp_base;
+    
+    //CtensorBpack(const Gdims& _dims, const int _nbu=-1, const int dev=0):
+    //dims(_dims), nbu(_nbu), device(dev){}
+
+//public: // -------------------------------------------------------------------------------------------------
+
+    /*
+    CtensorBpack(const int N, const Gdims& _dims, const int _nbu, const fill_raw& dummy, const int dev=0):
+      dims(_dims), nbu(_nbu), device(dev){
+      assert(dev==1);
+    }
+    */
+
+    /*
+    CtensorBpack(const int _N, const CtensorB& model, const fill_raw& dummy, const int dev=1):
+      dims(model.dims), nbu(model.nbu), device(dev), N(_N){
+      assert(dev==1);
+      int cst=model.cst;
+      int memsize=model.memsize;
+      float* temp_base;
+      //int cst=roundup(model->cst*sizeof(float),128);
+      //int memsize=roundup(model->memsize*sizeof(float),128);
+      CUDA_SAFE(cudaMalloc((void **)&temp_base, memsize*N*sizeof(float)));
+
+      float* arr[N]; 
+      float* arrc[N]; 
+      for(int i=0; i<N; i++){
+	arr[i]=temp_base+i*memsize;
+	arrc[i]=temp_base+i*memsize+cst;
+      }
+      
+      CUDA_SAFE(cudaMalloc((void ***)&parr, N*sizeof(float*)));
+      CUDA_SAFE(cudaMalloc((void ***)&parrc, N*sizeof(float*)));
+      CUDA_SAFE(cudaMemcpy(parr,arr,N*sizeof(float*),cudaMemcpyHostToDevice));  
+      CUDA_SAFE(cudaMemcpy(parrc,arrc,N*sizeof(float*),cudaMemcpyHostToDevice));  
+
+      device=1;
+      parr_valid=true;
+      temp=true;
+    }
+    */

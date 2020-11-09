@@ -18,10 +18,19 @@ namespace Cengine{
       engine(_engine), nodes(std::move(_nodes)){};
 
     void exec(){
-#ifndef CENGINE_DRY_RUN
-      dynamic_cast<RbatchedOperator*>(nodes[0]->op)->rbatched_exec(nodes); 
-#endif
       const int N=nodes.size();
+      if(N==0) return; 
+
+#ifndef CENGINE_DRY_RUN
+      int dev=CTENSORB(nodes[0]->op->inputs[0]).device;
+      if(dev==0){
+	for(int i=0; i<N; i++)
+	  nodes[i]->op->exec();
+      }else{
+	dynamic_cast<RbatchedOperator*>(nodes[0]->op)->rbatched_exec(nodes); 
+      }
+#endif
+
       for(int i=0; i<N; i++){
 	engine->done(nodes[i]);
       }

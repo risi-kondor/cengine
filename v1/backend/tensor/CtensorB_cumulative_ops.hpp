@@ -286,10 +286,10 @@ namespace Cengine{
   };
 
   
-  class ctensor_add_prod_rA_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
+  class ctensor_add_prod_r_A_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
   public:
 
-    ctensor_add_prod_rA_op(Cnode* r, Cnode* c, Cnode* A):
+    ctensor_add_prod_r_A_op(Cnode* r, Cnode* c, Cnode* A):
       Coperator(r,c,A){}
 
     virtual void exec(){
@@ -301,16 +301,17 @@ namespace Cengine{
     int batcher_id() const {return 100;}
 
     string str() const{
-      return "ctensor_add_prod_rA"+inp_str();
+      return "ctensor_add_prod_r_A"+inp_str();
     }
 
   };
 
-  
-  class ctensor_add_prod_cA_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
+
+  /*
+  class ctensor_add_prod_c_A_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
   public:
 
-    ctensor_add_prod_cA_op(Cnode* r, Cnode* c, Cnode* A):
+    ctensor_add_prod_c_A_op(Cnode* r, Cnode* c, Cnode* A):
       Coperator(r,c,A){}
 
     virtual void exec(){
@@ -324,6 +325,7 @@ namespace Cengine{
     }
 
   };
+  */
 
   
   class ctensor_add_prod_cc_A_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
@@ -538,6 +540,7 @@ namespace Cengine{
   };
 
 
+  /*
   class ctensor_add_inp_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
   public:
 
@@ -555,6 +558,7 @@ namespace Cengine{
     }
 
   };
+  */
 
 
   class ctensor_add_element_op: public Coperator, public CumulativeOperator, public InPlaceOperator{

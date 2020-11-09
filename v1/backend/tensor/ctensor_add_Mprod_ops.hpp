@@ -40,7 +40,6 @@ namespace Cengine{
 
 
     virtual void batched_exec(const vector<Cnode*>& nodes ){
-      DEBUG_ENGINE({CoutLock lk; cout<<"    Running batched ctensor_add_Mprod..."<<endl;});
       assert(nodes.size()>0);
       BasicCnodeEngine* engine=nodes[0]->engine;
       const int N=nodes.size();
@@ -65,7 +64,6 @@ namespace Cengine{
 	engine->done(nodes[i]);
       }
 
-      DEBUG_ENGINE2("    \e[1mDone.\e[0m");
     }
 
     ctensor_Mprod_signature signature() const{
@@ -78,32 +76,31 @@ namespace Cengine{
 
 
     virtual void rbatched_exec(const vector<Cnode*>& nodes){
-      DEBUG_ENGINE({CoutLock lk; cout<<"    Running batched ctensor_add_Mprod..."<<endl;});
       assert(nodes.size()>0);
-      BasicCnodeEngine* engine=nodes[0]->engine;
       const int N=nodes.size();
+      int dev=CTENSORB(nodes[0]->op->inputs[0]).device;
 
-      CtensorBpack R(nodes,0);
-      CtensorBpack X(nodes,1);
-      CtensorBpack Y(nodes,2);
-
-      //int dev=R.device;
-      //R.to_device(0);
-      //X.to_device(dev);
-      //Y.to_device(dev);
-      
-      if(Tsel==0) R.add_Mprod<Csel>(X,Y);
-      if(Tsel==1) R.add_Mprod_TA<Csel>(X,Y);
-      if(Tsel==2) R.add_Mprod_AT<Csel>(X,Y);
-
-      for(int i=0; i<N; i++)
-      nodes[i]->op->owner->obj=R.pack[i];
-
-      for(int i=0; i<N; i++){
-	engine->done(nodes[i]);
+      if(dev==0){
+	CtensorBpack R(nodes,0);
+	CtensorBpack X(nodes,1);
+	CtensorBpack Y(nodes,2);
+	
+	if(Tsel==0) R.add_Mprod<Csel>(X,Y);
+	if(Tsel==1) R.add_Mprod_TA<Csel>(X,Y);
+	if(Tsel==2) R.add_Mprod_AT<Csel>(X,Y);
       }
 
-      DEBUG_ENGINE2("    \e[1mDone.\e[0m");
+      if(dev==1){
+	CtensorBpack R(nodes,0);
+	CtensorBpack X(nodes,1);
+	CtensorBpack Y(nodes,2);
+	
+	if(Tsel==0) R.add_Mprod<Csel>(X,Y);
+	if(Tsel==1) R.add_Mprod_TA<Csel>(X,Y);
+	if(Tsel==2) R.add_Mprod_AT<Csel>(X,Y);
+	R.sum_into(CTENSORB(nodes[0]));
+      }
+
     }
 
     ctensor_Mprod_signature rsignature() const{

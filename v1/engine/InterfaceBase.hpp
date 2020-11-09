@@ -7,9 +7,11 @@
 #include "CtensorB_ops.hpp"
 #include "CtensorB_constructor_ops.hpp"
 #include "CtensorB_cumulative_ops.hpp"
-#include "CtensorB_rbatched_ops.hpp"
-#include "CtensorB_add_Mprod_ops.hpp"
 #include "CtensorB_mix_ops.hpp"
+
+#include "ctensor_add_ops.hpp"
+#include "ctensor_add_Mprod_ops.hpp"
+#include "ctensor_add_inp_op.hpp"
 
 extern ::Cengine::Cengine* Cengine_engine;
 
