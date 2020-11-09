@@ -543,7 +543,7 @@ namespace Cengine{
       }
 
       while(active_workers>0){
-	{CoutLock lk; cout<<"active workers"<<endl;}
+	//{CoutLock lk; cout<<"active workers"<<endl;}
 	/*
 	bool all_done=true;
 	for(auto p:workers){
