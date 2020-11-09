@@ -20,6 +20,8 @@ namespace Cengine{
     mutable float** parrc=nullptr;
     mutable bool parr_valid=false;
 
+    CtensorBpack(){}
+
     CtensorBpack(const int _N, const Gdims& _dims, const int _nbu=-1, const int dev=1):
       N(_N), dims(_dims), nbu(_nbu), device(dev){
       CUDA_SAFE(cudaMalloc((void ***)&parr, N*sizeof(float*)));
@@ -75,6 +77,16 @@ namespace Cengine{
     CtensorBpack(const CtensorBpack& x)=delete;
     CtensorBpack& operator=(const CtensorBpack& x)=delete;
 
+    CtensorBpack& operator=(CtensorBpack&& x){
+      if(parr) CUDA_SAFE(cudaFree(parr));
+      if(parrc) CUDA_SAFE(cudaFree(parrc));
+      N=x.N; dims=x.dims; nbu=x.nbu; device=x.device; 
+      parr=x.parr; x.parr=nullptr;
+      parrc=x.parrc; x.parrc=nullptr;
+      pack=std::move(x.pack);
+      return *this; 
+    }
+
 
   public: // -------------------------------------------------------------------------------------------------
 
@@ -88,23 +100,6 @@ namespace Cengine{
       return dims; 
     }
 
-
-    /*
-    void push_back(CtensorB* x){
-      assert(x->dims==dims);
-      assert(x->nbu==nbu);
-      pack.push_back(x);
-      parr_valid=false;
-    }
-
-
-    void push_back(CtensorB& x){
-      assert(x.dims==dims);
-      assert(x.nbu==nbu);
-      pack.push_back(&x);
-      parr_valid=false;
-    }
-    */
 
     float** get_parr() const{
       if(!parr || !parr_valid) renew_parr();
@@ -162,8 +157,6 @@ namespace Cengine{
     void sum_into_cu(const CtensorB& R, const cudaStream_t& stream);
 #endif 
 
-    void add_prod(const CscalarBpack& c, const CtensorBpack& A){
-    }
 
 
     void copy(const CtensorBpack& x){
@@ -198,8 +191,12 @@ namespace Cengine{
 	//if(!x.parr_valid) x.renew_parr();
 	//CUBLAS_SAFE(gemmBatched(genet_cublas,CUBLAS_OP_N,CUBLAS_OP_N);)
       }
-
     }
+
+    void add_prod(const CscalarBpack& c, const CtensorBpack& A){
+      CENGINE_UNIMPL();
+    }
+
 
     void sum_into(CtensorB& R){
       //assert(temp);
@@ -219,6 +216,10 @@ namespace Cengine{
 #endif
       }
 
+    }
+
+    void add_inp_into(CscalarBpack& R, CtensorBpack& Y){
+      CENGINE_UNIMPL(); 
     }
     
     #include "CtensorBpack_add_Mprod.hpp"
@@ -272,3 +273,20 @@ namespace Cengine{
       temp=true;
     }
     */
+    /*
+    void push_back(CtensorB* x){
+      assert(x->dims==dims);
+      assert(x->nbu==nbu);
+      pack.push_back(x);
+      parr_valid=false;
+    }
+
+
+    void push_back(CtensorB& x){
+      assert(x.dims==dims);
+      assert(x.nbu==nbu);
+      pack.push_back(&x);
+      parr_valid=false;
+    }
+    */
+

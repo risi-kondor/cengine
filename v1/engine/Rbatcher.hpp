@@ -22,7 +22,7 @@ namespace Cengine{
       if(N==0) return; 
 
 #ifndef CENGINE_DRY_RUN
-      int dev=CTENSORB(nodes[0]->op->inputs[0]).device;
+      int dev=nodes[0]->op->inputs[0]->obj->get_device();
       if(dev==0){
 	for(int i=0; i<N; i++)
 	  nodes[i]->op->exec();

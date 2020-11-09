@@ -14,6 +14,10 @@ namespace Cengine{
 
   public:
 
+    virtual int get_device() const{
+      return 0;
+    }
+
     virtual string classname() const{
       return "";
     }

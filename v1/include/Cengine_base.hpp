@@ -78,7 +78,9 @@ using namespace std;
 
 #define FCG_WARNING(message) printf("Warning: %s.\n",(message));
 
-#define GENET_UNIMPL() printf("Cengine error: function \"%s\" not implemented.\n",__PRETTY_FUNCTION__);
+#define CENGINE_UNIMPL() printf("Cengine error: function \"%s\" not implemented.\n",__PRETTY_FUNCTION__);
+
+#define GENET_UNIMPL() printf("GEnet error: function \"%s\" not implemented.\n",__PRETTY_FUNCTION__);
 
 #define COUT(cmd) {CoutLock lk; cout<<cmd<<endl;}
 

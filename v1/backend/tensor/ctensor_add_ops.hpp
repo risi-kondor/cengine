@@ -34,7 +34,6 @@ namespace Cengine{
       CtensorBreducer R(nodes.size(),CTENSORB(nodes[0]->op->inputs[0]));
       CtensorBpack X(nodes,1);
       R.add(X);
-      //R.sum_into(CTENSORB(nodes[0]));
     }
 
 
@@ -59,8 +58,8 @@ namespace Cengine{
     int rbatcher_id() const{return _rbatcher_id;}
     string rbatcher_name() const{return "ctensor_add<"+rsignature().str()+">";}
     ctensor_signature rsignature() const{return ctensor_signature(dims);}
-    Rbatcher_base* spawn_rbatcher(BasicCnodeEngine* _engine) const{
-      return new MetaRbatcher<ctensor_add_op,ctensor_signature,Rbatcher>(_engine);
+    Rbatcher_base* spawn_rbatcher(BasicCnodeEngine* engine) const{
+      return new MetaRbatcher<ctensor_add_op,ctensor_signature,Rbatcher>(engine);
     }
     
     

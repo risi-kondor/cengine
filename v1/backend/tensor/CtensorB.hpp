@@ -118,6 +118,9 @@ namespace Cengine{
       return dims;
     }
 
+    int get_device() const{
+      return device;
+    }
 
 
   public: // ---- Operations ---------------------------------------------------------------------------------
