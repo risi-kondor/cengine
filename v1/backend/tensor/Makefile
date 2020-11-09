@@ -34,7 +34,7 @@ derived: $(DERIVED)
 all: objects execs derived tests 
 
 clean: 
-	rm -f $(TESTS) #$(EXECS) $(OBJECTS) 
+	rm -f $(TESTS) $(EXECS) $(OBJECTS) 
 
 anew: clean all
 

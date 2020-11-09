@@ -14,6 +14,7 @@ namespace Cengine{
     Gdims dims; 
     int nbu=-1;
     mutable int device=1;
+    int memsize=0; 
 
     vector<CtensorB*> pack;
     mutable float** parr=nullptr;
@@ -30,13 +31,16 @@ namespace Cengine{
     }
 
     CtensorBpack(const int _N, const CtensorB& x):
-      CtensorBpack(_N,x.dims,x.nbu,x.device){}
+      CtensorBpack(_N,x.dims,x.nbu,x.device){
+      memsize=x.memsize;
+    }
 
     CtensorBpack(const CtensorB& x):
-      dims(x.dims), nbu(x.nbu), device(x.device){}
+      dims(x.dims), nbu(x.nbu), device(x.device), memsize(x.memsize){}
     
     CtensorBpack(const vector<CtensorB*>& v):
       CtensorBpack(v.size(),*v[0]){
+      memsize=v[0]->memsize;
       pack.resize(N);
       for(int i=0; i<N; i++){
 	pack[i]=v[i];
@@ -59,6 +63,7 @@ namespace Cengine{
 	pack[i]=dynamic_cast<CtensorB*>(v[i]->op->inputs[s]->obj);
 	pack[i]->to_device(device);
       }
+      memsize=pack[0]->memsize;
       float* arr[N]; 
       float* arrc[N]; 
       for(int i=0; i<N; i++){
@@ -84,6 +89,7 @@ namespace Cengine{
       parr=x.parr; x.parr=nullptr;
       parrc=x.parrc; x.parrc=nullptr;
       pack=std::move(x.pack);
+      memsize=x.memsize;
       return *this; 
     }
 
@@ -181,7 +187,7 @@ namespace Cengine{
     
     void add(const CtensorBpack& x){
       const int N=pack.size();
-      assert(x.pack.size()==N);
+      //assert(x.pack.size()==N);
 
       if(device==0){
 	for(int i=0; i<N; i++)

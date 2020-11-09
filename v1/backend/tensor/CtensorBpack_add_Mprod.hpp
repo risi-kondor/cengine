@@ -4,8 +4,8 @@ template<int selector>
 void add_Mprod(const CtensorBpack& x, const CtensorBpack& y, const int nx=1, const int ny=1){
 
   const int N=pack.size();
-  assert(x.pack.size()==N);
-  assert(y.pack.size()==N);
+  //assert(x.pack.size()==N);
+  //assert(y.pack.size()==N);
 
 
   //{CoutLock lk; cout<<"Mprod Dev="<<device<<endl;}
@@ -19,8 +19,8 @@ void add_Mprod(const CtensorBpack& x, const CtensorBpack& y, const int nx=1, con
     return; 
   }
 
-  x.to_device(1);
-  y.to_device(1);
+  //x.to_device(1);
+  //y.to_device(1);
 
   const int xk=x.pack[0]->k;
   const int yk=y.pack[0]->k;

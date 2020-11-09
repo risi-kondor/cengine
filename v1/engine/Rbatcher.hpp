@@ -28,6 +28,12 @@ namespace Cengine{
 	for(int i=0; i<N; i++)
 	  nodes[i]->op->exec();
       }else{
+	//COUT("GPU rbatched "<<N);
+	if(dynamic_cast<CumulativeOperator*>(nodes[0]->op)){
+	  Cobject* target=nodes[0]->op->inputs[0]->obj;
+	  for(int i=0; i<N; i++)
+	    nodes[i]->obj=target;
+	}
 	dynamic_cast<RbatchedOperator*>(nodes[0]->op)->rbatched_exec(nodes); 
       }
 #endif

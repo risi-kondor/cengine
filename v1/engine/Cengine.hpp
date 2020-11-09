@@ -29,6 +29,8 @@ namespace Cengine{
     
     vector<Cworker*> workers;
     bool shutdown=false; 
+    bool biphasic=false;
+    bool hold=false;
 
     int nnodes=0;
     int nhandles=0;
@@ -305,7 +307,7 @@ namespace Cengine{
 	if(it!=ready.end()) ready.erase(it);
 	ready.push_back(node);
       }
-      get_task_cv.notify_one();
+      if(!hold) get_task_cv.notify_one();
     }
 
 
@@ -321,7 +323,7 @@ namespace Cengine{
 	}
 	ready_batchers.push_back(node);
       }
-      get_task_cv.notify_one();
+      if(!hold) get_task_cv.notify_one();
     }
 
 
@@ -478,6 +480,12 @@ namespace Cengine{
       DEBUG_ENGINE2(endl<<"    \e[1mFlushing engine...\e[0m");
       CENGINE_TRACE("\e[1mFlushing engine...\e[0m");
       int h=0;
+
+      if(hold){
+	hold=false;
+	get_task_cv.notify_all();	
+      } 
+
       bool all_done=false;
       while(true){
 	all_done=true; 
@@ -554,6 +562,7 @@ namespace Cengine{
 	this_thread::sleep_for(chrono::milliseconds(13));	
       }
 
+      if(biphasic) hold=true; 
       DEBUG_FLUSH2("done.");
       DEBUG_ENGINE2("    \e[1mFlushed.\e[0m")
       CENGINE_TRACE("\e[1mFlushed.\e[0m")
@@ -635,7 +644,7 @@ namespace Cengine{
       if(active_workers==0) active_workers_cv.notify_one();
       
       unique_lock<mutex> lock(get_task_mx);
-      get_task_cv.wait(lock,[this](){return ready.size()>0 || ready_batchers.size()>0 || shutdown;});
+      get_task_cv.wait(lock,[this](){return (!hold && (ready.size()>0 || ready_batchers.size()>0)) || shutdown;});
 
       {
 #ifdef ENGINE_PRIORITY
@@ -652,7 +661,7 @@ namespace Cengine{
 	  op=ready_batchers.front()->op;
 	  ready_batchers.pop_front();
 	  op->owner->working=true; 
-	  get_task_cv.notify_one();
+	  if(!hold) get_task_cv.notify_one();
 	  active_batchers++;
 	  return op;      
 	}
@@ -662,7 +671,7 @@ namespace Cengine{
 	  op=ready.front()->op;
 	  ready.pop_front();
 	  op->owner->working=true; 
-	  get_task_cv.notify_one();
+	  if(!hold) get_task_cv.notify_one();
 	  return op;      
 	}
 	

@@ -7,7 +7,7 @@ OBJECTSDIR=$(ROOTDIR)/objects
 ENGINEDIR=$(ROOTDIR)/engine
 TESTSDIR=$(ROOTDIR)/tests
 
-CFLAGS= -std=c++11
+CFLAGS= -std=c++11 -O3 
 INCLUDE= -I $(ROOTDIR)/include 
 LIBS= -lstdc++ -lm -lpthread 
 
