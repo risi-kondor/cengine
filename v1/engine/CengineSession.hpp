@@ -8,10 +8,9 @@ namespace Cengine{
   class CengineSession{
   public:
 
-    CengineSession(){
+    CengineSession(const int nthreads=3){
+      Cengine_engine=new Cengine(nthreads);
 #ifdef _WITH_CUBLAS
-      //#include <cublas_v2.h>
-      //cublasHandle_t Cengine_cublas;
       cublasCreate(&Cengine_cublas);
 #endif 
     }

@@ -86,7 +86,7 @@ using namespace std;
 
 //#define WAITING_OPT(cmd) cmd
 #define WAITING_OPT(cmd)
-#define WITH_FASTLIST 
+//#define WITH_FASTLIST 
 #define WITH_TINYSET 
 //const int explicitL=3;
 //const int inline_explicitL=5;

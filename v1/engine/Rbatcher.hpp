@@ -45,7 +45,8 @@ namespace Cengine{
     
     string str() const{
       if(nodes.size()==0)  return "exec_batcher_op<>";
-      return "exec_rbatcher_op<"+dynamic_cast<RbatchedOperator*>(nodes[0]->op)->rbatcher_name()+">";
+      return "exec_rbatcher_op<"+dynamic_cast<RbatchedOperator*>(nodes[0]->op)->rbatcher_name()+"> ["+
+	to_string(nodes.size())+"]";
     }
 
   };
@@ -74,7 +75,9 @@ namespace Cengine{
       DEBUG_ENGINE2("    \e[1mNew Rbatcher for "<<name<<"\e[0m");
     }
 
-    ~Rbatcher(){}
+    ~Rbatcher(){
+      DEBUG_ENGINE2("Erasing Rbatcher "<<name<<" "<<id);
+    }
 
   public:
 

@@ -48,11 +48,13 @@ namespace Cengine{
       OP* op=static_cast<OP*>(node->op);
       SUBINDEX ix=dynamic_cast<OP*>(op)->rsignature();
 
+
       auto it=batchersets.find(ix);
       if(it==batchersets.end()) 
 	batchersets[ix]=new RbatcherSet;
 
       RbatcherSet* bset=batchersets[ix];
+      //COUT("ab");
       RBATCHER* sub=new RBATCHER(engine,op->rbatcher_name());
       sub->id=batchercount++;
       sub->push(node);
@@ -85,7 +87,8 @@ namespace Cengine{
       //t+=p->npending();
       for(auto p:batchersets)
 	for(auto q:*p.second)
-	  t+=q->flush();
+	  t+=q->npending();
+      //t+=q->flush(); ???
       return t;
     }
     

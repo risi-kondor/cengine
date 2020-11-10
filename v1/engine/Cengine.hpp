@@ -22,7 +22,7 @@ namespace Cengine{
   class Cengine: public BasicCnodeEngine{
   public:
 
-    int nbatchers;
+    int nbatchers=0;
 
     set<Cnode*> nodes;
     WAITING_OPT(set<Cnode*> waiting;);
@@ -63,7 +63,7 @@ namespace Cengine{
     condition_variable ready_batchers_empty_cv;
     bool batching=false; 
 
-    int nrbatchers;
+    int nrbatchers=0;
     vector<Rbatcher_base*> rbatchers;
 
     thread* sentinel;
