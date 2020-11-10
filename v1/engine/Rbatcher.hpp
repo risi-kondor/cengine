@@ -24,11 +24,11 @@ namespace Cengine{
 #ifndef CENGINE_DRY_RUN
       int dev=nodes[0]->op->inputs[0]->obj->get_device();
       if(dev==0){
-	//COUT("CPU rbatched "<<N);
+	//COUT("CPU rbatched "<<str());
 	for(int i=0; i<N; i++)
 	  nodes[i]->op->exec();
       }else{
-	//COUT("GPU rbatched "<<N);
+	//COUT("GPU rbatched "<<str());
 	if(dynamic_cast<CumulativeOperator*>(nodes[0]->op)){
 	  Cobject* target=nodes[0]->op->inputs[0]->obj;
 	  for(int i=0; i<N; i++)

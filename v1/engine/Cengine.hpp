@@ -559,7 +559,7 @@ namespace Cengine{
 	}
 	if(all_done) break;
 	*/
-	this_thread::sleep_for(chrono::milliseconds(13));	
+	this_thread::sleep_for(chrono::milliseconds(2));	
       }
 
       if(biphasic) hold=true; 
