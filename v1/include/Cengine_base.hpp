@@ -17,14 +17,19 @@
 #include <set>
 #include <algorithm>
 
-#ifdef _WITH_CUDA
-#include <cuda.h>
-#include <cuda_runtime.h>
-#endif 
 
 using namespace std; 
 
 #define CG_CONST_MEM_SIZE 32276
+
+
+// ---- OPTIONS ----------------------------------------------------------------------------------------------
+
+
+//#define WAITING_OPT(cmd) cmd
+#define WAITING_OPT(cmd)
+//#define WITH_FASTLIST 
+#define WITH_TINYSET 
 
 
 // ---- DEBUGGING -------------------------------------------------------------------------------------------
@@ -35,6 +40,8 @@ using namespace std;
 #ifdef DEBUG_ENGINE_FLAG
 #define DEBUG_ENGINE(cmd) cmd;
 #define DEBUG_ENGINE2(cmd) {CoutLock lk; cout<<cmd<<endl;}
+#define CENGINE_ECHO_WORKERS
+#define CENGINE_ECHO_QUEUE
 #else
 #define DEBUG_ENGINE(cmd);
 #define DEBUG_ENGINE2(cmd);
@@ -48,49 +55,55 @@ using namespace std;
 #define DEBUG_FLUSH2(cmd);
 #endif 
 
+#ifdef CENGINE_TRACEBACK_FLAG
+#define CENGINE_TRACE(msg) {traceback(msg);}
+#define CENGINE_ASSERT(condition)				\
+  if(!(condition)) {traceback.dump(); assert(condition);}
+#define CENGINE_DUMP_TRACE() traceback.dump();
+#else
+#define CENGINE_ASSERT(condition);
+#define CENGINE_TRACE(msg);
+#define CENGINE_DUMP_TRACE(); 
+#endif
+
+#ifdef CENGINE_ECHO_WORKERS
+#define CENGINE_WORKER_ECHO(cmd) {CoutLock lk; cout<<cmd<<endl;}
+#else 
+#define CENGINE_WORKER_ECHO(cmd);
+#endif 
+
+#ifdef CENGINE_ECHO_QUEUE
+#define CENGINE_QUEUE_ECHO(cmd) {CoutLock lk; cout<<cmd<<endl;}
+#else
+#define CENGINE_QUEUE_ECHO(cmd);
+#endif 
+
+// ---- WARNINGS ---------------------------------------------------------------------------------------------
+
 //#define COPY_WARNING
 #define COPY_WARNING cout<<"\e[1mWarning:\e[0m "<<classname()<<" copied."<<endl;
-
 //#define ASSIGN_WARNING
 #define ASSIGN_WARNING cout<<"\e[1mWarning:\e[0m "<<classname()<<" assigned."<<endl;
-
 //#define CONVERT_WARNING(a,b)
 #define CONVERT_WARNING(a,b) cout<<"\e[1mWarning:\e[0m "<<a<<" converted to "<<b<<"."<<endl;
-
-#define NOCUDA_ERROR cout<<"Error: Cengine was compiled without GPU support."<<endl;
-
-#ifndef _WITH_CUDA
-#define cudaMalloc(a,b) NOCUDA_ERROR
-#define cudaMemcpy(a,b,c,d) NOCUDA_ERROR
-#define cudaMemset(a,b,c) NOCUDA_ERROR
-#define cudaFree(a) NOCUDA_ERROR
-#endif
 
 #define FCG_ASSERT(condition, message) \
     if (!(condition)) {cout<<message<<endl; assert ((condition)); exit(-1); }
 
 #define FCG_UNIMPL() printf("Cengine error: function \"%s\" not implemented.\n",__PRETTY_FUNCTION__);
 #define FCG_NOTIMPL() printf("Cengine error: function \"%s\" not implemented.\n",__PRETTY_FUNCTION__);
-#define FCG_CPUONLY() if(device>0) {printf("Cengine error: CUDA code for \"%s\" not implemented.\n",__PRETTY_FUNCTION__); exit(-1);}
+#define CENGINE_UNIMPL() printf("Cengine error: function \"%s\" not implemented.\n",__PRETTY_FUNCTION__);
+#define GENET_UNIMPL() printf("GEnet error: function \"%s\" not implemented.\n",__PRETTY_FUNCTION__);
 
 #define CENGINE_DEPRECATED() printf("Cengine warning: function \"%s\" is deprecated.\n",__PRETTY_FUNCTION__);
 //#define FCG_DEPRECATED(message) printf("Warning: %s is deprecated.\n",(message));
 
-#define FCG_WARNING(message) printf("Warning: %s.\n",(message));
-
-#define CENGINE_UNIMPL() printf("Cengine error: function \"%s\" not implemented.\n",__PRETTY_FUNCTION__);
-
-#define GENET_UNIMPL() printf("GEnet error: function \"%s\" not implemented.\n",__PRETTY_FUNCTION__);
-
 #define COUT(cmd) {CoutLock lk; cout<<cmd<<endl;}
 
-//#define WAITING_OPT(cmd) cmd
-#define WAITING_OPT(cmd)
-//#define WITH_FASTLIST 
-#define WITH_TINYSET 
-//const int explicitL=3;
-//const int inline_explicitL=5;
+#define FCG_WARNING(message) printf("Warning: %s.\n",(message));
 
+
+// ---- VERIFICATION -----------------------------------------------------------------------------------------
 
 
 #ifdef CENGINE_OBJ_COUNT
@@ -121,25 +134,37 @@ using namespace std;
 #define CTENSORB_DESTROY();
 #endif 
 
-#ifdef CENGINE_TRACEBACK_FLAG
-#define CENGINE_TRACE(msg) {traceback(msg);}
-#define CENGINE_ASSERT(condition)				\
-  if(!(condition)) {traceback.dump(); assert(condition);}
-#define CENGINE_DUMP_TRACE() traceback.dump();
-#else
-#define CENGINE_ASSERT(condition);
-#define CENGINE_TRACE(msg);
-#define CENGINE_DUMP_TRACE(); 
+
+// ---- CUDA -------------------------------------------------------------------------------------------------
+
+
+#ifdef _WITH_CUDA
+#include <cuda.h>
+#include <cuda_runtime.h>
+#endif 
+
+#ifndef _WITH_CUDA
+#define cudaMalloc(a,b) NOCUDA_ERROR
+#define cudaMemcpy(a,b,c,d) NOCUDA_ERROR
+#define cudaMemset(a,b,c) NOCUDA_ERROR
+#define cudaFree(a) NOCUDA_ERROR
 #endif
 
+#define NOCUDA_ERROR cout<<"Error: Cengine was compiled without GPU support."<<endl;
+#define FCG_CPUONLY() if(device>0) {printf("Cengine error: CUDA code for \"%s\" not implemented.\n",__PRETTY_FUNCTION__); exit(-1);}
+
+
+// -----------------------------------------------------------------------------------------------------------
 
 
 namespace Cengine{
 
   namespace engine{}; 
 
+  enum class engine_mode{online,biphasic};
 
-  // ---- Fill ----------------------------------------------------------------------------------------------
+
+  // ---- Fill -----------------------------------------------------------------------------------------------
 
 
   struct fill_pattern{};

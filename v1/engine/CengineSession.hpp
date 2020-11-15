@@ -8,12 +8,19 @@ namespace Cengine{
   class CengineSession{
   public:
 
-    CengineSession(const int nthreads=3){
+    CengineSession(const int nthreads=3, const engine_mode& mode=engine_mode::online){
       Cengine_engine=new Cengine(nthreads);
 #ifdef _WITH_CUBLAS
       cublasCreate(&Cengine_cublas);
 #endif 
+
+      if(mode==engine_mode::biphasic){
+	Cengine_engine->biphasic=true;
+	Cengine_engine->hold=true;
+      }
+
     }
+
 
     ~CengineSession(){
       delete Cengine_engine;

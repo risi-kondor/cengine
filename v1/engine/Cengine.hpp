@@ -210,7 +210,7 @@ namespace Cengine{
 	if(!father->computed && !father->working){
 
 	  if(dynamic_cast<CumulativeOperator*>(father_op)){
-	    DEBUG_ENGINE2("    Creating diamond");
+	    CENGINE_QUEUE_ECHO("    Creating diamond");
 	    CENGINE_TRACE("Creating diamond");
 	    Cnode* grandfather=father->op->inputs[0];
 	    for(auto& p:op->inputs)
@@ -223,7 +223,7 @@ namespace Cengine{
 	  }
 
 	  if(dynamic_cast<diamond_op*>(father_op) && !father->released){ 
-	    DEBUG_ENGINE2("    (Extending diamond)");
+	    CENGINE_QUEUE_ECHO("    (Extending diamond)");
 	    CENGINE_TRACE("(Extending diamond)");
 	    Cnode* greatgrandfather=father->op->inputs[0]->op->inputs[0]; //father()->father();
 	    for(auto& p:op->inputs)
@@ -274,11 +274,11 @@ namespace Cengine{
       if(!node->rbatcher){
 	if(node->nblockers==0){
 	  release(node);
-	  DEBUG_ENGINE2("    Early   "<<node->ident()<<" ["<<node->op->str()<<"]");
+	  CENGINE_QUEUE_ECHO("    Early   "<<node->ident()<<" ["<<node->op->str()<<"]");
 	  CENGINE_TRACE("Early      "+node->ident()+" ["+node->op->str()+"] ");
 	}else{
 	  WAITING_OPT(waiting.insert(node););
-	  DEBUG_ENGINE2("    Queuing "<<node->ident()<<" ["<<node->op->str()<<"]");
+	  CENGINE_QUEUE_ECHO("    Queuing "<<node->ident()<<" ["<<node->op->str()<<"]");
 	  CENGINE_TRACE("Queuing    "+node->ident()+" ["+node->op->str()+"] ");
 	}
       }else{
@@ -337,8 +337,7 @@ namespace Cengine{
       lock_guard<mutex> lock(done_mx);
 #endif
 
-      DEBUG_ENGINE2("    Done "<<node->ident());
-
+      //DEBUG_ENGINE2("    Done "<<node->ident());
       //waiting.erase(node);
 
       Coperator* op=node->op; 
@@ -417,7 +416,7 @@ namespace Cengine{
 
 
     void kill(Cnode* node){
-      DEBUG_ENGINE2("    Killing "<<node->ident()); 
+      CENGINE_QUEUE_ECHO("    Killing "<<node->ident()); 
       CENGINE_TRACE("Killing "+node->ident()); 
 
       if(node->dependents.size()>0){
@@ -477,7 +476,7 @@ namespace Cengine{
 
 
     void flush(){ // not protected by done_mx 
-      DEBUG_ENGINE2(endl<<"    \e[1mFlushing engine...\e[0m");
+      CENGINE_QUEUE_ECHO(endl<<"    \e[1mFlushing engine...\e[0m");
       CENGINE_TRACE("\e[1mFlushing engine...\e[0m");
       int h=0;
 
@@ -564,7 +563,7 @@ namespace Cengine{
 
       if(biphasic) hold=true; 
       DEBUG_FLUSH2("done.");
-      DEBUG_ENGINE2("    \e[1mFlushed.\e[0m")
+      CENGINE_QUEUE_ECHO("    \e[1mFlushed.\e[0m")
       CENGINE_TRACE("\e[1mFlushed.\e[0m")
       return; 
     }
@@ -690,8 +689,8 @@ namespace Cengine{
     while(!owner->shutdown){
       Coperator* op=owner->get_task(this);
       if(op){
-	DEBUG_ENGINE({CoutLock lk; 
-	    cout<<"    \e[1mWorker "<<id<<":\e[0m  "<<op->owner->ident()<<" <- "<<op->str()<<endl;});
+	CENGINE_WORKER_ECHO("    \e[1mWorker "<<id<<":\e[0m  "<<op->owner->ident()<<" <- "<<
+	  op->str());
 	CENGINE_TRACE("\e[1mWorker "+to_string(id)+":\e[0m  "+op->owner->ident()+" <- "+op->str());
 #ifndef CENGINE_DRY_RUN
 	op->exec();
@@ -699,6 +698,7 @@ namespace Cengine{
 	//this_thread::sleep_for(chrono::milliseconds(10)); 
 	if(dynamic_cast<BatcherExecutor*>(op)) op->exec();
 #endif
+	CENGINE_WORKER_ECHO("    \e[1mWorker "<<id<<":\e[0m  "<<op->owner->ident()<<" done.");
 	owner->done(op->owner);
       }
     }

@@ -14,8 +14,8 @@ namespace Cengine{
 
     Gdims dims;
 
-    ctensor_add_inp_op(Cnode* R, Cnode* A, Cnode* B):
-      Coperator(R,A,B), dims(CTENSORB(A).dims){}
+    ctensor_add_inp_op(Cnode* R, Cnode* A, Cnode* B, const Gdims& _dims):
+      Coperator(R,A,B), dims(_dims){}
 
     void exec(){
       assert(!owner->obj);
@@ -24,6 +24,7 @@ namespace Cengine{
     }
 
     void rbatched_exec(const vector<Cnode*>& nodes){
+      cout<<"b"<<endl;
       const int N=nodes.size();
       int dev=CTENSORB(nodes[0]->op->inputs[0]).device;
       assert(dev==1);
