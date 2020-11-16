@@ -195,6 +195,37 @@ void add_to_chunk(const CFtensor& x, const int ix, const int offs){
 }
 
 
+void set_chunk(const CFtensor& x, const int ix, const int offs){
+  assert(k==x.k);
+  for(int i=0; i<k; i++) 
+    if(i!=ix) assert(dims[i]==x.dims[i]);
+    else assert(dims[i]>=x.dims[i]);
+  int subsize=x.asize;
+  if(ix>0) subsize=x.strides[ix-1];
+  int supsize=x.asize/subsize;
+  int jstride=asize; 
+  if(ix>0) jstride=strides[ix-1];
+
+  if(device==0){
+    for(int j=0; j<supsize; j++){
+      int toffs=j*jstride+offs*strides[ix];
+      //for(int m=0; m<x.dims[ix];; m++){
+	for(int i=0; i<subsize; i++){
+	  arr[toffs+i]=x.arr[j*subsize+i];
+	  arrc[toffs+i]=x.arrc[j*subsize+i];
+	}
+	//toffs+=strides[ix];
+	//}
+    }
+    return; 
+  }
+  FCG_UNIMPL();
+  //const float alpha = 1.0;
+  //CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrg, 1, arrg, 1));
+  //CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrgc, 1, arrgc, 1));
+}
+
+
 void add_slice(const CFtensor& x, const int ix, const int offs){
   assert(x.k==k+1);
   for(int i=0; i<ix; i++) assert(dims[i]==x.dims[i]);

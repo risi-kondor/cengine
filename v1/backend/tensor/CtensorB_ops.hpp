@@ -231,6 +231,28 @@ namespace Cengine{
   };
 
 
+  class ctensor_set_chunk_op: public Coperator, public InPlaceOperator{
+  public:
+
+    int ix;
+    int offs;
+
+    ctensor_set_chunk_op(Cnode* r, Cnode* x, const int _ix, const int _offs):
+      Coperator(r,x), ix(_ix), offs(_offs){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=inputs[0]->obj;
+      CTENSORB(owner).set_chunk(CTENSORB(inputs[1]),ix,offs);
+    }
+
+    string str() const{
+      return "ctensor_set_chunk"+inp_str(ix,offs);
+    }
+
+  };
+
+
   class ctensor_to_device_op: public Coperator, public InPlaceOperator{
   public:
 
