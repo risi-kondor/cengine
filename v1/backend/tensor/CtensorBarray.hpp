@@ -1,5 +1,5 @@
-#ifndef _CtensorB
-#define _CtensorB
+#ifndef _CtensorBarray
+#define _CtensorBarray
 
 #include "CFtensor.hpp"
 #include "Cobject.hpp"
@@ -9,67 +9,71 @@
 
 namespace Cengine{
 
-  class CtensorB: public Cobject, public CFtensor{
+  class CtensorBarray: public Cobject, public CFtensorArray{
   public:
 
+    Gdims adims; 
     Gdims dims; 
     int nbu=-1;
 
-    CtensorB(){
-      CTENSORB_CREATE();
+    CtensorBarray(){
+      CTENSORBARRAY_CREATE();
     }
 
-    ~CtensorB(){
-      CTENSORB_DESTROY();
+    ~CtensorBarray(){
+      CTENSORBARRAY_DESTROY();
     }
 
     string classname() const{
-      return "CtensorB";
+      return "CtensorBarray";
     }
 
     string describe() const{
-      if(nbu>=0) return "CtensorB"+dims.str()+"["+to_string(nbu)+"]";
-      return "CtensorB"+dims.str();
+      if(nbu>=0) return "CtensorBarray"+adims.str()+" "+dims.str()+"["+to_string(nbu)+"]";
+      return "CtensorBarray"+adims.str()+" "+dims.str();
     }
 
 
 
   public: // ---- Constructors ------------------------------------------------------------------------------
 
-    
-    CtensorB(const Gtensor<complex<float> >& x, const int dev=0): 
+    /*
+    CtensorBarray(const Gtensor<complex<float> >& x, const int dev=0): 
       CFtensor(x), dims(x.dims), nbu(-1){
-      CTENSORB_CREATE();
+      CTENSORBARRAY_CREATE();
     }
+    */
 
-    CtensorB(const Gtensor<complex<float> >& x, const device_id& dev=0): 
+    /*
+    CtensorBarray(const Gtensor<complex<float> >& x, const device_id& dev=0): 
       CFtensor(x), dims(x.dims), nbu(-1){
-      CTENSORB_CREATE();
+      CTENSORBARRAY_CREATE();
     }
+    */
 
 
   public: // ---- Filled constructors -----------------------------------------------------------------------
 
 
     template<typename FILLTYPE, typename = typename std::enable_if<std::is_base_of<fill_pattern, FILLTYPE>::value, FILLTYPE>::type>
-    CtensorB(const Gdims& _dims, const FILLTYPE& fill, const int dev=0):
-      CFtensor(_dims,fill,dev), dims(_dims){
-      CTENSORB_CREATE();
+    CtensorBarray(const Gdims& _adims, const Gdims& _dims, const FILLTYPE& fill, const int dev=0):
+      CFtensorArray(_adims,_dims,fill,dev), adims(_adims), dims(_dims){
+      CTENSORBARRAY_CREATE();
     }
 	  
     template<typename FILLTYPE, typename = typename std::enable_if<std::is_base_of<fill_pattern, FILLTYPE>::value, FILLTYPE>::type>
-    CtensorB(const Gdims& _dims, const int _nbu, const FILLTYPE& fill, const int dev=0):
-      CFtensor(_dims.prepend(_nbu),fill,dev), dims(_dims), nbu(_nbu){
-      CTENSORB_CREATE();
+    CtensorBarray(const Gdims& _adims, const Gdims& _dims, const int _nbu, const FILLTYPE& fill, const int dev=0):
+      CFtensorArray(_adims,_dims.prepend(_nbu),fill,dev), adims(_adims), dims(_dims), nbu(_nbu){
+      CTENSORBARRAY_CREATE();
     }
 	  
-    CtensorB(const Gdims& _dims, const int _nbu, const fill_gaussian& fill, const float c, const int dev=0):
-      CFtensor(_dims.prepend(_nbu),fill,c,dev), dims(_dims), nbu(_nbu){
-      CTENSORB_CREATE();
+    CtensorBarray(const Gdims& _adims, const Gdims& _dims, const int _nbu, const fill_gaussian& fill, const float c, const int dev=0):
+      CFtensorArray(_adims,_dims.prepend(_nbu),fill,c,dev), adims(_adims), dims(_dims), nbu(_nbu){
+      CTENSORBARRAY_CREATE();
     }
 	  
-    CtensorB(const Gdims& _dims, const int _nbu, std::function<complex<float>(const int i, const int j)> fn, const int dev=0):
-      CFtensor(_dims.prepend(_nbu),fill::raw), dims(_dims), nbu(_nbu){
+    CtensorBarray(const Gdims& _adims, const Gdims& _dims, const int _nbu, std::function<complex<float>(const int i, const int j)> fn, const int dev=0):
+      CFtensor(_dims.prepend(_nbu),fill::raw), adims(_adims), dims(_dims), nbu(_nbu){
       if(nbu==-1){
 	for(int i=0; i<dims[0]; i++)
 	  for(int j=0; j<dims[1]; j++)
@@ -81,16 +85,17 @@ namespace Cengine{
 	      CFtensor::set(b,i,j);
       }
       if(dev>0) to_device(dev);
-      CTENSORB_CREATE();
+      CTENSORBARRAY_CREATE();
     }
 	  
-    CtensorB(const CtensorB& x, std::function<complex<float>(const complex<float>)> fn):
-      CFtensor(x,fn), dims(x.dims){
-      CTENSORB_CREATE();
+    CtensorBarray(const CtensorBarray& x, std::function<complex<float>(const complex<float>)> fn):
+      CFtensor(x,fn), adims(x.adims), dims(x.dims){
+      CTENSORBARRAY_CREATE();
     }
 
-    CtensorB(const CtensorB& x, std::function<complex<float>(const int i, const int j, const complex<float>)> fn):
-      CFtensor(x,fill::raw), dims(x.dims){
+    CtensorBarray(const CtensorBarray& x, std::function<complex<float>(const int i, const int j, const complex<float>)> fn):
+      CFtensor(x,fill::raw), adims(x.adims), dims(x.dims){
+      /*
       assert(dims.size()==2);
       if(nbu==-1){
 	for(int i=0; i<dims[0]; i++)
@@ -102,40 +107,41 @@ namespace Cengine{
 	    for(int j=0; j<dims[1]; j++)
 	      CFtensor::set(b,i,j,fn(i,j,x.CFtensor::get(b,i,j)));
       }
-      CTENSORB_CREATE();
+      */
+      CTENSORBARRAY_CREATE();
     }
 
 
   public: // ---- Copying -----------------------------------------------------------------------------------
 
 
-    CtensorB(const CtensorB& x): 
+    CtensorBarray(const CtensorBarray& x): 
       CFtensor(x), dims(x.dims), nbu(x.nbu){
       COPY_WARNING;
-      CTENSORB_CREATE();
+      CTENSORBARRAY_CREATE();
     }
 
-    CtensorB(const CtensorB& x, const nowarn_flag& dummy): 
+    CtensorBarray(const CtensorBarray& x, const nowarn_flag& dummy): 
       CFtensor(x,dummy), dims(x.dims), nbu(x.nbu){
-      CTENSORB_CREATE();
+      CTENSORBARRAY_CREATE();
     }
 
-    CtensorB* clone() const{
-      return new CtensorB(*this, nowarn);
+    CtensorBarray* clone() const{
+      return new CtensorBarray(*this, nowarn);
     }
 
 
   public: // ---- Conversions -------------------------------------------------------------------------------
 
     
-    CtensorB(const CFtensor& x):
+    CtensorBarray(const CFtensor& x):
       CFtensor(x), dims(x.dims), nbu(-1){
-      CTENSORB_CREATE();
+      CTENSORBARRAY_CREATE();
     }
 
-    CtensorB(CFtensor&& x):
+    CtensorBarray(CFtensor&& x):
       CFtensor(std::move(x)), dims(x.dims), nbu(-1){
-      CTENSORB_CREATE();
+      CTENSORBARRAY_CREATE();
     }
 
     void to_device(const int _dev) const{
@@ -163,32 +169,32 @@ namespace Cengine{
   public: // ---- Operations ---------------------------------------------------------------------------------
 
 
-    CtensorB* conj() const{
-      return new CtensorB(CFtensor::conj());
+    CtensorBarray* conj() const{
+      return new CtensorBarray(CFtensor::conj());
     }
 
-    CtensorB* transp() const{
-      return new CtensorB(CFtensor::transp());
+    CtensorBarray* transp() const{
+      return new CtensorBarray(CFtensor::transp());
     }
 
-    CtensorB* herm() const{
-      return new CtensorB(CFtensor::herm());
+    CtensorBarray* herm() const{
+      return new CtensorBarray(CFtensor::herm());
     }
 
 
-    CtensorB* divide_cols(const CtensorB& N) const{
-      return new CtensorB(CFtensor::divide_cols(N));
+    CtensorBarray* divide_cols(const CtensorBarray& N) const{
+      return new CtensorBarray(CFtensor::divide_cols(N));
     }
 
-    CtensorB* normalize_cols() const{
-      return new CtensorB(CFtensor::normalize_cols());
+    CtensorBarray* normalize_cols() const{
+      return new CtensorBarray(CFtensor::normalize_cols());
     }
 
 
   public: // ---- Cumulative Operations ----------------------------------------------------------------------
 
 
-    void add_prod(const RscalarB& c, const CtensorB& A){
+    void add_prod(const RscalarB& c, const CtensorBarray& A){
       if(c.nbu==-1){
 	CFtensor::add(A,c.val);
       }else{
@@ -196,7 +202,7 @@ namespace Cengine{
       }
     }
  
-    void add_prod(const CscalarB& c, const CtensorB& A){
+    void add_prod(const CscalarB& c, const CtensorBarray& A){
       if(c.nbu==-1){
 	CFtensor::add(A,c.val);
       }else{
@@ -204,7 +210,7 @@ namespace Cengine{
       }
     }
  
-    void add_prod_cconj(const CscalarB& c, const CtensorB& A){
+    void add_prod_cconj(const CscalarB& c, const CtensorBarray& A){
       if(c.nbu==-1){
 	CFtensor::add(A,std::conj(c.val));
       }else{
@@ -212,7 +218,7 @@ namespace Cengine{
       }
     }
  
-    void add_prod_c_times_conj(const CscalarB& c, const CtensorB& A){
+    void add_prod_c_times_conj(const CscalarB& c, const CtensorBarray& A){
       if(c.nbu==-1){
 	CFtensor::add_conj(A,c.val);
       }else{
@@ -220,7 +226,7 @@ namespace Cengine{
       }
     }
  
-    void add_inp_into(CscalarB& r, const CtensorB& A){
+    void add_inp_into(CscalarB& r, const CtensorBarray& A){
       if(nbu==-1){
 	r.val+=inp(A);
       }else{
@@ -278,7 +284,7 @@ namespace Cengine{
       }
     }
 
-    void mix_into(CtensorB& r, const CtensorB& x) const{
+    void mix_into(CtensorBarray& r, const CtensorBarray& x) const{
       to_device(0);
       assert(dims.size()==2);
       if(r.nbu==-1){
@@ -309,53 +315,23 @@ namespace Cengine{
   };
 
 
-  inline CtensorB& asCtensorB(Cobject* x, const char* s){
-    return downcast<CtensorB>(x,s);
+  inline CtensorBarray& asCtensorBarray(Cobject* x, const char* s){
+    return downcast<CtensorBarray>(x,s);
   }
 
-  inline CtensorB& asCtensorB(Cnode* x, const char* s){
-    return downcast<CtensorB>(x,s);
+  inline CtensorBarray& asCtensorBarray(Cnode* x, const char* s){
+    return downcast<CtensorBarray>(x,s);
   }
   
-  inline CtensorB& asCtensorB(Cnode& x, const char* s){
-    return downcast<CtensorB>(x,s);
+  inline CtensorBarray& asCtensorBarray(Cnode& x, const char* s){
+    return downcast<CtensorBarray>(x,s);
   }
 
 
-#define CTENSORB(x) asCtensorB(x,__PRETTY_FUNCTION__) 
+#define CTENSORBARRAY(x) asCtensorBarray(x,__PRETTY_FUNCTION__) 
 
 
 }
 
 #endif
-
-    /*
-    CtensorB(const string filename, const device_id& dev=0):
-      CFtensor(filename,dev){}
-
-    int save(const string filename) const{
-      CFtensor::save(filename);
-      return 0;
-    }
-
-    CtensorB(Bifstream& ifs): 
-      CFtensor(ifs){
-    }
-
-    void serialize(Bofstream& ofs){
-      CFtensor::serialize(ofs);
-    }
-    */
-
-  //inline CtensorB& asCtensorB(Cobject* x){
-  //return downcast<CtensorB>(x,"");
-  //}
-
-  //inline CtensorB& asCtensorB(Cnode* x){
-  //return downcast<CtensorB>(x,"");
-  //}
-
-  //inline CtensorB& asCtensorB(Cnode& x){
-  //return downcast<CtensorB>(x,"");
-  //}
 

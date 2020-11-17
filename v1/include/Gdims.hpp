@@ -16,6 +16,9 @@ namespace Cengine{
 
     //Gdims(const vector<int>& x): vector<int>(x){}
 
+    Gdims(const int k, const fill_raw& dummy): 
+      vector<int>(k){}
+
     Gdims(const vector<int>& x){
       for(auto p:x) if(p>=0) push_back(p);
     }
@@ -47,6 +50,10 @@ namespace Cengine{
 
   public:
 
+    int k() const{
+      return size();
+    }
+
     int operator()(const int i) const{
       return (*this)[i];
     }
@@ -56,9 +63,16 @@ namespace Cengine{
       return t;
     }
 
-    int k() const{
-      return size();
+    int first() const{
+      return (*this)[0];
     }
+
+    int last() const{
+      return (*this)[size()-1];
+    }
+
+
+  public:
 
     int combined(const int a, const int b) const{
       assert(a<=b);
@@ -99,6 +113,40 @@ namespace Cengine{
       for(auto p:*this) R.push_back(p);
       return R;
     }
+
+    Gdims transpose() const{
+      assert(size()==2);
+      return Gdims((*this)[1],(*this)[0]);
+    }
+
+    Gdims Mprod(const Gdims& y) const{
+      Gdims R(size()+y.size()-2,fill::raw);
+      for(int i=0; i<size()-1; i++) R[i]=(*this)[i];
+      for(int i=0; i<y.size()-1; i++) R[i+size()-1]=y[i+1];
+      return R;
+    }
+
+    Gdims Mprod_AT(const Gdims& y) const{
+      Gdims R(size()+y.size()-2,fill::raw);
+      for(int i=0; i<size()-1; i++) R[i]=(*this)[i];
+      for(int i=0; i<y.size()-1; i++) R[i+size()-1]=y[i];
+      return R;
+    }
+
+   Gdims Mprod_TA(const Gdims& y) const{
+      Gdims R(size()+y.size()-2,fill::raw);
+      for(int i=0; i<size()-1; i++) R[i]=(*this)[i+1];
+      for(int i=0; i<y.size()-1; i++) R[i+size()-1]=y[i+1];
+      return R;
+    }
+
+   Gdims Mprod_TT(const Gdims& y) const{
+      Gdims R(size()+y.size()-2,fill::raw);
+      for(int i=0; i<size()-1; i++) R[i]=(*this)[i+1];
+      for(int i=0; i<y.size()-1; i++) R[i+size()-1]=y[i];
+      return R;
+   }
+
 
 
   public:
