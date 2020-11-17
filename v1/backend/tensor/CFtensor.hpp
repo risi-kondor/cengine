@@ -258,6 +258,28 @@ namespace Cengine{
       to_device(dev);
     }
 
+    CFtensor(const CFtensor& x, std::function<complex<float>(const complex<float>)> fn):
+      CFtensor(x.dims,fill::raw,0){
+      assert(device==0);
+      for(int i=0; i<asize; i++){
+	complex<float> t=fn(complex<float>(x.arr[i],x.arrc[i]));
+	arr[i]=std::real(t);
+	arrc[i]=std::imag(t);
+      }
+    }
+
+    /*
+    CFtensor(const CFtensor& x, std::function<complex<float>(const int i, const int j, const complex<float>)> fn):
+      CFtensor(x.dims,fill::raw,0){
+      assert(device==0);
+      for(int i=0; i<dims; i++){
+	complex<float> t=fn(i,j,complex<float>(arr[i],arrc[i]));
+	arr[i]=std::real(t);
+	arrc[i]=std::imag(t);
+      }
+      }
+    */
+
 
   public: // ---- Copying -------------------------------------------------------------------------------------
 
@@ -274,6 +296,9 @@ namespace Cengine{
       if(device==0) std::copy(x.arr,x.arr+memsize,arr);
       if(device==1) CUDA_SAFE(cudaMemcpy(arrg,x.arrg,memsize*sizeof(float),cudaMemcpyDeviceToDevice));  
     }
+
+    CFtensor(const CFtensor& x, const fill_raw& dummy): 
+      CFtensor(x.k,x.dims,x.strides,x.asize,x.memsize,x.cst,x.device){}
 
     /*
     CFtensor(const CFtensor& x, const device_id& dev): 

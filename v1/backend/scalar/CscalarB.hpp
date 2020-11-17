@@ -94,6 +94,11 @@ namespace Cengine{
       else std::fill(arr,arr+nbu,c);
     }
  
+    CscalarB(const CscalarB& x, std::function<complex<float>(const complex<float>)> fn):
+      CscalarB(x.nbu,fill::raw){
+      if(nbu==-1) val=fn(x.val); 
+      else for(int i=0; i<nbu; i++) arr[i]=fn(x.arr[i]);
+    }
 
     void reallocate(){
       delete[] arr;

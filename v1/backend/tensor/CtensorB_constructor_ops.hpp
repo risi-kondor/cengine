@@ -190,6 +190,72 @@ namespace Cengine{
   };
 
 
+  class new_ctensor_fn2_op: public Coperator{
+  public:
+
+    Gdims dims;
+    int nbu;
+    int device;
+    std::function<complex<float>(const int, const int)> fn; 
+
+    new_ctensor_fn2_op(const Gdims& _dims, const int _nbu, 
+      function<complex<float>(const int, const int)> _fn, const int _dev=0):
+      dims(_dims), nbu(_nbu), device(_dev), fn(_fn){
+    }
+
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=new CtensorB(dims,nbu,fn,device);
+    }
+
+    string str() const{
+      return "ctensor_fn2"+dims.str();
+    }
+
+  };
+
+
+  class ctensor_apply_op: public Coperator{
+  public:
+
+    std::function<complex<float>(const complex<float>)> fn; 
+
+    ctensor_apply_op(Cnode* x, std::function<complex<float>(const complex<float>)> _fn):
+      Coperator(x), fn(_fn){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=new CtensorB(CTENSORB(inputs[0]),fn);
+    }
+    
+    string str() const{
+      return "ctensor_apply"+inp_str();
+    }
+
+  };
+
+
+  class ctensor_apply2_op: public Coperator{
+  public:
+
+    std::function<complex<float>(const int, const int, const complex<float>)> fn; 
+
+    ctensor_apply2_op(Cnode* x, std::function<complex<float>(const int, const int, const complex<float>)> _fn):
+      Coperator(x), fn(_fn){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=new CtensorB(CTENSORB(inputs[0]),fn);
+    }
+    
+    string str() const{
+      return "ctensor_apply"+inp_str();
+    }
+
+  };
+
+
+
 }
 
 #endif 

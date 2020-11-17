@@ -93,6 +93,11 @@ namespace Cengine{
       else std::fill(arr,arr+nbu,c);
     }
  
+    RscalarB(const RscalarB& x, std::function<float(const float)> fn):
+      RscalarB(x.nbu,fill::raw){
+      if(nbu==-1) val=fn(x.val); 
+      else for(int i=0; i<nbu; i++) arr[i]=fn(x.arr[i]);
+    }
 
     void reallocate(){
       delete[] arr;

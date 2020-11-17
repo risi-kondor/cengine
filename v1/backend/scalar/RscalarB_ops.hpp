@@ -120,6 +120,26 @@ namespace Cengine{
   };
 
 
+  class rscalar_apply_op: public Coperator{
+  public:
+
+    std::function<float(const float)> fn; 
+
+    rscalar_apply_op(Cnode* x, std::function<float(const float)> _fn):
+      Coperator(x), fn(_fn){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=new RscalarB(RSCALARB(inputs[0]),fn);
+    }
+    
+    string str() const{
+      return "rscalar_apply"+inp_str();
+    }
+
+  };
+
+
   // ---- Not in-place operators  ----------------------------------------------------------------------------
 
   

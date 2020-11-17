@@ -122,6 +122,26 @@ namespace Cengine{
   };
 
 
+  class cscalar_apply_op: public Coperator{
+  public:
+
+    std::function<complex<float>(const complex<float>)> fn; 
+
+    cscalar_apply_op(Cnode* x, std::function<complex<float>(const complex<float>)> _fn):
+      Coperator(x), fn(_fn){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=new CscalarB(CSCALARB(inputs[0]),fn);
+    }
+    
+    string str() const{
+      return "cscalar_apply"+inp_str();
+    }
+
+  };
+
+
   // ---- Not in-place operators  ----------------------------------------------------------------------------
 
 

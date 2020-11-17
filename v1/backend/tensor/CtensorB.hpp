@@ -68,6 +68,43 @@ namespace Cengine{
       CTENSORB_CREATE();
     }
 	  
+    CtensorB(const Gdims& _dims, const int _nbu, std::function<complex<float>(const int i, const int j)> fn, const int dev=0):
+      CFtensor(_dims.prepend(_nbu),fill::raw), dims(_dims), nbu(_nbu){
+      if(nbu==-1){
+	for(int i=0; i<dims[0]; i++)
+	  for(int j=0; j<dims[1]; j++)
+	    CFtensor::set(i,j,fn(i,j));
+      }else{
+	for(int b=0; b<nbu; b++)
+	  for(int i=0; i<dims[0]; i++)
+	    for(int j=0; j<dims[1]; j++)
+	      CFtensor::set(b,i,j);
+      }
+      if(dev>0) to_device(dev);
+      CTENSORB_CREATE();
+    }
+	  
+    CtensorB(const CtensorB& x, std::function<complex<float>(const complex<float>)> fn):
+      CFtensor(x,fn), dims(x.dims){
+      CTENSORB_CREATE();
+    }
+
+    CtensorB(const CtensorB& x, std::function<complex<float>(const int i, const int j, const complex<float>)> fn):
+      CFtensor(x,fill::raw), dims(x.dims){
+      assert(dims.size()==2);
+      if(nbu==-1){
+	for(int i=0; i<dims[0]; i++)
+	  for(int j=0; j<dims[1]; j++)
+	    CFtensor::set(i,j,fn(i,j,x.CFtensor::get(i,j)));
+      }else{
+	for(int b=0; b<nbu; b++)
+	  for(int i=0; i<dims[0]; i++)
+	    for(int j=0; j<dims[1]; j++)
+	      CFtensor::set(b,i,j,fn(i,j,x.CFtensor::get(b,i,j)));
+      }
+      CTENSORB_CREATE();
+    }
+
 
   public: // ---- Copying -----------------------------------------------------------------------------------
 
@@ -146,7 +183,6 @@ namespace Cengine{
     CtensorB* normalize_cols() const{
       return new CtensorB(CFtensor::normalize_cols());
     }
-
 
 
   public: // ---- Cumulative Operations ----------------------------------------------------------------------
