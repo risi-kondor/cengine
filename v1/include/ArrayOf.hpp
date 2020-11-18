@@ -23,7 +23,8 @@ namespace Cengine{
       k=0;
       dims={};
       asize=0;
-      arr=new OBJ*[0];
+      //arr=new OBJ*[0];
+      arr=nullptr;
     }
 
     ~ArrayOf(){
@@ -138,7 +139,7 @@ namespace Cengine{
     ArrayOf<OBJ>& operator=(const ArrayOf<OBJ>& x){
       //for(int i=0; i<asize; i++)
       //delete arr[i];
-      delete[] arr;
+      //delete[] arr;
       reallocate(x.dims);
       for(int i=0; i<asize; i++)
 	arr[i]=new OBJ(*x.arr[i]);
@@ -146,7 +147,7 @@ namespace Cengine{
     }
 
     ArrayOf<OBJ>& operator=(ArrayOf<OBJ>&& x){
-      delete[] arr;
+      //delete[] arr;
       reallocate(x.dims);
       for(int i=0; i<asize; i++)
 	arr[i]=x.arr[i];

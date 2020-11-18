@@ -8,21 +8,21 @@ namespace Cengine{
   class Transpose{
   public:
     const OBJ& obj;
-    Transpose(const OBJ& _obj):obj(_obj){}
+    explicit Transpose(const OBJ& _obj):obj(_obj){}
   };
 
   template<typename OBJ>
   class Conjugate{
   public:
     const OBJ& obj;
-    Conjugate(const OBJ& _obj):obj(_obj){}
+    explicit Conjugate(const OBJ& _obj):obj(_obj){}
   };
 
   template<typename OBJ>
   class Hermitian{
   public:
     const OBJ& obj;
-    Hermitian(const OBJ& _obj):obj(_obj){}
+    explicit Hermitian(const OBJ& _obj):obj(_obj){}
   };
 
 

@@ -71,7 +71,8 @@ namespace Cengine{
       CFtensorArray(_adims,_dims.prepend(_nbu),fill,c,dev), adims(_adims), dims(_dims), nbu(_nbu){
       CTENSORBARRAY_CREATE();
     }
-	  
+
+    /*
     CtensorBarray(const Gdims& _adims, const Gdims& _dims, const int _nbu, std::function<complex<float>(const int i, const int j)> fn, const int dev=0):
       CFtensor(_dims.prepend(_nbu),fill::raw), adims(_adims), dims(_dims), nbu(_nbu){
       if(nbu==-1){
@@ -87,11 +88,14 @@ namespace Cengine{
       if(dev>0) to_device(dev);
       CTENSORBARRAY_CREATE();
     }
-	  
+    */
+	
+    /*
     CtensorBarray(const CtensorBarray& x, std::function<complex<float>(const complex<float>)> fn):
       CFtensor(x,fn), adims(x.adims), dims(x.dims){
       CTENSORBARRAY_CREATE();
     }
+    */
 
     CtensorBarray(const CtensorBarray& x, std::function<complex<float>(const int i, const int j, const complex<float>)> fn):
       CFtensor(x,fill::raw), adims(x.adims), dims(x.dims){

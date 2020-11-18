@@ -12,6 +12,9 @@ namespace Cengine{
 
     Gindex(){}
 
+    Gindex(const int k, const fill_zero& dummy): vector<int>(k){
+    }
+
     Gindex(const fill_zero& dummy){
     }
 
@@ -33,8 +36,20 @@ namespace Cengine{
       }
     }
 
+
   public:
     
+    int k() const{
+      return size();
+    }
+
+    int operator()(const int i) const{
+      return (*this)[i];
+    }
+
+
+  public:
+
     string str() const{
       string str="("; 
       int k=size();

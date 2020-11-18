@@ -42,6 +42,21 @@ namespace Cengine{
       (*this)[2]=i2;
     }
 
+    Gdims(const int i0, const int i1, const int i2, const int i3): vector<int>(4){
+      (*this)[0]=i0;
+      (*this)[1]=i1;
+      (*this)[2]=i2;
+      (*this)[3]=i3;
+    }
+
+    Gdims(const int i0, const int i1, const int i2, const int i3, const int i4): vector<int>(5){
+      (*this)[0]=i0;
+      (*this)[1]=i1;
+      (*this)[2]=i2;
+      (*this)[3]=i3;
+      (*this)[4]=i4;
+    }
+
     Gdims(const Gdims& d1, const Gdims& d2): vector<int>(d1.size()+d2.size()){
       for(int i=0; i<d1.size(); i++) (*this)[i]=d1[i];
       for(int i=0; i<d2.size(); i++) (*this)[i+d1.size()]=d2[i];
@@ -189,6 +204,8 @@ namespace Cengine{
   inline Gdims dims(const int i0) {return Gdims(i0);}
   inline Gdims dims(const int i0, const int i1) {return Gdims(i0,i1);}
   inline Gdims dims(const int i0, const int i1, const int i2) {return Gdims(i0,i1,i2);}
+  inline Gdims dims(const int i0, const int i1, const int i2, const int i3) {return Gdims(i0,i1,i2,i3);}
+  inline Gdims dims(const int i0, const int i1, const int i2, const int i3, const int i4) {return Gdims(i0,i1,i2,i3,i4);}
 
 }
 
