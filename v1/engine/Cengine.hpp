@@ -418,6 +418,7 @@ namespace Cengine{
     void kill(Cnode* node){
       CENGINE_QUEUE_ECHO("    Killing "<<node->ident()); 
       CENGINE_TRACE("Killing "+node->ident()); 
+      return; 
 
       if(node->dependents.size()>0){
 	CENGINE_DUMP_TRACE();
@@ -435,7 +436,7 @@ namespace Cengine{
 	if(it!=ready.end()) ready.erase(it);
       }
 
-      if(node->working){
+      if(node->working || !node->computed){
 	//{CoutLock lk; cout<<"Caught working N"<<node->id<<endl;} 
 	//exit(-1);
 	//tokill.insert(node);
