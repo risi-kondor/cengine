@@ -6,7 +6,7 @@
 
 namespace Cengine{
 
-
+  /*
   class ctensorarray_add_conj_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
   public:
 
@@ -24,6 +24,7 @@ namespace Cengine{
     }
     
   };
+  */
   
 
   /*
@@ -219,7 +220,7 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      CTENSORARRAYB(owner).subtract(CTENSORARRAYB(inputs[1]));
+      //CTENSORARRAYB(owner).subtract(CTENSORARRAYB(inputs[1]));
     }
 
     string str() const{
@@ -243,7 +244,7 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      CTENSORARRAYB(owner).add(CTENSORARRAYB(inputs[1]),c);
+      //CTENSORARRAYB(owner).add(CTENSORARRAYB(inputs[1]),c);
     }
 
     string str() const{
@@ -264,7 +265,7 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      CTENSORARRAYB(owner).add(CTENSORARRAYB(inputs[1]),c);
+      //CTENSORARRAYB(owner).add(CTENSORARRAYB(inputs[1]),c);
     }
 
     string str() const{
@@ -369,7 +370,7 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      CTENSORARRAYB(owner).add_LeakyReLU(CTENSORARRAYB(inputs[1]),c);
+      //CTENSORARRAYB(owner).add_LeakyReLU(CTENSORARRAYB(inputs[1]),c);
     }
 
     string str() const{
@@ -390,7 +391,7 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      CTENSORARRAYB(owner).add_LeakyReLU_back(CTENSORARRAYB(inputs[1]),CTENSORARRAYB(inputs[2]),c);
+      //CTENSORARRAYB(owner).add_LeakyReLU_back(CTENSORARRAYB(inputs[1]),CTENSORARRAYB(inputs[2]),c);
     }
 
     string str() const{
@@ -400,6 +401,7 @@ namespace Cengine{
   };
 
 
+  /*
   class ctensorarray_add_element_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
   public:
 
@@ -440,7 +442,7 @@ namespace Cengine{
     }
 
   };
-
+  */
 
 
   

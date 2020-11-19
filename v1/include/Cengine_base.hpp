@@ -17,6 +17,8 @@
 #include <set>
 #include <algorithm>
 
+#include "Cengine_helpers.hpp"
+
 
 using namespace std; 
 
@@ -119,8 +121,8 @@ using namespace std;
 #define CSCALARB_DESTROY() ::Cengine::CscalarB_count--; //cout<<::Cengine::CscalarB_count<<endl;
 #define CTENSORB_CREATE() ::Cengine::CtensorB_count++; // {CoutLock lk; cout<<"CtensorB("<<dims<<","<<nbu<<","<<device<<")"<<endl;} 
 #define CTENSORB_DESTROY() ::Cengine::CtensorB_count--; //cout<<::Cengine::CtensorB_count<<endl;
-#define CTENSORBARRAY_CREATE() ::Cengine::CtensorBarray_count++; // {CoutLock lk; cout<<"CtensorB("<<dims<<","<<nbu<<","<<device<<")"<<endl;} 
-#define CTENSORBARRAY_DESTROY() ::Cengine::CtensorBarray_count--; //cout<<::Cengine::CtensorB_count<<endl;
+#define CTENSORARRAYB_CREATE() ::Cengine::CtensorBarray_count++; // {CoutLock lk; cout<<"CtensorB("<<dims<<","<<nbu<<","<<device<<")"<<endl;} 
+#define CTENSORARRAYB_DESTROY() ::Cengine::CtensorBarray_count--; //cout<<::Cengine::CtensorB_count<<endl;
 #else
 #define CNODE_CREATE();
 #define CNODE_DESTROY();
@@ -134,8 +136,8 @@ using namespace std;
 #define CSCALARB_DESTROY();
 #define CTENSORB_CREATE();
 #define CTENSORB_DESTROY();
-#define CTENSORBARRAY_CREATE();
-#define CTENSORBARRAY_DESTROY();
+#define CTENSORARRAYB_CREATE();
+#define CTENSORARRAYB_DESTROY();
 #endif 
 
 
@@ -315,7 +317,6 @@ namespace Cengine{
     static device_id CPU(0);
     static device_id GPU0(1);
   }    
-
 
   // --- Variadics -------------------------------------------------------------------------------------------
 
@@ -622,45 +623,7 @@ inline void __cudaSafeCall(cudaError err, const char *file, const int line){
 #endif 
 
 
-template<typename TYPE>
-class pullin{
-public:
-  TYPE& obj;
-  int device;
-  pullin(TYPE& _obj): obj(_obj){
-    device=obj.device;
-    obj.to_device(0);
-  }
-  pullin(const TYPE& _obj): obj(const_cast<TYPE>(_obj)){
-    device=obj.device;
-    obj.to_device(0);
-  }
-  ~pullin(){
-    obj.to_device(device);
-  }
-};
 
-
-template<typename TYPE>
-class pullin2{
-public:
-  TYPE& obj0;
-  TYPE& obj1;
-  int device0;
-  int device1;
-  pullin2(const TYPE& _obj0, const TYPE& _obj1): 
-    obj0(const_cast<TYPE&>(_obj0)),
-    obj1(const_cast<TYPE&>(_obj1)){
-    device0=obj0.device;
-    device1=obj1.device;
-    obj0.to_device(0);
-    obj1.to_device(0);
-  }
-  ~pullin2(){
-    obj0.to_device(device0);
-    obj1.to_device(device1);
-  }
-};
 
 namespace Cengine{
 

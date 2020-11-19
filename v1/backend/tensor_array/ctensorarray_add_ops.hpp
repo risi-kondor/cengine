@@ -17,7 +17,7 @@ namespace Cengine{
     void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      CTENSORARRAYB(owner).add(CTENSORARRAYB(inputs[1]));
+      //CTENSORARRAYB(owner).add(CTENSORARRAYB(inputs[1]));
     }
 
 
@@ -39,12 +39,12 @@ namespace Cengine{
   public:
 
     ctensorarray_add_prod_c_A_op(Cnode* r, Cnode* c, Cnode* A):
-      Coperator(r,c,A), dims(_dims){}
+      Coperator(r,c,A){}
 
     void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      CTENSORARRAYB(owner).add_prod(CSCALARARRAYB(inputs[1]),CTENSORARRAYB(inputs[2]));
+      //CTENSORARRAYB(owner).add_prod(CSCALARARRAYB(inputs[1]),CTENSORARRAYB(inputs[2]));
     }
 
 

@@ -14,7 +14,7 @@ namespace Cengine{
     int nbu;
     int device;
 
-    new_ctensorarray_op(const Gdims& _adims, cconst Gdims& _dims, const int _nbu=-1, const int _device=0):
+    new_ctensorarray_op(const Gdims& _adims, const Gdims& _dims, const int _nbu=-1, const int _device=0):
       adims(_adims), dims(_dims), nbu(_nbu), device(_device){
     }
 
@@ -44,7 +44,7 @@ namespace Cengine{
 
     virtual void exec(){
       assert(!owner->obj);
-      owner->obj=new CtensorB(adims,dims,nbu,fill::zero,device);
+      owner->obj=new CtensorArrayB(adims,dims,nbu,fill::zero,device);
     }
 
     string str() const{
@@ -68,7 +68,7 @@ namespace Cengine{
 
     virtual void exec(){
       assert(!owner->obj);
-      owner->obj=new CtensorB(adims,dims,nbu,fill::ones,device);
+      owner->obj=new CtensorArrayB(adims,dims,nbu,fill::ones,device);
     }
 
     string str() const{
@@ -78,6 +78,7 @@ namespace Cengine{
   };
 
 
+  /*
   class new_ctensorarray_identity_op: public Coperator{
   public:
 
@@ -92,7 +93,7 @@ namespace Cengine{
 
     virtual void exec(){
       assert(!owner->obj);
-      owner->obj=new CtensorB(adims, dims,nbu,fill::identity,device);
+      owner->obj=new CtensorArrayB(adims, dims,nbu,fill::identity,device);
     }
 
     string str() const{
@@ -100,6 +101,7 @@ namespace Cengine{
     }
 
   };
+  */
 
 
   class new_ctensorarray_sequential_op: public Coperator{
@@ -116,7 +118,7 @@ namespace Cengine{
 
     virtual void exec(){
       assert(!owner->obj);
-      owner->obj=new CtensorB(adims,dims,nbu,fill::sequential,device);
+      owner->obj=new CtensorArrayB(adims,dims,nbu,fill::sequential,device);
     }
 
     string str() const{
@@ -145,7 +147,7 @@ namespace Cengine{
 
     virtual void exec(){
       assert(!owner->obj);
-      owner->obj=new CtensorB(adims,dims,nbu,fill::gaussian,c,device);
+      owner->obj=new CtensorArrayB(adims,dims,nbu,fill::gaussian,c,device);
     }
 
     string str() const{
@@ -163,7 +165,7 @@ namespace Cengine{
 
     virtual void exec(){
       assert(!owner->obj);
-      owner->obj=new CtensorB(CTENSORARRAYB(inputs[0]),nowarn);
+      owner->obj=new CtensorArrayB(CTENSORARRAYB(inputs[0]),nowarn);
     }
 
     string str() const{
@@ -173,6 +175,7 @@ namespace Cengine{
   };
 
 
+  /*
   class new_ctensorarray_fn2_op: public Coperator{
   public:
 
@@ -188,7 +191,7 @@ namespace Cengine{
 
     virtual void exec(){
       assert(!owner->obj);
-      owner->obj=new CtensorB(adims,dims,nbu,fn,device);
+      owner->obj=new CtensorArrayB(adims,dims,nbu,fn,device);
     }
 
     string str() const{
@@ -196,6 +199,7 @@ namespace Cengine{
     }
 
   };
+  */
 
   /*
   class ctensorarray_apply_op: public Coperator{

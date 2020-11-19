@@ -47,6 +47,14 @@ namespace Cengine{
       return (*this)[i];
     }
 
+    int operator()(const vector<int>& strides) const{
+      assert(strides.size()==size());
+      int t=0; 
+      for(int i=0; i<size(); i++) 
+	t+=(*this)[i]*strides[i];
+      return t;
+    }
+
 
   public:
 

@@ -182,11 +182,11 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      CTENSORARRAYB(owner).zero();
+      CTENSORARRAYB(owner).set_zero();
     }
 
     string str() const{
-      return "ctensor_zero"+inp_str();
+      return "ctensorarray_set_zero"+inp_str();
     }
 
   };
@@ -194,71 +194,127 @@ namespace Cengine{
 
   // ---- Access ---------------------------------------------------------------------------------------------
 
+
+  class ctensorarray_reshape_op: public Coperator, public InPlaceOperator{
+  public:
+
+    Gdims dims;
+
+    ctensorarray_reshape_op(Cnode* x, const Gdims& _dims): 
+      Coperator(x), dims(_dims){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=inputs[0]->obj;
+      CTENSORARRAYB(owner).reshape_array(dims);
+    }
+
+    string str() const{
+      return "ctensorarray_reshape"+inp_str(dims);
+    }
+
+  };
   
-  class ctensorarray_add_cell_into_op: public Coperator{
+  class ctensorarray_get_cell_op: public Coperator{
   public:
 
     Gindex ix;
 
-    ctensorarray_add_cell_into_op(Cnode* r, Cnode* x, const Gindex& _ix):
+    ctensorarray_get_cell_op(Cnode* x, const Gindex& _ix):
+      Coperator(x), ix(_ix){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      CtensorArrayB& x=CTENSORARRAYB(inputs[0]);
+      owner->obj=new CtensorB(x.dims,x.nbu,fill::raw,x.device);
+      x.copy_cell_into(CTENSORB(owner),ix);
+    }
+    
+    string str() const{
+      return "ctensorarray_get_cell"+inp_str(ix);
+    }
+  };
+
+
+  class ctensorarray_copy_cell_into_ctensor_op: public Coperator, public InPlaceOperator{
+  public:
+
+    Gindex ix;
+
+    ctensorarray_copy_cell_into_ctensor_op(Cnode* r, Cnode* x, const Gindex& _ix):
       Coperator(r,x), ix(_ix){}
 
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      CTENSORARRAYB(inputs[0]).add_cell_into(CSCALARARRAYB(inputs[1]).val);
+      CTENSORARRAYB(inputs[1]).copy_cell_into(CTENSORB(owner),ix);
     }
-
+    
     string str() const{
-      return "ctensor_set_element"+inp_str(ix);
+      return "ctensorarray_copy_cell_into_ctensor"+inp_str(ix);
     }
-
   };
 
-  /*
-  class ctensorarray_set_element_op: public Coperator, public InPlaceOperator{
+
+  class ctensorarray_add_cell_into_ctensor_op: public Coperator{
   public:
 
     Gindex ix;
 
-    ctensorarray_set_element_op(Cnode* r, Cnode* x, const Gindex& _ix):
+    ctensorarray_add_cell_into_ctensor_op(Cnode* r, Cnode* x, const Gindex& _ix):
       Coperator(r,x), ix(_ix){}
 
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      CTENSORARRAYB(owner).set(ix,CSCALARARRAYB(inputs[1]).val);
+      CTENSORARRAYB(inputs[0]).add_cell_into(CTENSORB(inputs[1]),ix);
     }
 
     string str() const{
-      return "ctensor_set_element"+inp_str(ix);
+      return "ctensor_add_cell_into_ctensor"+inp_str(ix);
     }
 
   };
-  */
 
-  /*
-  class ctensor_set_chunk_op: public Coperator, public InPlaceOperator{
+
+  class ctensorarray_copy_ctensor_into_cell_op: public Coperator, public InPlaceOperator{
   public:
 
-    int ix;
-    int offs;
+    Gindex ix;
 
-    ctensor_set_chunk_op(Cnode* r, Cnode* x, const int _ix, const int _offs):
-      Coperator(r,x), ix(_ix), offs(_offs){}
+    ctensorarray_copy_ctensor_into_cell_op(Cnode* r, Cnode* x, const Gindex& _ix):
+      Coperator(r,x), ix(_ix){}
 
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      CTENSORARRAYB(owner).set_chunk(CTENSORARRAYB(inputs[1]),ix,offs);
+      CTENSORARRAYB(owner).copy_into_cell(ix,CTENSORB(inputs[1]));
     }
-
+    
     string str() const{
-      return "ctensor_set_chunk"+inp_str(ix,offs);
+      return "ctensorarray_copy_ctensor_into_cell"+inp_str(ix);
     }
-
   };
-  */
+
+
+  class ctensorarray_add_ctensor_into_cell_op: public Coperator, public InPlaceOperator{
+  public:
+
+    Gindex ix;
+
+    ctensorarray_add_ctensor_into_cell_op(Cnode* r, Cnode* x, const Gindex& _ix):
+      Coperator(r,x), ix(_ix){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=inputs[0]->obj;
+      CTENSORARRAYB(owner).add_into_cell(ix,CTENSORB(inputs[1]));
+    }
+    
+    string str() const{
+      return "ctensorarray_add_ctensor_into_cell"+inp_str(ix);
+    }
+  };
 
 
   class ctensorarray_to_device_op: public Coperator, public InPlaceOperator{
@@ -282,7 +338,52 @@ namespace Cengine{
   };
 
 
+  // ---- Broadcasting and reductions ------------------------------------------------------------------------
   
+
+  class ctensorarray_broadcast_op: public Coperator, public InPlaceOperator{
+  public:
+
+    int ix;
+
+    ctensorarray_broadcast_op(Cnode* r, Cnode* x, const int _ix):
+      Coperator(r,x), ix(_ix){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=inputs[0]->obj;
+      CTENSORARRAYB(owner).broadcast(ix,CTENSORARRAYB(inputs[1]));
+    }
+
+    string str() const{
+      return "ctensorarray_broadcast"+inp_str(ix);
+    }
+
+  };
+
+
+  class ctensorarray_add_destructive_reduce_op: public Coperator, public InPlaceOperator{
+  public:
+
+    int ix;
+
+    ctensorarray_add_destructive_reduce_op(Cnode* r, Cnode* x, const int _ix):
+      Coperator(r,x), ix(_ix){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=inputs[0]->obj;
+      CTENSORARRAYB(inputs[1]).destructive_reduce_add_into(CTENSORARRAYB(owner),ix);
+    }
+
+    string str() const{
+      return "ctensorarray_add_destructive_reduce"+inp_str(ix);
+    }
+
+  };
+
+
+
 }
 
 #endif 

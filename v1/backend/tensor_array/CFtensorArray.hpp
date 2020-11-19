@@ -64,7 +64,6 @@ namespace Cengine{
 
 
     CFtensorArray(){
-      arr=nullptr;
     }
 
     CFtensorArray(const Gdims& _adims, const Gdims& _dims, const int dev=0): 
@@ -82,11 +81,11 @@ namespace Cengine{
       }
     }
 
-    /*
-    CFtensorArray(const int _k, const Gdims& _dims, const vector<int>_strides, const int _asize, 
-      const int _memsize, const int _cst, const device_id& _dev=0):
-      k(_k), dims(_dims), strides(_strides), asize(_asize), memsize(_memsize), cst(_cst), device(_dev.id()){
-      //CENGINE_DEPRECATED();
+    CFtensorArray(const int _ak, const Gdims& _adims, const vector<int>& _astrides, const int _aasize, 
+      const int _k, const Gdims& _dims, const vector<int>& _strides, const int _asize, 
+      const int _cellstride, const int _memsize, const int _cst, const int dev):
+      ak(_ak), k(_k), adims(_adims), dims(_dims), astrides(_astrides), strides(_strides), 
+      aasize(_aasize), asize(_asize), cellstride(_cellstride), memsize(_memsize), cst(_cst), device(dev){
       if(device==0){
 	arr=new float[memsize];
 	arrc=arr+cst;
@@ -96,22 +95,6 @@ namespace Cengine{
 	arrgc=arrg+cst;
       }
     }
-    */
-    
-    /*
-    CFtensorArray(const int _k, const Gdims& _dims, const vector<int>_strides, const int _asize, 
-      const int _memsize, const int _cst, const int dev=0):
-      k(_k), dims(_dims), strides(_strides), asize(_asize), memsize(_memsize), cst(_cst), device(dev){
-      if(device==0){
-	arr=new float[memsize];
-	arrc=arr+cst;
-      }
-      if(device==1){
-	CUDA_SAFE(cudaMalloc((void **)&arrg, memsize*sizeof(float)));
-	arrgc=arrg+cst;
-      }
-    }
-    */
     
     void make_strides(){
 
@@ -125,12 +108,12 @@ namespace Cengine{
 
       ak=adims.size();
       astrides.resize(ak);
-      astrides[k-1]=cellstride;
+      astrides[k-1]=1;
       for(int i=ak-2; i>=0; i--)
 	astrides[i]=astrides[i+1]*adims[i+1];
       aasize=adims.asize();
-      cst=astrides[0]*adims[0]; 
 
+      cst=astrides[0]*adims[0]*cellstride; 
       memsize=2*cst;
     }
 
@@ -149,6 +132,7 @@ namespace Cengine{
 
 
   public: // ---- Filled constructors -------------------------------------------------------------------------
+
 
     CFtensorArray(const Gdims& _adims, const Gdims& _dims, const fill_raw& dummy, const int dev=0): 
       CFtensorArray(_adims,_dims,dev){}
@@ -170,17 +154,6 @@ namespace Cengine{
 	CUDA_SAFE(cudaMemset(arrgc,0,cst*sizeof(float)));
       }
     }
-
-    /*
-    CFtensorArray(const Gdims& _adims, const Gdims& _dims, const fill_identity& dummy, const int dev=0): 
-      CFtensorArray(_dims,fill::raw,0){
-      assert(dims[k-1]==dims[k-2]);
-      std::fill(arr,arr+memsize,0);
-      for(int i=0; i<dims[k-1]; i++)
-	arr[i*(strides[k-2]+1)]=1;
-      to_device(dev);
-    }
-    */
 
     CFtensorArray(const Gdims& _adims, const Gdims& _dims, const fill_gaussian& dummy, const int dev):
       CFtensorArray(_adims,_dims,fill::raw,0){
@@ -238,20 +211,20 @@ namespace Cengine{
 
 
     CFtensorArray(const CFtensorArray& x): 
-      CFtensorArray(x.ak,x.adims,x.astrides,x.aasize,x.k,x.dims,x.strides,x.asize,x.memsize,x.cst,x.device){
+      CFtensorArray(x.ak,x.adims,x.astrides,x.aasize,x.k,x.dims,x.strides,x.asize,x.cellstride,x.memsize,x.cst,x.device){
       COPY_WARNING;
       if(device==0) std::copy(x.arr,x.arr+memsize,arr);
       if(device==1) CUDA_SAFE(cudaMemcpy(arrg,x.arrg,memsize*sizeof(float),cudaMemcpyDeviceToDevice));
     }
         
     CFtensorArray(const CFtensorArray& x, const nowarn_flag& dummy): 
-      CFtensorArray(x.ak,x.adims,x.astrides,x.aasize,x.k,x.dims,x.strides,x.asize,x.memsize,x.cst,x.device){
+      CFtensorArray(x.ak,x.adims,x.astrides,x.aasize,x.k,x.dims,x.strides,x.asize,x.cellstride,x.memsize,x.cst,x.device){
       if(device==0) std::copy(x.arr,x.arr+memsize,arr);
       if(device==1) CUDA_SAFE(cudaMemcpy(arrg,x.arrg,memsize*sizeof(float),cudaMemcpyDeviceToDevice));  
     }
 
     CFtensorArray(const CFtensorArray& x, const fill_raw& dummy): 
-      CFtensorArray(x.k,x.dims,x.strides,x.asize,x.memsize,x.cst,x.device){}
+      CFtensorArray(x.ak,x.adims,x.astrides,x.aasize,x.k,x.dims,x.strides,x.asize,x.cellstride,x.memsize,x.cst,x.device){}
 
     /*
     CFtensorArray(const CFtensorArray& x, const device_id& dev): 
@@ -268,7 +241,7 @@ namespace Cengine{
     */
     
     CFtensorArray(const CFtensorArray& x, const int dev): 
-      CFtensorArray(x.ak,x.adims,x.astrides,x.aasize,x.k,x.dims,x.strides,x.asize,x.memsize,x.cst,dev){
+      CFtensorArray(x.ak,x.adims,x.astrides,x.aasize,x.k,x.dims,x.strides,x.asize,x.cellstride,x.memsize,x.cst,dev){
       if(device==0){
 	if(x.device==0) std::copy(x.arr,x.arr+memsize,arr);
 	if(x.device==1) CUDA_SAFE(cudaMemcpy(arr,x.arrg,memsize*sizeof(float),cudaMemcpyDeviceToHost)); 
@@ -282,7 +255,7 @@ namespace Cengine{
     CFtensorArray(CFtensorArray&& x){
       ak=x.ak; adims=x.adims; astrides=x.astrides; aasize=x.aasize;
       k=x.k; dims=x.dims; strides=x.strides; asize=x.asize;
-      cellskip=x.cellskip; 
+      cellstride=x.cellstride; 
       memsize=x.memsize; cst=x.cst;  
       arr=x.arr; x.arr=nullptr; 
       arrg=x.arrg; x.arrg=nullptr;
@@ -294,7 +267,7 @@ namespace Cengine{
     
     CFtensorArray& operator=(const CFtensorArray& x){
       memsize=x.memsize; cst=x.cst;
-      cellskip=x.cellskip; 
+      cellstride=x.cellstride; 
       if(!is_view) delete arr;
       if(!is_view && arrg) cudaFree(arrg); 
       ak=x.ak; adims=x.adims; astrides=x.astrides; aasize=x.aasize;
@@ -314,7 +287,7 @@ namespace Cengine{
 
     CFtensorArray& operator=(CFtensorArray&& x){
       memsize=x.memsize; cst=x.cst; 
-      cellskip=x.cellskip; 
+      cellstride=x.cellstride; 
       if(!is_view && arr) delete arr;
       if(!is_view && arrg) CUDA_SAFE(cudaFree(arrg));
       ak=x.ak; adims=x.adims; astrides=x.astrides; aasize=x.aasize;
@@ -386,7 +359,7 @@ namespace Cengine{
 
 
     int size(const int i) const{
-      return dims[i];
+      return adims[i];
     }
 
     int combined_size(const int a, const int b) const{
@@ -397,46 +370,25 @@ namespace Cengine{
       return 1; 
     }
 
-    complex<float> operator()(const Gindex& ix) const{
+    void reshape_array(const Gdims& x){
+      assert(x.k()==ak);
+      assert(x.asize()==aasize);
+      adims=x;
+    }
+
+    void reshape_cells(const Gdims& x){
+      assert(x.k()==k);
+      assert(x.asize()==asize);
+      dims=x;
+    }
+
+    complex<float> operator()(const Gindex& aix, const Gindex& ix) const{
       FCG_CPUONLY();
-      int t=0; for(int i=0; i<k; i++) t+=ix[i]*strides[i];
+      int t=0; 
+      for(int i=0; i<k; i++) t+=ix[i]*strides[i];
+      for(int i=0; i<ak; i++) t+=aix[i]*astrides[i];
       return complex<float>(arr[t],arrc[t]);
     }
-
-    /*
-    complex<float> get(const Gindex& ix) const{
-      FCG_CPUONLY();
-      int t=0; for(int i=0; i<k; i++) t+=ix[i]*strides[i];
-      return complex<float>(arr[t],arrc[t]);
-    }
-    
-    CFtensorArray& set(const Gindex& ix, const complex<float>& v){
-      FCG_CPUONLY();
-      int t=0; for(int i=0; i<k; i++) t+=ix[i]*strides[i];
-      arr[t]=std::real(v);
-      arrc[t]=std::imag(v);
-      return *this;
-    }
-
-    CFtensorArray& inc(const Gindex& ix, const complex<float>& v){
-      FCG_CPUONLY();
-      int t=0; for(int i=0; i<k; i++) t+=ix[i]*strides[i];
-      arr[t]+=std::real(v);
-      arrc[t]+=std::imag(v);
-      return *this;
-    }
-
-    CFtensorArray& set(const complex<float>& v){
-      FCG_CPUONLY();
-      if(device==0){
-	std::fill(arr,arr+asize,std::real(v));
-	std::fill(arrc,arrc+asize,std::imag(v));
-      }
-      if(device==1){
-      }
-      return *this;
-    }	
-    */
 
     // #include "CFtensorArray_access.hpp"
 
@@ -444,32 +396,21 @@ namespace Cengine{
   public: // ---- Elementwise Operations --------------------------------------------------------------------
 
 
-    void zero(){
+    void set_zero(){
       if(device==0) std::fill(arr,arr+memsize,0);
       if(device==1) CUDA_SAFE(cudaMemset(arrg,0,memsize*sizeof(float)));
     }
 
-    /*
-    void set(const fill_gaussian& dummy){
-      const int _dev=device;
-      to_device(0);
-      normal_distribution<double> distr;
-      for(int i=0; i<asize; i++) arr[i]=distr(rndGen);
-      for(int i=0; i<asize; i++) arrc[i]=distr(rndGen);
-      to_device(_dev);
-    }
-    */
-
 
     bool operator==(const CFtensorArray& x) const{
-      if(x.aasize!=aasize) return false; 
-      if(x.asize!=asize) return false; 
+      if(x.dims!=dims) return false; 
+      if(x.adims!=adims) return false; 
       pullin2<CFtensorArray> p(*this,x);
       for(int j=0; j<aasize; j++){
 	for(int i=0; i<asize; i++)
-	  if(arr[i]!=x.arr[i]) return false;
+	  if(arr[i+j*cellstride]!=x.arr[i+j*cellstride]) return false;
 	for(int i=0; i<asize; i++)
-	  if(arrc[i]!=x.arrc[i]) return false;
+	  if(arrc[i+j*cellstride]!=x.arrc[i+j*cellstride]) return false;
       }
       return true;
     }
@@ -479,63 +420,57 @@ namespace Cengine{
 
 
     CFtensorArray plus(const CFtensorArray& x) const{
-      assert(asize==x.asize);
+      assert(memsize==x.memsize);
       x.to_device(device);
       if(device==0){
 	CFtensorArray R(adims,dims,fill::raw,device);
 	for(int i=0; i<memsize; i++) R.arr[i]=arr[i]+x.arr[i];
-	//for(int i=0; i<asize; i++) R.arrc[i]=arrc[i]+x.arrc[i];
 	return R;
       }
       CFtensorArray R(*this,nowarn);
       const float alpha = 1.0;
       CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, memsize, &alpha, x.arrg, 1, R.arrg, 1));
-      //CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, memsize, &alpha, x.arrgc, 1, R.arrgc, 1));
       return R;
     }
 
 
     CFtensorArray minus(const CFtensorArray& x) const{
-      assert(asize==x.asize);
+      assert(memsize==x.memsize);
       x.to_device(device);
       if(device==0){
-	CFtensorArray R(dims,fill::raw,device);
+	CFtensorArray R(adims,dims,fill::raw,device);
 	for(int i=0; i<memsize; i++) R.arr[i]=arr[i]-x.arr[i];
-	//for(int i=0; i<asize; i++) R.arrc[i]=arrc[i]-x.arrc[i];
 	return R;
       }
       CFtensorArray R(*this,nowarn);
       const float alpha = -1.0;
       CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, memsize, &alpha, x.arrg, 1, R.arrg, 1));
-      //CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrgc, 1, R.arrgc, 1));
       return R;
     }
 
 
     CFtensorArray times(const float c) const{
       if(device==0){
-	CFtensorArray R(dims,fill::raw,0);
+	CFtensorArray R(adims,dims,fill::raw,0);
 	for(int i=0; i<memsize; i++) R.arr[i]=c*arr[i];
-	//for(int i=0; i<asize; i++) R.arrc[i]=c*arrc[i];
 	return R;
       }
-      CFtensorArray R(dims,fill::zero,device);
+      CFtensorArray R(adims,dims,fill::zero,device);
       CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, memsize, &c, arrg, 1, R.arrg, 1));
-      //CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &c, arrgc, 1, R.arrgc, 1));
       return R;
     }
 
 
     CFtensorArray times(const complex<float> c) const{
       if(device==0){
-	CFtensorArray R(dims,fill::raw,0);
+	CFtensorArray R(adims,dims,fill::raw,0);
 	float cr=std::real(c);
 	float ci=std::imag(c);
 	for(int i=0; i<cst; i++) R.arr[i]=cr*arr[i]-ci*arrc[i];
 	for(int i=0; i<cst; i++) R.arrc[i]=cr*arrc[i]+ci*arr[i];
 	return R;
       }
-      CFtensorArray R(dims,fill::zero,device);
+      CFtensorArray R(adims,dims,fill::zero,device);
       float cr=std::real(c);
       float ci=std::imag(c);
       float mci=-std::imag(c);
@@ -546,54 +481,40 @@ namespace Cengine{
       return R;
     }
 
+    /*
     CFtensorArray elementwise_times(const CFtensorArray& x) const{
       FCG_CPUONLY();
       assert(cst==x.cst);
-      CFtensorArray R(dims,fill::raw,0);
-      for(int i=0; i<cst; i++) R.arr[i]=arr[i]*x.arr[i]-arrc[i]*x.arrc[i];
-      for(int i=0; i<cst; i++) R.arrc[i]=arr[i]*x.arrc[i]+arrc[i]*x.arr[i];
-      return R;
-    }
-
-    CFtensorArray elementwise_divide(const CFtensorArray& x) const{
-      FCG_CPUONLY();
-      assert(cst==x.cst);
-      CFtensorArray R(dims,fill::raw,0);
-      for(int i=0; i<cst; i++) R.arr[i]=arr[i]/x.arr[i]+arrc[i]/x.arrc[i];
-      for(int i=0; i<cst; i++) R.arrc[i]=arrc[i]/x.arr[i]-arr[i]/x.arrc[i];
-      return R;
-    }
-
-    /*
-    CFtensorArray elementwise_pow(const float p, const complex<float> c=1.0) const{
-      FCG_CPUONLY();
-      CFtensorArray R(dims,fill::raw,0);
-      for(int i=0; i<cst; i++){
-	complex<float> t=c*pow(complex<float>(arr[i],arrc[i]),p);
-	R.arr[i]=std::real(t); 
-	R.arrc[i]=std::imag(t);
+      if(device==0){
+	CFtensorArray R(adims,dims,fill::raw,0);
+	for(int i=0; i<cst; i++) R.arr[i]=arr[i]*x.arr[i]-arrc[i]*x.arrc[i];
+	for(int i=0; i<cst; i++) R.arrc[i]=arr[i]*x.arrc[i]+arrc[i]*x.arr[i];
+	return R;
       }
-      return R;
     }
     */
 
     /*
-    Gtensor abs() const{
+    CFtensorArray elementwise_divide(const CFtensorArray& x) const{
       FCG_CPUONLY();
-      Gtensor R(dims,fill::raw);
-      for(int i=0; i<asize; i++) R.arr[i]=std::abs(arr[i]);
-      return R;
+      assert(cst==x.cst);
+      if(device==0){
+	CFtensorArray R(adims,dims,fill::raw,0);
+	for(int i=0; i<cst; i++) R.arr[i]=arr[i]/x.arr[i]+arrc[i]/x.arrc[i];
+	for(int i=0; i<cst; i++) R.arrc[i]=arrc[i]/x.arr[i]-arr[i]/x.arrc[i];
+	return R;
+      }
     }
     */
 
     CFtensorArray conj() const{
       if(device==0){
-	CFtensorArray R(dims,fill::raw,0);
+	CFtensorArray R(adims,dims,fill::raw,0);
 	std::copy(arr,arr+cst,R.arr);
 	for(int i=0; i<cst; i++) R.arrc[i]=-arrc[i];
 	return R;
       }
-      CFtensorArray R(dims,fill::zero,device);
+      CFtensorArray R(adims,dims,fill::zero,device);
       const float alpha = 1.0;
       const float malpha = -1.0;
       CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, arrg, 1, R.arrg, 1));
@@ -842,34 +763,31 @@ namespace Cengine{
 
 
     void operator+=(const CFtensorArray& x){
-      assert(asize==x.asize);
+      assert(memsize==x.memsize);
+      tmpdev<CFtensorArray> tt(device,x);
       if(device==0){
-	for(int i=0; i<cst; i++) arr[i]+=x.arr[i];
-	for(int i=0; i<cst; i++) arrc[i]+=x.arrc[i];
+	for(int i=0; i<memsize; i++) arr[i]+=x.arr[i];
 	return; 
       }
       const float alpha = 1.0;
-      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, cst, &alpha, x.arrg, 1, arrg, 1));
-      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, cst, &alpha, x.arrgc, 1, arrgc, 1));
+      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, memsize, &alpha, x.arrg, 1, arrg, 1));
     }
 
     void operator-=(const CFtensorArray& x){
       assert(asize==x.asize);
+      tmpdev<CFtensorArray> tt(device,x);
       if(device==0){
-	for(int i=0; i<cst; i++) arr[i]+=x.arr[i];
-	for(int i=0; i<cst; i++) arrc[i]+=x.arrc[i];
+	for(int i=0; i<memsize; i++) arr[i]+=x.arr[i];
 	return; 
       }
       const float alpha = -1.0;
-      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, cst, &alpha, x.arrg, 1, arrg, 1));
-      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, cst, &alpha, x.arrgc, 1, arrgc, 1));
+      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, memsize, &alpha, x.arrg, 1, arrg, 1));
     }
 
-    void operator*=(const float x){
+    void operator*=(const float c){
       FCG_CPUONLY();
       pullin<CFtensorArray> p(*this);
-      for(int i=0; i<asize; i++) cst[i]*=x;
-      for(int i=0; i<asize; i++) cst[i]*=x;
+      for(int i=0; i<memsize; i++) arr[i]*=c;
     }
 
     void operator*=(const complex<float> x){
@@ -948,17 +866,18 @@ namespace Cengine{
     }
     */
 
-#include "CFtensorArray_add_Mprod.hpp"
+    //#include "CFtensorArray_add_Mprod.hpp"
 
 
   public: // ---- I/O ----------------------------------------------------------------------------------------
 
+    /*
     string str(const string indent="") const{
       if(device>0) return CFtensorArray(*this,0).str(indent);
       return "";
 
-      assert(device==0);
       ostringstream oss;
+      pullin<CFtensorArray> tt(*this);
 
       if(k==1){
 	  oss<<indent<<"[ ";
@@ -996,14 +915,15 @@ namespace Cengine{
 
 	return oss.str();
     }
+    */
 
-    friend ostream& operator<<(ostream& stream, const CFtensorArray& x){
-      stream<<x.str(); return stream;
-    }
+    //friend ostream& operator<<(ostream& stream, const CFtensorArray& x){
+    //stream<<x.str(); return stream;
+    //}
 
   };
   
-
+}
 
 #endif 
 
