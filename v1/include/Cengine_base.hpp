@@ -313,10 +313,19 @@ namespace Cengine{
     int id() const {return _id;}
   };
 
-  namespace device{
-    static device_id CPU(0);
-    static device_id GPU0(1);
+  struct device{
+    int _id;
+    explicit device(const int x): _id(x){};
+    int id() const {return _id;}
+  };
+
+  namespace deviceid{
+    //static device_id CPU(0);
+    //static device_id GPU0(1);
+    static device CPU(0);
+    static device GPU0(1);
   }    
+
 
   // --- Variadics -------------------------------------------------------------------------------------------
 

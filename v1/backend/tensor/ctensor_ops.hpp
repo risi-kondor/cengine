@@ -210,6 +210,27 @@ namespace Cengine{
   // ---- Access ---------------------------------------------------------------------------------------------
 
   
+  class ctensor_get_element_op: public Coperator{
+  public:
+
+    Gindex ix;
+
+    ctensor_get_element_op(Cnode* x, const Gindex& _ix):
+      Coperator(x), ix(_ix){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      const CtensorB& x=CTENSORB(inputs[0]);
+      owner->obj=new CscalarB(x.nbu,x(ix),x.device);
+    }
+
+    string str() const{
+      return "ctensor_get_element"+inp_str(ix);
+    }
+
+  };
+
+
   class ctensor_set_element_op: public Coperator, public InPlaceOperator{
   public:
 

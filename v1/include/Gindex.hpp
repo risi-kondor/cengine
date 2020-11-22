@@ -28,6 +28,19 @@ namespace Cengine{
       (*this)[1]=i1;
     }
 
+    Gindex(const int i0, const int i1, const int i2): vector<int>(3){
+      (*this)[0]=i0;
+      (*this)[1]=i1;
+      (*this)[2]=i2;
+    }
+
+    Gindex(const int i0, const int i1, const int i2, const int i3): vector<int>(4){
+      (*this)[0]=i0;
+      (*this)[1]=i1;
+      (*this)[2]=i2;
+      (*this)[3]=i3;
+    }
+
     Gindex(int a, const Gdims& dims): 
       vector<int>(dims.size()){
       for(int i=size()-1; i>=0; i--){
