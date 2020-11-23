@@ -242,6 +242,27 @@ namespace Cengine{
   };
 
   
+  class cscalar_set_value_op: public Coperator, public InPlaceOperator{
+  public:
+
+    complex<float> x;
+
+    cscalar_set_value_op(Cnode* r, complex<float> _x):
+      Coperator(r), x(_x){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=inputs[0]->obj;
+      CSCALARB(owner).val=x;
+    }
+
+    string str() const{
+      return "cscalar_set_value"+inp_str();
+    }
+
+  };
+
+  
   class cscalar_set_real_op: public Coperator, public InPlaceOperator{
   public:
 

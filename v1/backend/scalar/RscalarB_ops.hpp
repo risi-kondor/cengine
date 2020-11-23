@@ -165,6 +165,28 @@ namespace Cengine{
   };
   
 
+  class rscalar_set_value_op: public Coperator, public InPlaceOperator{
+  public:
+
+    float x;
+
+    rscalar_set_value_op(Cnode* r, float _x):
+      Coperator(r), x(_x){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=inputs[0]->obj;
+      RSCALARB(owner).val=x;
+    }
+
+    string str() const{
+      return "rscalar_set_value"+inp_str();
+    }
+
+  };
+
+  
+
   // ---- Cumulative operators  ------------------------------------------------------------------------------
 
 

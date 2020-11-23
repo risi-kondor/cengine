@@ -24,7 +24,11 @@ namespace Cengine{
 
   vector<float> rscalar_get(Chandle* hdl){
     Cengine_engine->flush(hdl->node);
-    return asRscalarB(hdl->node->obj,__PRETTY_FUNCTION__);
+#ifdef CENGINE_DRY_RUN
+    return vector<float>(0); 
+#else
+    return RSCALARB(hdl->node->obj);
+#endif 
   }
   
   vector<complex<float> > cscalar_get(Chandle* hdl){
@@ -32,7 +36,7 @@ namespace Cengine{
 #ifdef CENGINE_DRY_RUN
     return vector<complex<float> >(0); 
 #else
-    return asCscalarB(hdl->node->obj,__PRETTY_FUNCTION__);
+    return CSCALARB(hdl->node->obj);
 #endif 
   }
   
