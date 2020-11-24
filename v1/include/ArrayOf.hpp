@@ -60,8 +60,9 @@ namespace Cengine{
       k(_dims.size()), dims(_dims), strides(_dims.size()){
       assert(k==1);
       allocate();
-      for(int i=0; i<dims[0]; i++)
+      for(int i=0; i<dims[0]; i++){
 	arr[i]=new OBJ(fn(i));
+      }
     }
       
     template<typename ARG1>
