@@ -231,7 +231,7 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      asCtensorB(owner,__PRETTY_FUNCTION__).subtract(asCtensorB(inputs[1],__PRETTY_FUNCTION__));
+      CTENSORB(owner).subtract(CTENSORB(inputs[1]));
     }
 
     string str() const{
@@ -356,8 +356,7 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      asCtensorB(owner,__PRETTY_FUNCTION__).add_prod_c_times_conj(asCscalarB(inputs[1],__PRETTY_FUNCTION__),asCtensorB(inputs[2],__PRETTY_FUNCTION__));
-      //owner->computed=true; 
+      CTENSORB(owner).add_prod_c_times_conj(CSCALARB(inputs[1]),CTENSORB(inputs[2]));
     }
 
     string str() const{

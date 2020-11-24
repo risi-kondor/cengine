@@ -30,7 +30,7 @@ using namespace std;
 
 //#define WAITING_OPT(cmd) cmd
 #define WAITING_OPT(cmd)
-//#define WITH_FASTLIST 
+#define WITH_FASTLIST 
 #define WITH_TINYSET 
 
 
@@ -95,7 +95,7 @@ using namespace std;
 #define FCG_UNIMPL() printf("Cengine error: function \"%s\" not implemented.\n",__PRETTY_FUNCTION__);
 #define FCG_NOTIMPL() printf("Cengine error: function \"%s\" not implemented.\n",__PRETTY_FUNCTION__);
 #define CENGINE_UNIMPL() printf("Cengine error: function \"%s\" not implemented.\n",__PRETTY_FUNCTION__);
-#define GENET_UNIMPL() printf("GEnet error: function \"%s\" not implemented.\n",__PRETTY_FUNCTION__);
+//#define GENET_UNIMPL() printf("GEnet error: function \"%s\" not implemented.\n",__PRETTY_FUNCTION__);
 
 #define CENGINE_DEPRECATED() printf("Cengine warning: function \"%s\" is deprecated.\n",__PRETTY_FUNCTION__);
 //#define FCG_DEPRECATED(message) printf("Warning: %s is deprecated.\n",(message));
@@ -183,6 +183,9 @@ namespace Cengine{
   struct fill_identity: public fill_pattern{fill_identity(){}};
   struct fill_uniform: public fill_pattern{fill_uniform(){}};
   struct fill_tensor: public fill_pattern{fill_tensor(){}};
+  struct fill_stack: public fill_pattern{fill_stack(){}};
+  struct fill_cat: public fill_pattern{fill_cat(){}};
+
 
   struct fill_gaussian: public fill_pattern{
   public:
@@ -204,14 +207,23 @@ namespace Cengine{
     double p=0.5;
     fill_symm_bernoulli(){}
     fill_symm_bernoulli(const double _p):p(_p){}};
+
   template<typename TYPE> 
   struct fill_const: public fill_pattern{
     TYPE p=0;
     fill_const(){}
     fill_const(const TYPE _p):p(_p){}
   };
-  struct fill_stack: public fill_pattern{fill_stack(){}};
-  struct fill_cat: public fill_pattern{fill_cat(){}};
+
+  template<int>
+  struct const_size: public fill_pattern{
+    const_size(){}
+  };
+
+  struct size_spec: public fill_pattern{
+    const int n;
+    size_spec(const int _n): n(_n){}
+  };
 
   namespace fill{
     static const fill_noalloc noalloc;
@@ -534,8 +546,9 @@ inline ostream& operator<<(ostream& stream, const vector<TYPE>& x){
 
 
 template<typename TYPE>
-inline void print(const TYPE& x){
+std::ostream& print(const TYPE& x){
   cout<<x.str()<<endl;
+  return cout;
 }
 
 template<typename TYPE>
