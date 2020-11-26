@@ -59,6 +59,11 @@
     }
 
     template<typename OP, typename ARG0>
+    Chandle* push(Chandle* h0, Chandle* h1, Chandle* h2, Chandle* h3, const ARG0 arg0){
+      return new_handle(enqueue_for_handle(new OP(nodeof(h0),nodeof(h1),nodeof(h2),nodeof(h3),arg0)));
+    }
+
+    template<typename OP, typename ARG0>
     Chandle* push(Chandle* h0, vector<const Chandle*> _v1, const ARG0 arg0){
       vector<Cnode*> v1(_v1.size());
       for(int i=0; i<_v1.size(); i++) v1[i]=nodeof(_v1[i]);

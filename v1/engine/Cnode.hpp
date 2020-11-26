@@ -47,6 +47,7 @@ namespace Cengine{
     bool working=false; 
     bool computed=false;
     bool is_view=false; 
+    bool is_reflective=false;
 
     int id;
 
@@ -61,7 +62,10 @@ namespace Cengine{
       if(nhandles>0){CoutLock lk; cout<<"Error: attempting to delete node "<<ident()<<" that has a handle."<<endl;exit(0);}
       // DEBUG_ENGINE2("Deleting "<<ident());
       delete op;
-      if(!is_view) delete obj;
+      if(!is_view && !is_reflective) {
+	//COUT("del"<<ident());
+	delete obj;
+      }
       CNODE_DESTROY();
     }
 

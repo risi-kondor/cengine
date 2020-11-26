@@ -449,6 +449,7 @@ namespace Cengine{
       }
 
       nodes.erase(node);
+      //COUT("deleting"<<node->ident());
       delete node; 
 
     }
