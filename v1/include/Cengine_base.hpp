@@ -121,6 +121,8 @@ using namespace std;
 #define CSCALARB_DESTROY() ::Cengine::CscalarB_count--; //cout<<::Cengine::CscalarB_count<<endl;
 #define CTENSORB_CREATE() ::Cengine::CtensorB_count++; // {CoutLock lk; cout<<"CtensorB("<<dims<<","<<nbu<<","<<device<<")"<<endl;} 
 #define CTENSORB_DESTROY() ::Cengine::CtensorB_count--; //cout<<::Cengine::CtensorB_count<<endl;
+#define CMATRIXB_CREATE() ::Cengine::CmatrixB_count++; // {CoutLock lk; cout<<"CtensorB("<<dims<<","<<nbu<<","<<device<<")"<<endl;} 
+#define CMATRIXB_DESTROY() ::Cengine::CmatrixB_count--; //cout<<::Cengine::CtensorB_count<<endl;
 #define CTENSORARRAYB_CREATE() ::Cengine::CtensorBarray_count++; // {CoutLock lk; cout<<"CtensorB("<<dims<<","<<nbu<<","<<device<<")"<<endl;} 
 #define CTENSORARRAYB_DESTROY() ::Cengine::CtensorBarray_count--; //cout<<::Cengine::CtensorB_count<<endl;
 #else
@@ -136,6 +138,8 @@ using namespace std;
 #define CSCALARB_DESTROY();
 #define CTENSORB_CREATE();
 #define CTENSORB_DESTROY();
+#define CMATRIXB_CREATE();
+#define CMATRIXB_DESTROY();
 #define CTENSORARRAYB_CREATE();
 #define CTENSORARRAYB_DESTROY();
 #endif 

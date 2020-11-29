@@ -10,6 +10,7 @@ namespace Cengine{
   atomic<int> RscalarB_count; 
   atomic<int> CscalarB_count; 
   atomic<int> CtensorB_count; 
+  atomic<int> CmatrixB_count; 
   atomic<int> CtensorBarray_count; 
 #endif 
 

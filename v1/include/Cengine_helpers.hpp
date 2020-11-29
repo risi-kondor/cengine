@@ -38,6 +38,26 @@ namespace Cengine{
 
 
   template<typename TYPE>
+  class _pullin{
+  public:
+    TYPE& obj;
+    int dev;
+    _pullin(TYPE& _obj): obj(_obj){
+      dev=obj.dev;
+      obj.to_device(0);
+    }
+    _pullin(const TYPE& _obj): 
+      obj(const_cast<TYPE&>(_obj)){
+      dev=obj.dev;
+      obj.to_device(0);
+    }
+    ~_pullin(){
+      obj.to_device(dev);
+    }
+  };
+
+
+  template<typename TYPE>
   class pullin2{
   public:
     TYPE& obj0;
@@ -74,6 +94,24 @@ namespace Cengine{
     }
     ~tmpdev(){
       obj.to_device(device);
+    }
+  };
+
+  template<typename TYPE>
+  class _tmpdev{
+  public:
+    TYPE& obj;
+    int dev;
+    _tmpdev(const int _dev, TYPE& _obj): obj(_obj){
+      dev=obj.dev;
+      obj.to_device(_dev);
+    }
+    _tmpdev(const int _dev, const TYPE& _obj): obj(const_cast<TYPE&>(_obj)){
+      dev=obj.dev;
+      obj.to_device(_dev);
+    }
+    ~_tmpdev(){
+      obj.to_device(dev);
     }
   };
 
