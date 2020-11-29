@@ -93,6 +93,7 @@ namespace Cengine{
     int d=1;
     while(d<N) d*=2;
     d/=2;
+    //cout<<"warps="<<cst/32<<endl;
 
     CtensorBpack_reduce_kernel<<<d,32,0,stream>>>
       (R.arrg,R.arrgc,parr,parrc,cst/32,d,N);

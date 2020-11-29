@@ -372,22 +372,24 @@ namespace Cengine{
     const CFtensor& to_device(const int _dev) const{
       if(_dev==0){
  	if(device==0) return *this;
+	//COUT("CFtensor to device "<<_dev)
  	delete[] arr;
 	reallocate(_dev);
 	CUDA_SAFE(cudaMemcpy(arr,arrg,memsize*sizeof(float),cudaMemcpyDeviceToHost));  
 	CUDA_SAFE(cudaFree(arrg));
 	const_cast<CFtensor*>(this)->arrg=nullptr;
-	device=0;
+	//device=0;
 	return *this;
       }
       if(_dev>0){
 	if(device==_dev) return *this;
+	//COUT("CFtensor to device "<<_dev)
 	if(arrg) cudaFree(arrg);
 	reallocate(_dev);
 	CUDA_SAFE(cudaMemcpy(arrg,arr,memsize*sizeof(float),cudaMemcpyHostToDevice));  
 	delete[] arr;
 	const_cast<CFtensor*>(this)->arr=nullptr;
-	device=_dev;
+	//device=_dev;
 	//if(!is_view && arrg) CUDA_SAFE(cudaFree(arrg));
 	return *this;
       }
