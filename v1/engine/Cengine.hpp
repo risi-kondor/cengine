@@ -298,6 +298,28 @@ namespace Cengine{
     void release(Cnode* node){ // visited by workers but protected by done_mx
       //DEBUG_ENGINE2("    Releasing "<<node->ident());
 
+      if(node->dependents.size()>0){// && dynamic_cast<diamond_op>(node->dependents[0]->op)){
+	diamond_op* diamond=nullptr;
+	node->dependents.map([&diamond](Cnode* n){
+	    //COUT(n->op->str())
+	    if (dynamic_cast<diamond_op*>(n->op)){
+	      diamond=dynamic_cast<diamond_op*>(n->op);
+	    }
+	  });
+	if(diamond && dynamic_cast<RbatchedOperator*>(node->op)==nullptr){
+	  //COUT("Hold siblings!");
+	  for(auto p:diamond->inputs){
+	    if(p!=node && !p->computed){
+	      if(p->working){
+		//if(p->dependents.insert(node)) node->nblockers++; // TODO 
+	      }else{
+		if(node->dependents.insert(p)) p->nblockers++;		
+	      }
+	    }
+	  }
+	}
+      }
+
       WAITING_OPT(if(waiting.find(node)!=waiting.end()) waiting.erase(node););
       node->released=true;
 
@@ -656,6 +678,8 @@ namespace Cengine{
 	lock_guard<mutex> lock2(ready_mx);
 
 	{lock_guard<mutex> lock(active_workers_mx); active_workers++;}
+
+	//this_thread::sleep_for(chrono::milliseconds(0));
 
 	if(ready_batchers.size()>0){
 	  worker->working=true;
