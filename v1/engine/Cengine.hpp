@@ -309,7 +309,7 @@ namespace Cengine{
 	if(diamond && dynamic_cast<RbatchedOperator*>(node->op)==nullptr){
 	  //COUT("Hold siblings!");
 	  for(auto p:diamond->inputs){
-	    if(p!=node && !p->computed){
+	    if(p!=node && !p->released && !p->computed){
 	      if(p->working){
 		//if(p->dependents.insert(node)) node->nblockers++; // TODO 
 	      }else{
@@ -692,6 +692,9 @@ namespace Cengine{
 	}
 
 	if(ready.size()>0){
+	  //CoutLock lk; 
+	  //for(auto p:ready) cout<<p->str()<<" "; 
+	  //cout<<endl; 
 	  worker->working=true;
 	  op=ready.front()->op;
 	  ready.pop_front();
