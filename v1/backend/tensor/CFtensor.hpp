@@ -433,6 +433,7 @@ namespace Cengine{
     int combined_size(const int a, const int b) const{
       assert(b<=k);
       assert(a<=b);
+      if(b>0 && strides[b-1]==0) return 0;
       if(a>0) return (strides[a-1])/(strides[b-1]);
       if(b>0) return asize/strides[b-1];
       return 1; 

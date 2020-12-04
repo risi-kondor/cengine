@@ -6,12 +6,16 @@
 template<int selector> 
 void add_Mprod(const CFtensor& x, const CFtensor& y, const int nx=1, const int ny=1){
 
+  if(x.asize==0 || y.asize==0) return;
+
   const int K=x.combined_size(x.k-nx,x.k);
   assert(y.combined_size(0,ny)==K);
 
   const int I=x.combined_size(0,x.k-nx);
   const int J=y.combined_size(ny,y.k);
   assert(asize==I*J);
+
+  cout<<device<<endl;
 
   if(device==0){
     x.to_device(0);
@@ -20,7 +24,7 @@ void add_Mprod(const CFtensor& x, const CFtensor& y, const int nx=1, const int n
     const int istridex=K;
     const int istrider=J;
     const int pstridey=J;
-    
+
     for(int i=0; i<I; i++)
       for(int j=0; j<J; j++){
 	float tr=0; 
@@ -76,6 +80,8 @@ void add_Mprod(const CFtensor& x, const CFtensor& y, const int nx=1, const int n
 
 template<int selector> 
 void add_Mprod_AT(const CFtensor& x, const CFtensor& y, const int nx=1, const int ny=1){
+
+  if(x.asize==0 || y.asize==0) return;
 
   const int K=x.combined_size(x.k-nx,x.k);
   assert(y.combined_size(y.k-ny,y.k)==K);
@@ -147,6 +153,8 @@ void add_Mprod_AT(const CFtensor& x, const CFtensor& y, const int nx=1, const in
 template<int selector>
 void add_Mprod_TA(const CFtensor& x, const CFtensor& y, const int nx=1, const int ny=1){
   
+  if(x.asize==0 || y.asize==0) return;
+
   const int K=x.combined_size(0,nx);
   
   if(y.combined_size(0,ny)!=K){CoutLock lk; cout<<K<<" "<<y.combined_size(0,ny)<<endl;};

@@ -16,7 +16,7 @@ namespace Cengine{
     int nbu;
     mutable int dev=0; 
 
-  private:
+  protected:
 
     int asize; 
     int bst;
@@ -25,9 +25,9 @@ namespace Cengine{
     int memsize;
     bool is_view=false;
 
-    mutable float* arr;
+    mutable float* arr=nullptr;
     mutable float* arrc;
-    mutable float* arrg;
+    mutable float* arrg=nullptr;
     mutable float* arrgc;
 
   public:
@@ -147,7 +147,8 @@ namespace Cengine{
 	arrc=arr+cst;
       }
       if(dev==1){
-	CUDA_SAFE(cudaMemset(arrg,0,memsize*sizeof(float)));
+	CUDA_SAFE(cudaMalloc((void **)&arrg, memsize*sizeof(float)));
+	//CUDA_SAFE(cudaMemset(arrg,0,memsize*sizeof(float)));
 	arrgc=arrg+cst;
       }
     }
@@ -158,7 +159,8 @@ namespace Cengine{
 	arrc=arr+cst;
       }
       if(_dev==1){
-	CUDA_SAFE(cudaMemset(arrg,0,memsize*sizeof(float)));
+	CUDA_SAFE(cudaMalloc((void **)&arrg, memsize*sizeof(float)));
+	//CUDA_SAFE(cudaMemset(arrg,0,memsize*sizeof(float)));
 	arrgc=arrg+cst;
       }
     }

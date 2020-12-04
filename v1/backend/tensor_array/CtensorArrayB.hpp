@@ -186,6 +186,7 @@ namespace Cengine{
       if(device==0){
 	std::copy(arr+t,arr+t+asize,R.arr);
 	std::copy(arrc+t,arrc+t+asize,R.arrc);
+	return; 
       }
       CUDA_SAFE(cudaMemcpy(arrg+t,R.arrg,asize*sizeof(float),cudaMemcpyDeviceToDevice));
       CUDA_SAFE(cudaMemcpy(arrgc+t,R.arrgc,asize*sizeof(float),cudaMemcpyDeviceToDevice));
@@ -199,6 +200,7 @@ namespace Cengine{
 	float* pc=arr+t;
 	for(int i=0; i<asize; i++) R.arr[i]+=p[i];
 	for(int i=0; i<asize; i++) R.arrc[i]+=pc[i];
+	return; 
       }
       //CUDA_SAFE(cudaMemcpy(arrg+t,R.arrg,asize*sizeof(float),cudaMemcpyDeviceToDevice));
       //CUDA_SAFE(cudaMemcpy(arrgc+t,R.arrgc,asize*sizeof(float),cudaMemcpyDeviceToDevice));
@@ -212,6 +214,7 @@ namespace Cengine{
       if(device==0){
 	std::copy(x.arr,x.arr+asize,arr+t);
 	std::copy(x.arrc,x.arrc+asize,arrc+t);
+	return; 
       }
       CUDA_SAFE(cudaMemcpy(x.arrg,arrg+t,asize*sizeof(float),cudaMemcpyDeviceToDevice));
       CUDA_SAFE(cudaMemcpy(x.arrgc,arrgc+t,asize*sizeof(float),cudaMemcpyDeviceToDevice));
@@ -227,6 +230,7 @@ namespace Cengine{
 	float* pc=arrc+t;
 	for(int i=0; i<asize; i++) p[i]+=x.arr[i];
 	for(int i=0; i<asize; i++) pc[i]+=x.arrc[i];
+	return; 
       }
       // CUDA_SAFE(cudaMemcpy(x.arrg,arrg+t,asize*sizeof(float),cudaMemcpyDeviceToDevice));
       //CUDA_SAFE(cudaMemcpy(x.arrgc,arrgc+t,asize*sizeof(float),cudaMemcpyDeviceToDevice));
@@ -241,6 +245,7 @@ namespace Cengine{
       if(device==0){
 	std::copy(x.arr+xt,x.arr+xt+asize,arr+t);
 	std::copy(x.arrc+xt,x.arrc+xt+asize,arrc+t);
+	return; 
       }
       CUDA_SAFE(cudaMemcpy(x.arrg+xt,arrg+t,asize*sizeof(float),cudaMemcpyDeviceToDevice));
       CUDA_SAFE(cudaMemcpy(x.arrgc+xt,arrgc+t,asize*sizeof(float),cudaMemcpyDeviceToDevice));
@@ -255,6 +260,7 @@ namespace Cengine{
       if(device==0){
 	stdadd(x.arr+xt,x.arr+xt+asize,arr+t);
 	stdadd(x.arrc+xt,x.arrc+xt+asize,arrc+t);
+	return; 
       }
       //CUDA_SAFE(cudaMemcpy(x.arrg+xt,arrg+t,asize*sizeof(float),cudaMemcpyDeviceToDevice));
       //CUDA_SAFE(cudaMemcpy(x.arrgc+xt,arrgc+t,asize*sizeof(float),cudaMemcpyDeviceToDevice));
