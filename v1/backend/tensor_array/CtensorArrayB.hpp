@@ -197,7 +197,7 @@ namespace Cengine{
       tmpdev<CtensorB>(device,R);
       if(device==0){
 	float* p=arr+t;
-	float* pc=arr+t;
+	float* pc=arrc+t;
 	for(int i=0; i<asize; i++) R.arr[i]+=p[i];
 	for(int i=0; i<asize; i++) R.arrc[i]+=pc[i];
 	return; 
@@ -373,17 +373,49 @@ namespace Cengine{
       if(device==0){
 	if(ix==0){
 	  for(int i=0; i<n; i++){
-	    std::copy(x.arr,x.arr+x.aasize*x.cellstride,arr+i*astrides[0]*cellstride);
-	    std::copy(x.arrc,x.arrc+x.aasize*x.cellstride,arrc+i*astrides[0]*cellstride);
+	    //std::copy(x.arr,x.arr+x.aasize*x.cellstride,arr+i*astrides[0]*cellstride);
+	    //std::copy(x.arrc,x.arrc+x.aasize*x.cellstride,arrc+i*astrides[0]*cellstride);
+	    std::copy(x.arr,x.arr+x.aasize*x.cellstride,arr+i*astrides[0]);
+	    std::copy(x.arrc,x.arrc+x.aasize*x.cellstride,arrc+i*astrides[0]);
 	  }
 	}else{
-	  const int A=aasize/astrides[ix-1];
+	  const int A=(astrides[0]*adims[0])/astrides[ix-1];
 	  for(int a=0; a<A; a++){
-	    const int offs=a*astrides[ix-1]*cellstride;
-	    const int xoffs=a*x.astrides[ix-1]*x.cellstride;
+	    const int offs=a*astrides[ix-1];
+	    const int xoffs=a*x.astrides[ix-1];
 	    for(int i=0; i<n; i++){
-	      std::copy(x.arr+xoffs,x.arr+xoffs+x.astrides[ix-1]*x.cellstride,arr+offs+astrides[ix]*cellstride);
-	      std::copy(x.arrc+xoffs,x.arrc+xoffs+x.astrides[ix-1]*x.cellstride,arrc+offs+astrides[ix]*cellstride);
+	      //std::copy(x.arr+xoffs,x.arr+xoffs+x.astrides[ix-1]*x.cellstride,arr+offs+astrides[ix]*cellstride);
+	      //std::copy(x.arrc+xoffs,x.arrc+xoffs+x.astrides[ix-1]*x.cellstride,arrc+offs+astrides[ix]*cellstride);
+	      std::copy(x.arr+xoffs,x.arr+xoffs+x.astrides[ix-1],arr+offs+i*astrides[ix]);
+	      std::copy(x.arrc+xoffs,x.arrc+xoffs+x.astrides[ix-1],arrc+offs+i*astrides[ix]);
+	    }
+	  }
+	}
+      }
+      FCG_CPUONLY();
+    }
+
+    void add_broadcast(const int ix, const CtensorArrayB& x){
+      assert(nbu==x.nbu);
+      assert(x.ak==ak-1);
+      for(int i=0; i<ix; i++) assert(adims[i]==x.adims[i]);
+      for(int i=ix+1; i<adims.size(); i++) assert(adims[i]==x.adims[i-1]);
+      int n=adims[ix];
+      tmpdev<CtensorArrayB> tt(device,x);
+      if(device==0){
+	if(ix==0){
+	  for(int i=0; i<n; i++){
+	    stdadd(x.arr,x.arr+x.aasize*x.cellstride,arr+i*astrides[0]);
+	    stdadd(x.arrc,x.arrc+x.aasize*x.cellstride,arrc+i*astrides[0]);
+	  }
+	}else{
+	  const int A=(astrides[0]*adims[0])/astrides[ix-1];
+	  for(int a=0; a<A; a++){
+	    const int offs=a*astrides[ix-1];
+	    const int xoffs=a*x.astrides[ix-1];
+	    for(int i=0; i<n; i++){
+	      stdadd(x.arr+xoffs,x.arr+xoffs+x.astrides[ix-1],arr+offs+i*astrides[ix]);
+	      stdadd(x.arrc+xoffs,x.arrc+xoffs+x.astrides[ix-1],arrc+offs+i*astrides[ix]);
 	    }
 	  }
 	}
@@ -392,27 +424,32 @@ namespace Cengine{
     }
 
     
-    void destructive_reduce_add_into(CtensorArrayB& r, const int ix){
+    void collapse_add_into(CtensorArrayB& r, const int ix){
       assert(nbu==r.nbu);
       assert(r.ak==ak-1);
       for(int i=0; i<ix; i++) assert(adims[i]==r.adims[i]);
       for(int i=ix+1; i<adims.size(); i++) assert(adims[i]==r.adims[i-1]);
       int n=adims[ix];
+
       tmpdev<CtensorArrayB> tt(device,r);
       if(device==0){
 	if(ix==0){
 	  for(int i=0; i<n; i++){
-	    stdadd(arr+i*astrides[0]*cellstride,arr+(i+1)*astrides[0]*cellstride,r.arr);
-	    stdadd(arrc+i*astrides[0]*cellstride,arrc+(i+1)*astrides[0]*cellstride,r.arrc);
+	    //stdadd(arr+i*astrides[0]*cellstride,arr+(i+1)*astrides[0]*cellstride,r.arr);
+	    //stdadd(arrc+i*astrides[0]*cellstride,arrc+(i+1)*astrides[0]*cellstride,r.arrc);
+	    stdadd(arr+i*astrides[0],arr+(i+1)*astrides[0],r.arr);
+	    stdadd(arrc+i*astrides[0],arrc+(i+1)*astrides[0],r.arrc);
 	  }
 	}else{
-	  const int A=aasize/astrides[ix-1];
+	  const int A=(astrides[0]*adims[0])/astrides[ix-1];
 	  for(int a=0; a<A; a++){
-	    const int offs=a*astrides[ix-1]*cellstride;
-	    const int xoffs=a*r.astrides[ix-1]*r.cellstride;
+	    const int offs=a*astrides[ix-1];
+	    const int xoffs=a*r.astrides[ix-1];
 	    for(int i=0; i<n; i++){
-	      stdadd(arr+offs+i*astrides[ix]*cellstride,arr+offs+(i+1)*astrides[ix]*cellstride,r.arr+xoffs);
-	      stdadd(arrc+offs+i*astrides[ix]*cellstride,arrc+offs+(i+1)*astrides[ix]*cellstride,r.arrc+xoffs);
+	      //stdadd(arr+offs+i*astrides[ix]*cellstride,arr+offs+(i+1)*astrides[ix]*cellstride,r.arr+xoffs);
+	      //stdadd(arrc+offs+i*astrides[ix]*cellstride,arrc+offs+(i+1)*astrides[ix]*cellstride,r.arrc+xoffs);
+	      stdadd(arr+offs+i*astrides[ix],arr+offs+(i+1)*astrides[ix],r.arr+xoffs);
+	      stdadd(arrc+offs+i*astrides[ix],arrc+offs+(i+1)*astrides[ix],r.arrc+xoffs);
 	    }
 	  }	  
 	}

@@ -116,6 +116,15 @@ namespace Cengine{
       return R;
     }
 
+    Gdims insert(const int j, const int n) const{
+      Gdims R;
+      for(int i=0; i<j; i++) R.push_back((*this)[i]);
+      R.push_back(n);
+      for(int i=j; i<size(); i++) R.push_back((*this)[i]);
+      return R;
+    }
+
+
     Gdims append(const int i) const{
       Gdims R=*this;
       if(i>=0) R.push_back(i);

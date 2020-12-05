@@ -97,7 +97,6 @@ namespace Cengine{
     }
     
     void make_strides(){
-
       k=dims.size();
       strides.resize(k);
       strides[k-1]=1;
@@ -108,12 +107,12 @@ namespace Cengine{
 
       ak=adims.size();
       astrides.resize(ak);
-      astrides[k-1]=1;
+      astrides[ak-1]=cellstride; // changed
       for(int i=ak-2; i>=0; i--)
 	astrides[i]=astrides[i+1]*adims[i+1];
       aasize=adims.asize();
 
-      cst=astrides[0]*adims[0]*cellstride; 
+      cst=astrides[0]*adims[0]; //*cellstride; 
       memsize=2*cst;
     }
 
@@ -152,6 +151,18 @@ namespace Cengine{
       if(dev==1){
 	CUDA_SAFE(cudaMemset(arrg,1,cst*sizeof(float)));
 	CUDA_SAFE(cudaMemset(arrgc,0,cst*sizeof(float)));
+      }
+    }
+
+    CFtensorArray(const Gdims& _adims, const Gdims& _dims, const fill_identity& dummy, const int dev=0): 
+      CFtensorArray(_adims,_dims,dev){
+      if(dev==0){
+	GENET_UNIMPL();
+	std::fill(arr,arr+memsize,0);
+      }
+      if(dev==1){
+	GENET_UNIMPL();
+	CUDA_SAFE(cudaMemset(arrg,0,memsize*sizeof(float)));
       }
     }
 

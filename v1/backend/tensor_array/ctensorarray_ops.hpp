@@ -256,7 +256,7 @@ namespace Cengine{
   };
 
 
-  class ctensorarray_add_cell_into_ctensor_op: public Coperator{
+  class ctensorarray_add_cell_into_ctensor_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
   public:
 
     Gindex ix;
@@ -266,8 +266,8 @@ namespace Cengine{
 
     virtual void exec(){
       assert(!owner->obj);
-      owner->obj=inputs[0]->obj;
-      CTENSORARRAYB(inputs[0]).add_cell_into(CTENSORB(inputs[1]),ix);
+        owner->obj=inputs[0]->obj;
+      CTENSORARRAYB(inputs[1]).add_cell_into(CTENSORB(owner),ix);
     }
 
     string str() const{
@@ -362,22 +362,43 @@ namespace Cengine{
   };
 
 
-  class ctensorarray_add_destructive_reduce_op: public Coperator, public InPlaceOperator{
+  class ctensorarray_add_broadcast_op: public Coperator, public InPlaceOperator{
   public:
 
     int ix;
 
-    ctensorarray_add_destructive_reduce_op(Cnode* r, Cnode* x, const int _ix):
+    ctensorarray_add_broadcast_op(Cnode* r, Cnode* x, const int _ix):
       Coperator(r,x), ix(_ix){}
 
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      CTENSORARRAYB(inputs[1]).destructive_reduce_add_into(CTENSORARRAYB(owner),ix);
+      CTENSORARRAYB(owner).add_broadcast(ix,CTENSORARRAYB(inputs[1]));
     }
 
     string str() const{
-      return "ctensorarray_add_destructive_reduce"+inp_str(ix);
+      return "ctensorarray_add_broadcast"+inp_str(ix);
+    }
+
+  };
+
+
+  class ctensorarray_add_collapse_op: public Coperator, public InPlaceOperator{
+  public:
+
+    int ix;
+
+    ctensorarray_add_collapse_op(Cnode* r, Cnode* x, const int _ix):
+      Coperator(r,x), ix(_ix){}
+
+    virtual void exec(){
+      assert(!owner->obj);
+      owner->obj=inputs[0]->obj;
+      CTENSORARRAYB(inputs[1]).collapse_add_into(CTENSORARRAYB(owner),ix);
+    }
+
+    string str() const{
+      return "ctensorarray_add_collapse"+inp_str(ix);
     }
 
   };

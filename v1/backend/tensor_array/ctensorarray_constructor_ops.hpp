@@ -6,6 +6,7 @@
 namespace Cengine{
 
 
+  template<typename FILLTYPE>
   class new_ctensorarray_op: public Coperator{
   public:
 
@@ -20,11 +21,11 @@ namespace Cengine{
 
     virtual void exec(){
       assert(!owner->obj);
-      owner->obj=new CtensorArrayB(adims,dims,nbu,fill::raw,device);
+      owner->obj=new CtensorArrayB(adims,dims,nbu,FILLTYPE(),device);
     }
 
     string str() const{
-      return "ctensorarray"+adims.str()+dims.str();
+      return "new_ctensorarray"+adims.str()+dims.str();
     }
 
   };
