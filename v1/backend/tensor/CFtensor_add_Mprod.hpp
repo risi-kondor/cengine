@@ -14,8 +14,9 @@ void add_Mprod(const CFtensor& x, const CFtensor& y, const int nx=1, const int n
   const int I=x.combined_size(0,x.k-nx);
   const int J=y.combined_size(ny,y.k);
   assert(asize==I*J);
+  if(asize==0) return;
 
-  cout<<device<<endl;
+  //cout<<device<<endl;
 
   if(device==0){
     x.to_device(0);
@@ -90,6 +91,7 @@ void add_Mprod_AT(const CFtensor& x, const CFtensor& y, const int nx=1, const in
   const int I=x.combined_size(0,x.k-nx);
   const int J=y.combined_size(0,y.k-ny);
   assert(asize==I*J);
+  if(asize==0) return;
 
   if(device==0){
 
@@ -157,12 +159,13 @@ void add_Mprod_TA(const CFtensor& x, const CFtensor& y, const int nx=1, const in
 
   const int K=x.combined_size(0,nx);
   
-  if(y.combined_size(0,ny)!=K){CoutLock lk; cout<<K<<" "<<y.combined_size(0,ny)<<endl;};
+  //if(y.combined_size(0,ny)!=K){CoutLock lk; cout<<K<<" "<<y.combined_size(0,ny)<<endl;};
   assert(y.combined_size(0,ny)==K);
 
   const int I=x.combined_size(nx,x.k);
   const int J=y.combined_size(ny,y.k);
   assert(asize==I*J);
+  if(asize==0) return;
 
   if(device==0){
 
