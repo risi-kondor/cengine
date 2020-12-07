@@ -9,6 +9,33 @@
 
 namespace Cengine{
 
+  template<typename OBJ>
+  class CellRef{
+  public:
+
+    OBJ* owner;
+    float* arr;
+    float* arrc;
+    vector<int> strides;
+
+  public:
+
+    CellRef(float* _arr, float* _arrc, const vector<int>& _strides):
+      arr(_arr), arrc(_arrc), strides(_strides){}
+
+    complex<float> operator()(const int i0, const int i1){
+      int t=strides[0]*i0+strides[1]*i1;
+      return complex<float>(arr[t],arrc[t]);
+    }
+
+    void inc(const int i0, const int i1, complex<float> x){
+      int t=strides[0]*i0+strides[1]*i1;
+      arr[t]+=std::real(x);
+      arrc[t]+=std::imag(x);
+    }
+
+  };
+
 
   class CtensorArrayB: public Cobject, public CFtensorArray{
   public:
@@ -173,6 +200,11 @@ namespace Cengine{
     int get_device() const{
       return device;
     }
+
+    CellRef<CtensorArrayB> cellrf(const int i){
+      return CellRef<CtensorArrayB>(arr+i*cellstride,arrc+i*cellstride,strides);
+    }
+
 
     CtensorB get_cell(const Gindex& aix) const{
       CtensorB R(dims,nbu,fill::raw,device);
