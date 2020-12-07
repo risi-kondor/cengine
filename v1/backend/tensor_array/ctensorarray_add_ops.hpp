@@ -17,7 +17,7 @@ namespace Cengine{
     void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      //CTENSORARRAYB(owner).add(CTENSORARRAYB(inputs[1]));
+      CTENSORARRAYB(owner).add(CTENSORARRAYB(inputs[1]));
     }
 
 

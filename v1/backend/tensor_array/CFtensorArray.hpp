@@ -830,6 +830,56 @@ namespace Cengine{
 
     //#include "CFtensorArray_add.hpp"
 
+    void add(const CFtensorArray& x){
+      assert(asize==x.asize);
+      assert(device==x.device);
+      if(device==0){
+	for(int i=0; i<cst; i++) arr[i]+=x.arr[i];
+	for(int i=0; i<cst; i++) arrc[i]+=x.arrc[i];
+	return; 
+      }
+      if(device==1){
+	const float alpha = 1.0;
+	CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, cst, &alpha, x.arrg, 1, arrg, 1));
+	CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, cst, &alpha, x.arrgc, 1, arrgc, 1));
+      }
+    }
+
+
+    void add_conj(const CFtensorArray& x){
+      assert(asize==x.asize);
+      assert(device==x.device);
+      if(device==0){
+	for(int i=0; i<cst; i++) arr[i]+=x.arr[i];
+	for(int i=0; i<cst; i++) arrc[i]-=x.arrc[i];
+	return; 
+      }
+      if(device==1){
+	const float alpha = 1.0;
+	const float malpha = -1.0;
+	CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, cst, &alpha, x.arrg, 1, arrg, 1));
+	CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, cst, &malpha, x.arrgc, 1, arrgc, 1));
+      }
+    }
+
+// ---- Subtract ---------------------------------------------------------------------------------------------
+
+
+    void subtract(const CFtensorArray& x){
+      assert(cst==x.cst);
+      assert(device==x.device);
+      if(device==0){
+	for(int i=0; i<cst; i++) arr[i]-=x.arr[i];
+	for(int i=0; i<cst; i++) arrc[i]-=x.arrc[i];
+	return;
+      }
+      const float c=-1.0; 
+      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, cst, &c, x.arrg, 1, arrg, 1));
+      CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, cst, &c, x.arrgc, 1, arrgc, 1));
+    }
+
+
+
     /*
     void add_odot(const CFtensorArray& x, const CFtensorArray& y){
       assert(x.asize==asize);

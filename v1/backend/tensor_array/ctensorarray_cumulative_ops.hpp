@@ -220,7 +220,7 @@ namespace Cengine{
     virtual void exec(){
       assert(!owner->obj);
       owner->obj=inputs[0]->obj;
-      //CTENSORARRAYB(owner).subtract(CTENSORARRAYB(inputs[1]));
+      CTENSORARRAYB(owner).subtract(CTENSORARRAYB(inputs[1]));
     }
 
     string str() const{
