@@ -206,15 +206,15 @@ namespace Cengine{
     }
     */
 
-    CFtensor(const Gdims& _dims, const fill_ones& dummy, const int dev=0): 
-      CFtensor(_dims,dev){
-      if(dev==0){
-	std::fill(arr,arr+asize,1);
-	std::fill(arrc,arrc+asize,0);
-      }
-      if(dev==1){
-	CUDA_SAFE(cudaMemset(arrg,1,asize*sizeof(float)));
-	CUDA_SAFE(cudaMemset(arrgc,0,asize*sizeof(float)));
+    CFtensor(const Gdims& _dims, const fill_ones& dummy, const int _dev=0): 
+      CFtensor(_dims,fill::raw,0){
+      std::fill(arr,arr+asize,1);
+      std::fill(arrc,arrc+asize,0);
+      if(_dev==1){
+	to_device(1);
+	  //cout<<"ones"<<endl; 
+	  //CUDA_SAFE(cudaMemset(arrg,1,asize*sizeof(float)));
+	  //CUDA_SAFE(cudaMemset(arrgc,0,asize*sizeof(float)));
       }
     }
 
@@ -706,6 +706,8 @@ namespace Cengine{
 
     complex<float> inp(const CFtensor& x) const{
       assert(asize==x.asize);
+      if(asize==0) return 0; 
+      //cout<<"dd"<<device<<x.device<<endl;
       x.to_device(device);
       if(device==0){
 	float tr=0; 
@@ -717,16 +719,25 @@ namespace Cengine{
 	//{CoutLock lk; cout<<*this<<endl<<endl; cout<<"  "<<asize<<" "<<tr<<":"<<ti<<endl;}
 	return complex<float>(tr,ti);
       }
-      float a,b,c,d;
+      float a=0;
+      float b=0; 
+      float c=0;
+      float d=0; 
+      //float buf[255];
+      //CUDA_SAFE(cudaMemcpy(buf,x.arrg,memsize*sizeof(float),cudaMemcpyDeviceToHost)); 
+      //for(int i=0; i<memsize; i++) cout<<buf[i]<<endl; 
 #ifdef _WITH_CUBLAS
+      cudaDeviceSynchronize();
       cublasSdot(Cengine_cublas, asize, arrg, 1, x.arrg, 1, &a);
       cublasSdot(Cengine_cublas, asize, arrgc, 1, x.arrgc, 1, &b);
-      cublasSdot(Cengine_cublas, asize, arrg, 1, x.arrgc, 1, &c);
-      cublasSdot(Cengine_cublas, asize, arrgc, 1, x.arrg, 1, &d);
+      cublasSdot(Cengine_cublas, asize, arrgc, 1, x.arrg, 1, &c);
+      cublasSdot(Cengine_cublas, asize, arrg, 1, x.arrgc, 1, &d);
+      cudaDeviceSynchronize();
 #else
       NOCUDA_ERROR;
 #endif       
-      return complex<float>(a-b,c+d);
+      //cout<<asize<<" "<<a<<" "<<b<<" "<<c<<" "<<d<<endl;
+      return complex<float>(a+b,c-d);
     }
 
     float diff2(const CFtensor& x) const{

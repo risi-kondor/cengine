@@ -16,6 +16,9 @@ namespace Cengine{
     mutable int device=1;
     int memsize=0; 
 
+    float* arrg=nullptr;
+    float* arrgc=nullptr;
+
     vector<CtensorB*> pack;
     mutable float** parr=nullptr;
     mutable float** parrc=nullptr;
@@ -160,6 +163,7 @@ namespace Cengine{
 
 #ifdef _WITH_CUDA
     void copy_cu(const CtensorBpack& x, const cudaStream_t& stream);
+    void add_cu(const CtensorBpack& x, const cudaStream_t& stream);
     void sum_into_cu(const CtensorB& R, const cudaStream_t& stream);
 #endif 
 
@@ -193,6 +197,11 @@ namespace Cengine{
 	for(int i=0; i<N; i++)
 	  pack[i]->add(*x.pack[i]);
       }else{
+	cudaStream_t stream;
+	CUDA_SAFE(cudaStreamCreate(&stream));
+	add_cu(x,stream);
+	CUDA_SAFE(cudaStreamSynchronize(stream));
+	CUDA_SAFE(cudaStreamDestroy(stream));
 	//if(!parr_valid) renew_parr();
 	//if(!x.parr_valid) x.renew_parr();
 	//CUBLAS_SAFE(gemmBatched(genet_cublas,CUBLAS_OP_N,CUBLAS_OP_N);)

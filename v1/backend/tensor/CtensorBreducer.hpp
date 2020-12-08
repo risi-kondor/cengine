@@ -15,18 +15,19 @@ namespace Cengine{
       N=_N;
       int cst=target.cst;
       int memsize=target.memsize;
-      float* temp_base;
-      CUDA_SAFE(cudaMalloc((void **)&temp_base, memsize*N*sizeof(float)));
+      CUDA_SAFE(cudaMalloc((void **)&arrg, memsize*N*sizeof(float)));
+      CUDA_SAFE(cudaMemset(arrg,0,N*memsize*sizeof(float)));
+      arrgc=arrg+target.cst;
 
       float* arr[N]; 
       float* arrc[N]; 
       for(int i=0; i<N; i++){
-	arr[i]=temp_base+i*memsize;
-	arrc[i]=temp_base+i*memsize+cst;
+	arr[i]=arrg+i*memsize;
+	arrc[i]=arrgc+i*memsize;
       }
       
-      CUDA_SAFE(cudaMalloc((void ***)&parr, N*sizeof(float*)));
-      CUDA_SAFE(cudaMalloc((void ***)&parrc, N*sizeof(float*)));
+      //CUDA_SAFE(cudaMalloc((void ***)&parr, N*sizeof(float*)));
+      //CUDA_SAFE(cudaMalloc((void ***)&parrc, N*sizeof(float*)));
       CUDA_SAFE(cudaMemcpy(parr,arr,N*sizeof(float*),cudaMemcpyHostToDevice));  
       CUDA_SAFE(cudaMemcpy(parrc,arrc,N*sizeof(float*),cudaMemcpyHostToDevice));  
 
@@ -38,10 +39,12 @@ namespace Cengine{
 #ifdef _WITH_CUDA
 	target.to_device(1);
 	cudaStream_t stream;
+	cudaDeviceSynchronize();
 	CUDA_SAFE(cudaStreamCreate(&stream));
 	sum_into_cu(target,stream);
 	CUDA_SAFE(cudaStreamSynchronize(stream));
 	CUDA_SAFE(cudaStreamDestroy(stream));
+	cudaDeviceSynchronize();
 #else
 	NOCUDA_ERROR;
 #endif

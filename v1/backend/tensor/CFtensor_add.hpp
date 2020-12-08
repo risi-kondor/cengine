@@ -1,6 +1,7 @@
 
 void add(const CFtensor& x){
   assert(asize==x.asize);
+  //cout<<device<<x.device<<endl;
   if(device!=1 || x.device!=1){
     to_device(0);
     x.to_device(0);
@@ -14,6 +15,7 @@ void add(const CFtensor& x){
     const float alpha = 1.0;
     CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrg, 1, arrg, 1));
     CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, x.arrgc, 1, arrgc, 1));
+    cudaDeviceSynchronize();
   }
 }
 
@@ -295,6 +297,7 @@ void add(const CFtensor& x, const float c){
   if(device==1){
     CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &c, x.arrg, 1, arrg, 1));
     CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &c, x.arrgc, 1, arrgc, 1));
+    cudaDeviceSynchronize();
   }
 }
 
@@ -317,6 +320,7 @@ void add(const CFtensor& x, const complex<float> c){
     CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &mci, x.arrgc, 1, arrg, 1));
     CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &ci, x.arrg, 1, arrgc, 1));
     CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &cr, x.arrgc, 1, arrgc, 1));
+    cudaDeviceSynchronize();
   }
 }
 
@@ -339,6 +343,7 @@ void add_conj(const CFtensor& x, const complex<float> c){
     CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &ci, x.arrgc, 1, arrg, 1));
     CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &mci, x.arrg, 1, arrgc, 1));
     CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &cr, x.arrgc, 1, arrgc, 1));
+    cudaDeviceSynchronize();
   }
 }
 
@@ -360,6 +365,7 @@ void subtract(const CFtensor& x){
   const float c=-1.0; 
   CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &c, x.arrg, 1, arrg, 1));
   CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &c, x.arrgc, 1, arrgc, 1));
+  cudaDeviceSynchronize();
 }
 
 void subtract(const CFtensor& x, const float c){

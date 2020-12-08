@@ -11,8 +11,8 @@
 namespace Cengine{
 
 
-  class ctensor_add_op: public Coperator, public CumulativeOperator, public InPlaceOperator, 
-			public RbatchedOperator{
+  class ctensor_add_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
+    //    			public RbatchedOperator{
   public:
 
     Gdims dims; 
@@ -30,10 +30,15 @@ namespace Cengine{
     void rbatched_exec(const vector<Cnode*>& nodes){
       int dev=CTENSORB(nodes[0]->op->inputs[0]).device;
       assert(dev==1);
+      //COUT("batched");
 
+      cudaDeviceSynchronize(); 
       CtensorBreducer R(nodes.size(),CTENSORB(nodes[0]->op->inputs[0]));
       CtensorBpack X(nodes,1);
+      cudaDeviceSynchronize(); 
       R.add(X);
+      cudaDeviceSynchronize(); 
+
     }
 
 
