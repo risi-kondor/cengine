@@ -331,7 +331,11 @@ namespace Cengine{
 
   struct device{
     int _id;
-    explicit device(const int x): _id(x){};
+    device(const int x): _id(x){};
+    //device& operator=(const int x){
+    //_id=x;
+    //return *this;
+    //}
     int id() const {return _id;}
   };
 
