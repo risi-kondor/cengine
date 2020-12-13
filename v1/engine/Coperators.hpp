@@ -171,6 +171,34 @@ namespace Cengine{
       
   };
 
+
+  // ---- Cumulative operators -------------------------------------------------------------------------------
+
+ 
+  template<typename OBJ0, typename OBJ1>
+  class InplaceOp1: public Coperator, public InPlaceOperator{
+  public:
+
+    InplaceOp1(Cnode* x0, Cnode* x1){
+      inputs.push_back(x0);
+      inputs.push_back(x1);
+    }
+
+    OBJ0& output(){
+      return dynamic_cast<OBJ0&>(*owner->obj);
+    }
+
+    void exec(){
+      owner->obj=inputs[0]->obj;
+      exec(dynamic_cast<OBJ0&>(*inputs[0]->obj), 
+	dynamic_cast<OBJ1&>(*inputs[1]->obj));
+    }
+
+    virtual void exec(OBJ0& x0, const OBJ1& x1)=0;
+      
+  };
+
+ 
  
 
 

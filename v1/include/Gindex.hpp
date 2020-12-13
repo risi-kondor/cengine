@@ -68,6 +68,17 @@ namespace Cengine{
       return t;
     }
 
+    int operator()(const Gdims& dims) const{
+      assert(dims.size()==size());
+      int s=1;
+      int t=0; 
+      for(int i=size()-1; i>=0; i--){
+	t+=(*this)[i]*s;
+	s*=dims[i];
+      }
+      return t;
+    }
+
 
   public:
 

@@ -285,10 +285,10 @@ void add_chunk(const CFtensor& x, const int ix, const int offs, const int n){
 
 void add(const CFtensor& x, const float c){
   assert(asize==x.asize);
-  if(device!=1 || x.device!=1){
-    to_device(0);
-    x.to_device(0);
-  }
+  //if(device!=1 || x.device!=1){
+  //to_device(0);
+  //x.to_device(0);
+  //}
   if(device==0){
     for(int i=0; i<asize; i++) arr[i]+=x.arr[i]*c;
     for(int i=0; i<asize; i++) arrc[i]+=x.arrc[i]*c;
@@ -305,10 +305,10 @@ void add(const CFtensor& x, const complex<float> c){
   assert(asize==x.asize);
   float cr=std::real(c);
   float ci=std::imag(c);
-  if(device!=1 || x.device!=1){
-    to_device(0);
-    x.to_device(0);
-  }
+  //if(device!=1 || x.device!=1){
+  //to_device(0);
+  //x.to_device(0);
+  //}
   if(device==0){
     for(int i=0; i<asize; i++) arr[i]+=x.arr[i]*cr-x.arrc[i]*ci;
     for(int i=0; i<asize; i++) arrc[i]+=x.arrc[i]*cr+x.arr[i]*ci;

@@ -5,6 +5,7 @@
 #include "Cobject.hpp"
 #include "RscalarB.hpp"
 #include "CscalarB.hpp"
+#include "CellAccessor.hpp"
 
 
 namespace Cengine{
@@ -157,6 +158,10 @@ namespace Cengine{
 
     int get_device() const{
       return device;
+    }
+
+    CtensorAccessor<CtensorB> accessor(){
+      return CtensorAccessor<CtensorB>(arr,arrc,strides);
     }
 
 

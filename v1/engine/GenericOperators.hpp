@@ -4,6 +4,27 @@
 namespace Cengine{
 
 
+  template<typename RTYPE, typename XTYPE>
+  class add_x_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
+  public:
+
+    add_x_op(Cnode* r, Cnode* x):
+      Coperator(r,x){}
+    
+    void exec(){
+      assert(!owner->obj);
+      owner->obj=inputs[0]->obj;
+      downcast<RTYPE>(owner,__PRETTY_FUNCTION__).
+	add(downcast<XTYPE>(inputs[1],__PRETTY_FUNCTION__));
+    }
+
+    string str() const{
+      return "add_x"+inp_str();
+    }
+
+  };
+
+
   template<typename RTYPE, typename XTYPE, typename CTYPE>
   class add_x_times_const_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
   public:
@@ -91,6 +112,56 @@ namespace Cengine{
     }
 
   };
+
+  
+  // ---------------------------------------------------------------------------------------------------------
+  // -------------------------    BROADCAST   ----------------------------------------------------------------
+  // ---------------------------------------------------------------------------------------------------------
+
+
+  template<typename RTYPE, typename XTYPE>
+  class broadcast_copy_op: public Coperator, public InPlaceOperator{
+  public:
+
+    broadcast_copy_op(Cnode* r, Cnode* x):
+      Coperator(r,x){}
+    
+    void exec(){
+      assert(!owner->obj);
+      owner->obj=inputs[0]->obj;
+      downcast<RTYPE>(owner,__PRETTY_FUNCTION__).
+	broadcast_copy(downcast<XTYPE>(inputs[1],__PRETTY_FUNCTION__));
+    }
+
+    string str() const{
+      return "broadcast_copy"+inp_str();
+    }
+
+  };
+
+
+  template<typename RTYPE, typename XTYPE>
+  class broadcast_add_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
+  public:
+
+    broadcast_add_op(Cnode* r, Cnode* x):
+      Coperator(r,x){}
+    
+    void exec(){
+      assert(!owner->obj);
+      owner->obj=inputs[0]->obj;
+      downcast<RTYPE>(owner,__PRETTY_FUNCTION__).
+	broadcast_add(downcast<XTYPE>(inputs[1],__PRETTY_FUNCTION__));
+    }
+
+    string str() const{
+      return "broadcast_add"+inp_str();
+    }
+
+  };
+
+
+
 
 
 }

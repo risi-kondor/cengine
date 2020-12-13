@@ -25,6 +25,34 @@ namespace Cengine{
     explicit Hermitian(const OBJ& _obj):obj(_obj){}
   };
 
+  template<typename OBJ>
+  class Broadcast{
+  public:
+    const OBJ& obj;
+    explicit Broadcast(const OBJ& _obj):obj(_obj){}
+  };
+
+
+
+  template<typename OBJ>
+  class Scatter{
+  public:
+    const OBJ& obj;
+    explicit Scatter(const OBJ& _obj):obj(_obj){}
+  };
+
+
+
+  template<typename OBJ>
+  Broadcast<OBJ> broadcast(const OBJ& x){
+    return Broadcast<OBJ>(x);
+  }
+
+  template<typename OBJ>
+  Scatter<OBJ> scatter(const OBJ& x){
+    return Scatter<OBJ>(x);
+  }
+
 
 }
 
