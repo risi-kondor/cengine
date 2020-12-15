@@ -109,7 +109,14 @@ void add_sum(const vector<CFtensor*> v){
     }
     return;
   }
-  FCG_UNIMPL();
+  const float alpha = 1.0;
+  for(int i=0; i<N; i++){
+    const CFtensor& o=*v[i];
+    assert(o.asize==asize);
+    CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, o.arrg, 1, arrg, 1));
+    CUBLAS_SAFE(cublasSaxpy(Cengine_cublas, asize, &alpha, o.arrgc, 1, arrgc, 1));
+    cudaDeviceSynchronize();
+  }
 }
 
 

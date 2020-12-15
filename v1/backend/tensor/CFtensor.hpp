@@ -119,6 +119,7 @@ namespace Cengine{
 	arrc=arr+cst;
       }
       if(device==1){
+	//cout<<k<<dims<<memsize<<endl;
 	CUDA_SAFE(cudaMalloc((void **)&arrg, memsize*sizeof(float)));
 	arrgc=arrg+cst;
       }

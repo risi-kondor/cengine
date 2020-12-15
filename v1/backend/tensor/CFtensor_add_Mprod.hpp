@@ -124,7 +124,11 @@ void add_Mprod_AT(const CFtensor& x, const CFtensor& y, const int nx=1, const in
   }
 
   if(device>0){
-	
+
+    //cout<<"here"<<endl;
+    //cout<<x.device<<endl;
+    //cout<<y.device<<endl;
+
     float alpha0=1.0;
     float alpha1=1.0;
     float alpha2=1.0;
