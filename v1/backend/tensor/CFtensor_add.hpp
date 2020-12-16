@@ -1,11 +1,7 @@
 
 void add(const CFtensor& x){
   assert(asize==x.asize);
-  //cout<<device<<x.device<<endl;
-  if(device!=1 || x.device!=1){
-    to_device(0);
-    x.to_device(0);
-  }
+  assert(x.device==device);
   if(device==0){
     for(int i=0; i<asize; i++) arr[i]+=x.arr[i];
     for(int i=0; i<asize; i++) arrc[i]+=x.arrc[i];
@@ -22,10 +18,7 @@ void add(const CFtensor& x){
 
 void add_conj(const CFtensor& x){
   assert(asize==x.asize);
-  if(device!=1 || x.device!=1){
-    to_device(0);
-    x.to_device(0);
-  }
+  assert(x.device==device);
   if(device==0){
     for(int i=0; i<asize; i++) arr[i]+=x.arr[i];
     for(int i=0; i<asize; i++) arrc[i]-=x.arrc[i];
@@ -42,10 +35,7 @@ void add_conj(const CFtensor& x){
 
 void add_transp(const CFtensor& x, const int n=1) const{
   assert(asize==x.asize);
-  if(device!=1 || x.device!=1){
-    to_device(0);
-    x.to_device(0);
-  }
+  assert(x.device==device);
   const int J=x.combined_size(0,n);
   const int I=x.asize/J;
   if(device==0){
@@ -69,10 +59,7 @@ void add_transp(const CFtensor& x, const int n=1) const{
 
 void add_herm(const CFtensor& x, const int n=1) const{
   assert(asize==x.asize);
-  if(device!=1 || x.device!=1){
-    to_device(0);
-    x.to_device(0);
-  }
+  assert(x.device==device);
   const int J=x.combined_size(0,n);
   const int I=x.asize/J;
   if(device==0){
@@ -102,6 +89,7 @@ void add_sum(const vector<CFtensor*> v){
     for(int i=0; i<N; i++){
       const CFtensor& o=*v[i];
       assert(o.asize==asize);
+      assert(o.device==device);
       for(int j=0; j<asize; j++){
 	arr[j]+=o.arr[j];
 	arrc[j]+=o.arrc[j];
@@ -122,6 +110,7 @@ void add_sum(const vector<CFtensor*> v){
 
 void add_to_slice(const CFtensor& x, const int ix, const int offs){
   assert(k==x.k+1);
+  assert(x.device==device);
   for(int i=0; i<ix; i++) assert(dims[i]==x.dims[i]);
   for(int i=ix; i<x.k; i++) assert(dims[i+1]==x.dims[i]);
   int subsize=x.asize;
@@ -174,6 +163,7 @@ void add_to_slices(const vector<const CFtensor*> v, const int ix){
 
 
 void add_to_chunk(const CFtensor& x, const int ix, const int offs){
+  assert(x.device==device);
   assert(k==x.k);
   for(int i=0; i<k; i++) 
     if(i!=ix) assert(dims[i]==x.dims[i]);
@@ -205,6 +195,7 @@ void add_to_chunk(const CFtensor& x, const int ix, const int offs){
 
 
 void set_chunk(const CFtensor& x, const int ix, const int offs){
+  assert(x.device==device);
   assert(k==x.k);
   for(int i=0; i<k; i++) 
     if(i!=ix) assert(dims[i]==x.dims[i]);
@@ -236,6 +227,7 @@ void set_chunk(const CFtensor& x, const int ix, const int offs){
 
 
 void add_slice(const CFtensor& x, const int ix, const int offs){
+  assert(x.device==device);
   assert(x.k==k+1);
   for(int i=0; i<ix; i++) assert(dims[i]==x.dims[i]);
   for(int i=ix; i<k; i++) assert(x.dims[i+1]==dims[i]);
@@ -291,6 +283,7 @@ void add_chunk(const CFtensor& x, const int ix, const int offs, const int n){
 
 
 void add(const CFtensor& x, const float c){
+  assert(x.device==device);
   assert(asize==x.asize);
   //if(device!=1 || x.device!=1){
   //to_device(0);
@@ -309,6 +302,7 @@ void add(const CFtensor& x, const float c){
 }
 
 void add(const CFtensor& x, const complex<float> c){
+  assert(x.device==device);
   assert(asize==x.asize);
   float cr=std::real(c);
   float ci=std::imag(c);
@@ -332,6 +326,7 @@ void add(const CFtensor& x, const complex<float> c){
 }
 
 void add_conj(const CFtensor& x, const complex<float> c){
+  assert(x.device==device);
   assert(asize==x.asize);
   float cr=std::real(c);
   float ci=-std::imag(c);
@@ -359,11 +354,8 @@ void add_conj(const CFtensor& x, const complex<float> c){
 
 
 void subtract(const CFtensor& x){
+  assert(x.device==device);
   assert(asize==x.asize);
-  if(device!=1 || x.device!=1){
-    to_device(0);
-    x.to_device(0);
-  }
   if(device==0){
     for(int i=0; i<asize; i++) arr[i]-=x.arr[i];
     for(int i=0; i<asize; i++) arrc[i]-=x.arrc[i];
@@ -376,11 +368,8 @@ void subtract(const CFtensor& x){
 }
 
 void subtract(const CFtensor& x, const float c){
+  assert(x.device==device);
   assert(asize==x.asize);
-  if(device!=1 || x.device!=1){
-    to_device(0);
-    x.to_device(0);
-  }
   if(device==0){
     for(int i=0; i<asize; i++) arr[i]-=x.arr[i]*c;
     for(int i=0; i<asize; i++) arrc[i]-=x.arrc[i]*c;
@@ -391,6 +380,7 @@ void subtract(const CFtensor& x, const float c){
 }
 
 void subtract(const CFtensor& x, const complex<float> c){
+  assert(x.device==device);
   assert(asize==x.asize);
   float cr=std::real(c);
   float ci=std::imag(c);
@@ -411,6 +401,7 @@ void subtract(const CFtensor& x, const complex<float> c){
 }
 
 void subtractc(const CFtensor& x, const complex<float> c){
+  assert(x.device==device);
   assert(asize==x.asize);
   float cr=std::real(c);
   float ci=std::imag(c);
@@ -436,7 +427,7 @@ void subtractc(const CFtensor& x, const complex<float> c){
 
 
 void add_col_norms(const CFtensor& x){
-
+  assert(x.device==device);
   int xk=x.dims.size();
   assert(xk>=2);
   const int J=x.dims[xk-1];
@@ -464,6 +455,9 @@ void add_col_norms(const CFtensor& x){
 
 
 void add_col_norms_back(const CFtensor& G, const CFtensor& X, const CFtensor& N){
+  assert(G.device==device);
+  assert(X.device==device);
+  assert(N.device==device);
   assert(k>=2);
   assert(X.asize==asize);
   const int J=dims[k-1];
@@ -489,6 +483,8 @@ void add_col_norms_back(const CFtensor& G, const CFtensor& X, const CFtensor& N)
 
 
 void add_divide_cols(const CFtensor& X, const CFtensor& N){
+  assert(X.device==device);
+  assert(N.device==device);
   assert(k>=2);
   assert(X.asize==asize);
   const int J=dims[k-1];
@@ -515,6 +511,8 @@ void add_divide_cols(const CFtensor& X, const CFtensor& N){
 
 
 void add_divide_cols_back0(const CFtensor& G, const CFtensor& N){
+  assert(G.device==device);
+  assert(N.device==device);
   assert(k>=2);
   const int J=dims[k-1];
   const int I=dims[k-2];
@@ -543,6 +541,9 @@ void add_divide_cols_back0(const CFtensor& G, const CFtensor& N){
 
 
 void add_divide_cols_back1(const CFtensor& G, const CFtensor& X, const CFtensor& N){
+  assert(G.device==device);
+  assert(X.device==device);
+  assert(N.device==device);
   const int _k=G.k;
   assert(_k>=2);
   assert(G.dims==X.dims);

@@ -62,24 +62,6 @@ namespace Cengine{
       arr=nullptr;
     }
 
-    /*
-    CFtensor(const Gdims& _dims, const device_id& dev=0): 
-      dims(_dims), strides(_dims.size()){
-      make_strides();
-      if(dev.id()==0){
-	CENGINE_DEPRECATED();
-	arr=new float[memsize];
-	arrc=arr+cst; 
-	device=0;
-      }
-      if(dev.id()==1){
-	CUDA_SAFE(cudaMalloc((void **)&arrg, memsize*sizeof(float)));
-	arrgc=arrg+cst;
-	device=1;
-      }
-    }
-    */
-
     CFtensor(const Gdims& _dims, const int dev=0): 
       dims(_dims), strides(_dims.size()){
       make_strides();
@@ -95,22 +77,6 @@ namespace Cengine{
       }
     }
 
-    /*
-    CFtensor(const int _k, const Gdims& _dims, const vector<int>_strides, const int _asize, 
-      const int _memsize, const int _cst, const device_id& _dev=0):
-      k(_k), dims(_dims), strides(_strides), asize(_asize), memsize(_memsize), cst(_cst), device(_dev.id()){
-      //CENGINE_DEPRECATED();
-      if(device==0){
-	arr=new float[memsize];
-	arrc=arr+cst;
-      }
-      if(device==1){
-	CUDA_SAFE(cudaMalloc((void **)&arrg, memsize*sizeof(float)));
-	arrgc=arrg+cst;
-      }
-    }
-    */
-    
     CFtensor(const int _k, const Gdims& _dims, const vector<int>_strides, const int _asize, 
       const int _memsize, const int _cst, const int dev=0):
       k(_k), dims(_dims), strides(_strides), asize(_asize), memsize(_memsize), cst(_cst), device(dev){
@@ -136,22 +102,6 @@ namespace Cengine{
       memsize=2*cst; 
     }
 
-    /*
-    void reallocate(const device_id& dev=0) const{
-      CENGINE_DEPRECATED();
-      if(dev.id()==0){
-	arr=new float[memsize];
-	arrc=arr+cst;
-	device=0;
-      }
-      if(dev.id()==1){
-	CUDA_SAFE(cudaMalloc((void **)&arrg, memsize*sizeof(float)));
-	arrgc=arrg+cst;
-	device=1;
-      }
-    }
-    */
-
     void reallocate(const int dev=0) const{
       if(dev==0){
 	arr=new float[memsize];
@@ -168,44 +118,15 @@ namespace Cengine{
 
   public: // ---- Filled constructors -------------------------------------------------------------------------
 
-    /*
-    CFtensor(const Gdims& _dims, const fill_raw& dummy, const device_id& dev=0): 
-      CFtensor(_dims,dev){      
-      CENGINE_DEPRECATED();}
-    */
-
     CFtensor(const Gdims& _dims, const fill_raw& dummy, const int dev=0): 
       CFtensor(_dims,dev){}
     
-    /*
-    CFtensor(const Gdims& _dims, const fill_zero& dummy, const device_id& dev=0): 
-      CFtensor(_dims,dev) {
-      CENGINE_DEPRECATED();
-      if(dev.id()==0) std::fill(arr,arr+memsize,0);
-      if(dev.id()==1) CUDA_SAFE(cudaMemset(arrg,0,memsize*sizeof(float)));
-    }
-    */
-
     CFtensor(const Gdims& _dims, const fill_zero& dummy, const int dev=0): 
       CFtensor(_dims,dev){
       if(dev==0) std::fill(arr,arr+memsize,0);
       if(dev==1) CUDA_SAFE(cudaMemset(arrg,0,memsize*sizeof(float)));
     }
 
-    /*
-    CFtensor(const Gdims& _dims, const fill_ones& dummy, const device_id& dev=0): 
-      CFtensor(_dims,dev){
-      CENGINE_DEPRECATED();
-      if(dev.id()==0){
-	std::fill(arr,arr+asize,1);
-	std::fill(arrc,arrc+asize,0);
-      }
-      if(dev.id()==1){
-	CUDA_SAFE(cudaMemset(arrg,1,asize*sizeof(float)));
-	CUDA_SAFE(cudaMemset(arrgc,0,asize*sizeof(float)));
-      }
-    }
-    */
 
     CFtensor(const Gdims& _dims, const fill_ones& dummy, const int _dev=0): 
       CFtensor(_dims,fill::raw,0){
@@ -213,9 +134,6 @@ namespace Cengine{
       std::fill(arrc,arrc+asize,0);
       if(_dev==1){
 	to_device(1);
-	  //cout<<"ones"<<endl; 
-	  //CUDA_SAFE(cudaMemset(arrg,1,asize*sizeof(float)));
-	  //CUDA_SAFE(cudaMemset(arrgc,0,asize*sizeof(float)));
       }
     }
 
@@ -269,18 +187,6 @@ namespace Cengine{
       }
     }
 
-    /*
-    CFtensor(const CFtensor& x, std::function<complex<float>(const int i, const int j, const complex<float>)> fn):
-      CFtensor(x.dims,fill::raw,0){
-      assert(device==0);
-      for(int i=0; i<dims; i++){
-	complex<float> t=fn(i,j,complex<float>(arr[i],arrc[i]));
-	arr[i]=std::real(t);
-	arrc[i]=std::imag(t);
-      }
-      }
-    */
-
 
   public: // ---- Copying -------------------------------------------------------------------------------------
 
@@ -301,20 +207,6 @@ namespace Cengine{
     CFtensor(const CFtensor& x, const fill_raw& dummy): 
       CFtensor(x.k,x.dims,x.strides,x.asize,x.memsize,x.cst,x.device){}
 
-    /*
-    CFtensor(const CFtensor& x, const device_id& dev): 
-      CFtensor(x.k,x.dims,x.strides,x.asize,x.memsize,x.cst,dev){
-      if(device==0){
-	if(x.device==0) std::copy(x.arr,x.arr+memsize,arr);
-	if(x.device==1) CUDA_SAFE(cudaMemcpy(arr,x.arrg,memsize*sizeof(float),cudaMemcpyDeviceToHost)); 
-      }
-      if(device==1){
-	if(x.device==0) CUDA_SAFE(cudaMemcpy(arrg,x.arr,memsize*sizeof(float),cudaMemcpyHostToDevice));
-	if(x.device==1) CUDA_SAFE(cudaMemcpy(arrg,x.arrg,memsize*sizeof(float),cudaMemcpyDeviceToDevice));  
-      }
-    }
-    */
-    
     CFtensor(const CFtensor& x, const int dev): 
       CFtensor(x.k,x.dims,x.strides,x.asize,x.memsize,x.cst,dev){
       if(device==0){
@@ -379,7 +271,6 @@ namespace Cengine{
 	CUDA_SAFE(cudaMemcpy(arr,arrg,memsize*sizeof(float),cudaMemcpyDeviceToHost));  
 	CUDA_SAFE(cudaFree(arrg));
 	const_cast<CFtensor*>(this)->arrg=nullptr;
-	//device=0;
 	return *this;
       }
       if(_dev>0){
@@ -390,7 +281,6 @@ namespace Cengine{
 	CUDA_SAFE(cudaMemcpy(arrg,arr,memsize*sizeof(float),cudaMemcpyHostToDevice));  
 	delete[] arr;
 	const_cast<CFtensor*>(this)->arr=nullptr;
-	//device=_dev;
 	//if(!is_view && arrg) CUDA_SAFE(cudaFree(arrg));
 	return *this;
       }
@@ -516,7 +406,7 @@ namespace Cengine{
 
     CFtensor plus(const CFtensor& x) const{
       assert(asize==x.asize);
-      x.to_device(device);
+      assert(x.device==device);
       if(device==0){
 	CFtensor R(dims,fill::raw,device);
 	for(int i=0; i<asize; i++) R.arr[i]=arr[i]+x.arr[i];
@@ -533,7 +423,7 @@ namespace Cengine{
 
     CFtensor minus(const CFtensor& x) const{
       assert(asize==x.asize);
-      x.to_device(device);
+      assert(x.device==device);
       if(device==0){
 	CFtensor R(dims,fill::raw,device);
 	for(int i=0; i<asize; i++) R.arr[i]=arr[i]-x.arr[i];
@@ -583,6 +473,7 @@ namespace Cengine{
     }
 
     CFtensor elementwise_times(const CFtensor& x) const{
+      assert(x.device==device);
       FCG_CPUONLY();
       assert(asize==x.asize);
       CFtensor R(dims,fill::raw,0);
@@ -592,6 +483,7 @@ namespace Cengine{
     }
 
     CFtensor elementwise_divide(const CFtensor& x) const{
+      assert(x.device==device);
       FCG_CPUONLY();
       assert(asize==x.asize);
       CFtensor R(dims,fill::raw,0);
@@ -709,7 +601,7 @@ namespace Cengine{
       assert(asize==x.asize);
       if(asize==0) return 0; 
       //cout<<"dd"<<device<<x.device<<endl;
-      x.to_device(device);
+      assert(x.device==device);
       if(device==0){
 	float tr=0; 
 	float ti=0; 
@@ -745,6 +637,7 @@ namespace Cengine{
       FCG_CPUONLY();
       assert(x.dims==dims);
       assert(x.asize==asize);
+      assert(x.device==device);
       float t=0;
       for(int i=0; i<asize; i++)
 	t+=(arr[i]-x.arr[i])*(arr[i]-x.arr[i])+(arrc[i]-x.arrc[i])*(arrc[i]-x.arrc[i]);
@@ -754,6 +647,7 @@ namespace Cengine{
     CFtensor odot(const CFtensor& x) const{
       FCG_CPUONLY();
       assert(dims==x.dims);
+      assert(x.device==device);
       CFtensor R(dims,fill::raw,0);
       for(int i=0; i<asize; i++){
 	R.arr[i]=arr[i]*x.arr[i]+arrc[i]*x.arrc[i];
@@ -765,6 +659,7 @@ namespace Cengine{
     CFtensor odotc(const CFtensor& x) const{
       FCG_CPUONLY();
       assert(dims==x.dims);
+      assert(x.device==device);
       CFtensor R(dims,fill::raw,0);
       for(int i=0; i<asize; i++){
 	R.arr[i]=arr[i]*x.arr[i]+arrc[i]*x.arrc[i];
@@ -775,6 +670,7 @@ namespace Cengine{
 
 
     CFtensor divide_cols(const CFtensor& N) const{
+      assert(N.device==device);
       assert(k>=2);
       const int J=dims[k-1];
       const int I=dims[k-2];
@@ -874,6 +770,7 @@ namespace Cengine{
 
     void operator+=(const CFtensor& x){
       assert(asize==x.asize);
+      assert(x.device==device);
       if(device==0){
 	for(int i=0; i<asize; i++) arr[i]+=x.arr[i];
 	for(int i=0; i<asize; i++) arrc[i]+=x.arrc[i];
@@ -886,6 +783,7 @@ namespace Cengine{
 
     void operator-=(const CFtensor& x){
       assert(asize==x.asize);
+      assert(x.device==device);
       if(device==0){
 	for(int i=0; i<asize; i++) arr[i]+=x.arr[i];
 	for(int i=0; i<asize; i++) arrc[i]+=x.arrc[i];
@@ -933,6 +831,8 @@ namespace Cengine{
     void add_odot(const CFtensor& x, const CFtensor& y){
       assert(x.asize==asize);
       assert(y.asize==asize);
+      assert(x.device==device);
+      assert(y.device==device);
       for(int i=0; i<asize; i++){
 	arr[i]+=x.arr[i]*y.arr[i]-x.arrc[i]*y.arrc[i];
 	arrc[i]+=x.arr[i]*y.arrc[i]+x.arrc[i]*y.arr[i];
@@ -942,6 +842,8 @@ namespace Cengine{
     void add_odotc(const CFtensor& x, const CFtensor& y){
       assert(x.asize==asize);
       assert(y.asize==asize);
+      assert(x.device==device);
+      assert(y.device==device);
       for(int i=0; i<asize; i++){
 	arr[i]+=x.arr[i]*y.arr[i]+x.arrc[i]*y.arrc[i];
 	arr[i]+=x.arrc[i]*y.arr[i]-x.arr[i]*y.arrc[i];
@@ -951,12 +853,14 @@ namespace Cengine{
 
     void add_ReLU(const CFtensor& x){
       assert(x.asize==asize);
+      assert(x.device==device);
       for(int i=0; i<asize; i++) arr[i]+=(x.arr[i]>0)*x.arr[i];
       for(int i=0; i<asize; i++) arrc[i]+=(x.arrc[i]>0)*x.arrc[i];
     }
 
     void add_LeakyReLU(const CFtensor& x, const float alpha){
       assert(x.asize==asize);
+      assert(x.device==device);
       for(int i=0; i<asize; i++) arr[i]+=((x.arr[i]>0)+alpha*(x.arr[i]<0))*x.arr[i];
       for(int i=0; i<asize; i++) arrc[i]+=((x.arrc[i]>0)+alpha*(x.arrc[i]<0))*x.arrc[i];
     }
@@ -964,6 +868,8 @@ namespace Cengine{
     void add_ReLU_back(const CFtensor& g, const CFtensor& x){
       assert(x.asize==asize);
       assert(g.asize==asize);
+      assert(x.device==device);
+      assert(g.device==device);
       for(int i=0; i<asize; i++) arr[i]+=(x.arr[i]>0)*g.arr[i];
       for(int i=0; i<asize; i++) arrc[i]+=(x.arrc[i]>0)*g.arr[i];
     }
@@ -971,6 +877,8 @@ namespace Cengine{
     void add_LeakyReLU_back(const CFtensor& g, const CFtensor& x, const float alpha){
       assert(x.asize==asize);
       assert(g.asize==asize);
+      assert(x.device==device);
+      assert(g.device==device);
       for(int i=0; i<asize; i++) arr[i]+=((x.arr[i]>0)+(x.arr[i]<=0)*alpha)*g.arr[i];
       for(int i=0; i<asize; i++) arrc[i]+=((x.arrc[i]>0)+(x.arrc[i]<=0)*alpha)*g.arrc[i];
     }
@@ -1042,7 +950,6 @@ namespace Cengine{
 
     string str(const string indent="") const{
       if(device>0) return CFtensor(*this,0).str(indent);
-      assert(device==0);
       ostringstream oss;
 
       if(k==1){
@@ -1087,9 +994,59 @@ namespace Cengine{
     }
 
   };
-  
+    
+}
 
-  /*
+#endif 
+
+
+   /*
+    CFtensor(const int _k, const Gdims& _dims, const vector<int>_strides, const int _asize, 
+      const int _memsize, const int _cst, const device_id& _dev=0):
+      k(_k), dims(_dims), strides(_strides), asize(_asize), memsize(_memsize), cst(_cst), device(_dev.id()){
+      //CENGINE_DEPRECATED();
+      if(device==0){
+	arr=new float[memsize];
+	arrc=arr+cst;
+      }
+      if(device==1){
+	CUDA_SAFE(cudaMalloc((void **)&arrg, memsize*sizeof(float)));
+	arrgc=arrg+cst;
+      }
+    }
+    */
+    
+    /*
+    void reallocate(const device_id& dev=0) const{
+      CENGINE_DEPRECATED();
+      if(dev.id()==0){
+	arr=new float[memsize];
+	arrc=arr+cst;
+	device=0;
+      }
+      if(dev.id()==1){
+	CUDA_SAFE(cudaMalloc((void **)&arrg, memsize*sizeof(float)));
+	arrgc=arrg+cst;
+	device=1;
+      }
+    }
+    */
+
+    /*
+    CFtensor(const CFtensor& x, const device_id& dev): 
+      CFtensor(x.k,x.dims,x.strides,x.asize,x.memsize,x.cst,dev){
+      if(device==0){
+	if(x.device==0) std::copy(x.arr,x.arr+memsize,arr);
+	if(x.device==1) CUDA_SAFE(cudaMemcpy(arr,x.arrg,memsize*sizeof(float),cudaMemcpyDeviceToHost)); 
+      }
+      if(device==1){
+	if(x.device==0) CUDA_SAFE(cudaMemcpy(arrg,x.arr,memsize*sizeof(float),cudaMemcpyHostToDevice));
+	if(x.device==1) CUDA_SAFE(cudaMemcpy(arrg,x.arrg,memsize*sizeof(float),cudaMemcpyDeviceToDevice));  
+      }
+    }
+    */
+    
+ /*
   inline Gdims CFtensorProductType::dims(const CFtensor& x, const CFtensor& y) const{
     Gdims d;
     d.resize(k);
@@ -1127,9 +1084,3 @@ namespace Cengine{
   }
   */
   
-  
-}
-
-#endif 
-
-

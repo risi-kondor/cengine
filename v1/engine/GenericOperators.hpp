@@ -4,6 +4,26 @@
 namespace Cengine{
 
 
+  template<typename TYPE>
+  class copy_to_device_op: public Coperator{
+  public:
+
+    int dev;
+
+    copy_to_device_op(Cnode* x, const int _dev):
+      Coperator(x), dev(_dev){}
+
+    void exec(){
+      owner->obj=new TYPE(downcast<TYPE>(inputs[0],__PRETTY_FUNCTION__),dev);
+    }
+
+    string str() const{
+      return "copy_to_device"+inp_str(dev);
+    }
+
+  };
+
+
   template<typename RTYPE, typename XTYPE>
   class add_x_op: public Coperator, public CumulativeOperator, public InPlaceOperator{
   public:
