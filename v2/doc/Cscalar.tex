@@ -1,0 +1,85 @@
+\begin{cldescr}{\ccode{cscalar}}
+
+The \ccode{cscalar} virtual type is used to represent single precision complex valued scalars. 
+A \ccode{cscalar} object may either store a single complex number or a bundle of \m{n_{\textrm{bu}}} complex numbers. 
+%The backend storage class for \ccode{cscalar} is \ccode{CscalarB}. 
+User level code can access \ccode{cscalar} objects using the following operators. 
+
+\begin{clgroup}[Constructors]
+\mmember{
+new\_cscalar\_op(const int nbu=-1, const int dev	=0)\\
+new\_cscalar\_zero\_op(const int nbu=-1, const int dev=0)\\
+new\_cscalar\_set\_op(const int nbu=-1, const complex<float> z, const int dev=0)\\
+new\_cscalar\_gaussian\_op(const int nbu=-1, const int dev=0)
+}{Construct a new \ccode{cscalar} object with \ccode{nbu} bundles on \ccode{dev}. 
+The four cases correspond to the object being uninitialized, initialized to zero, initialized to \m{z}, 
+or initialized with random standard normal entries.  
+\ccode{nbu=-1} signifies that the object is not bundled and \ccode{device=0} is the host.}
+
+\member{cscalar\_copy\_op(const cscalar\& x)}{Create a new \ccode{cscalar} by copying \ccode{x}}. 
+\end{clgroup}
+
+\begin{clgroup}[In-place operators]
+\member{cscalar\_set\_zero\_op(const cscalar\& r)}{Set \ccode{r} to zero.}
+\end{clgroup}
+
+\begin{clgroup}[Not in-place operators]
+\member{cscalar\_conj\_op(const cscalar\& z)}{Return \m{\wbar{z}}.}
+\member{cscalar\_get\_real\_op(const cscalar\& z)}{Return the real part of \m{z}.}
+\member{cscalar\_get\_imag\_op(const cscalar\& z)}{Return the imaginary part of \m{z}.}
+\end{clgroup}
+
+\begin{clgroup}[Cumulative operators]
+\member{cscalar\_add\_op(const cscalar\& r, const cscalar\& z)}{Set \m{r\leftarrow r+z}.}
+\member{cscalar\_subtract\_op(const cscalar\& r, const cscalar\& z)}{Set \m{r\leftarrow r-z}.}
+\member{cscalar\_add\_prod\_r\_op(const cscalar\& r, const cscalar\& x, const rscalar\& y)}{
+	Set \m{r\leftarrow r+xy}.}
+\member{cscalar\_add\_prod\_r\_op(const cscalar\& r, const cscalar\& x, const rscalar\& y)}{
+	Set \m{r\leftarrow r+xy}.}
+\member{cscalar\_add\_prodc\_op(const cscalar\& r, const cscalar\& x, const cscalar\& y)}{
+	Set \m{r\leftarrow r+x\wbar{y}}.}
+\member{cscalar\_add\_prodcc\_op(const cscalar\& r, const cscalar\& x, const cscalar\& y)}{
+	Set \m{r\leftarrow r+\wbar{xy}}.}
+\member{cscalar\_add\_div\_op(const cscalar\& r, const cscalar\& x, const cscalar\& y)}{
+	Set \m{r\leftarrow r+x/y}.}
+\\
+\member{cscalar\_add\_to\_real\_op(const cscalar\& r, const rscalar\& x)}{Set \m{r\leftarrow r+(x,0)}.}
+\member{cscalar\_add\_to\_imag\_op(const cscalar\& r, const rscalar\& x)}{Set \m{r\leftarrow r+(0,x)}.}
+\\
+\member{cscalar\_add\_abs\_op(const cscalar\& r, const cscalar\& z)}{Set \m{r\leftarrow r+\abs{z}}.}
+\member{cscalar\_add\_exp\_op(const cscalar\& r, const cscalar\& z)}{Set \m{r\leftarrow r+e^{z}}.}
+\member{cscalar\_add\_pow\_op(const cscalar\& r, const cscalar\& z, const float p, const float c)}{
+Set \m{r\leftarrow r+c\,z^p}.}
+\member{rscalar\_add\_ReLU\_op(const rscalar\& r, const rscalar\& z, const float c)}{
+Apply the soft-ReLU operator to the real and imaginary parts of \m{z} separately and add the result to \m{r}.}
+\member{rscalar\_add\_sigmoid\_op(const rscalar\& r, const rscalar\& z)}{
+Apply the sigmoid operator to the real and imaginary parts of \m{z} separately and add the result to \m{r}.}
+\end{clgroup}
+
+\begin{clgroup}[Backward operators]
+\item \hspace{-6pt}The ``backward'' operators are for use in automatic differentiation.
+\\ 
+\member{cscalar\_add\_div\_back0\_op(const rscalar\& r, const rscalar\& g, const rscalar\& x,\hspace{60pt}\mbox{}}{
+Set \m{r\leftarrow r+g/\wbar{y}}.\hfill\ccode{\hfill const rscalar\& y)}}
+\member{cscalar\_add\_div\_back1\_op(const rscalar\& r, const rscalar\& g, const rscalar\& x,\hspace{60pt}\mbox{}}{
+Set \m{r\leftarrow r-g\,\wbar{x}/\wbar{y}^2}}.\hfill\ccode{\hfill const rscalar\& y)}}
+\member{cscalar\_add\_pow\_back\_op(const rscalar\& r, const rscalar\& x,  const rscalar\& g, const float p,\hspace{-60pt}\mbox{}} 
+{Set \m{r\leftarrow r+c\,g\,\wbar{x^p}}.\hfill \ccode{ const float c)}}
+\member{rscalar\_add\_abs\_back\_op(const rscalar\& r, const rscalar\& g, const rscalar\& x)}{
+Set~ \m{r\leftarrow r+g}~ if~ \m{x\<\geq 0} ~and~ \m{r\leftarrow r-g} ~otherwise.}
+%\member{rscalar\_add\_ReLU\_back\_op(const rscalar\& r, const rscalar\& g, const rscalar\& x, const float c)\hspace{-30pt}\mbox{}}{
+%Set~ \m{r\leftarrow r+g}~ if~ \m{x\<\geq 0}, ~otherwise~ \m{r\leftarrow r+c\ts g}.}
+%\member{rscalar\_add\_sigmoid\_back\_op(const rscalar\& r, const rscalar\& g, const rscalar\& x)}{
+%Set \m{r\leftarrow r+g\ts x/(1\<-x)}.}
+\end{clgroup}
+
+\begin{clgroup}[Blocking operations]
+\item \hspace{-6pt}The following functions are called directly (as opposed to being pushed to the engine as an operator). 
+%and force the engine to flush all operations up to \ccode{x}.
+\\ 
+\member{vector< complex<float> > cscalar\_get(const cscalar\& z)}{
+Flush \ccode{z} and return its value(s) in a \ccode{std::vector}. }
+\end{clgroup}
+
+
+\end{cldescr}

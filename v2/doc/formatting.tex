@@ -1,0 +1,237 @@
+\usepackage{scalefnt}
+
+
+% Chapter and section headings 
+\usepackage{titlesec}
+\titleclass{\part}{top}
+\titleclass{\chapter}{straight}
+\renewcommand{\thepart}{\arabic{part}}
+\titleformat{\part}{\fontsize{44}{50}\fontfamily{pag}\selectfont}{\thepart.}{20pt}{\fontsize{44}{50}\fontfamily{pag}\selectfont}
+\titleformat{\chapter}{\normalfont\Huge}{\thechapter.}{20pt}{\fontsize{36}{44}\fontfamily{pag}\selectfont}
+\titleformat*{\section}{\fontsize{20}{26}\fontfamily{pag}\selectfont}
+\titleformat*{\subsection}{\fontsize{14}{24}\fontfamily{pag}\selectfont}
+\titleformat*{\subsubsection}{\fontsize{12}{18}\fontfamily{pag}\selectfont}
+\titlespacing*{\part}{0pt}{-30pt}{30pt}
+\titlespacing*{\chapter}{0pt}{-20pt}{30pt}
+\titlespacing*{\subsection}{0pt}{5pt}{5pt}
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{3}
+
+% Table of contents
+\usepackage{tocloft}
+\cftsetindents{part}{0pt}{0pt}
+\cftsetindents{chapter}{5pt}{5pt}
+\cftsetindents{section}{16pt}{0pt}
+\cftsetindents{subsection}{19pt}{25pt}
+\cftsetindents{subsubsection}{40pt}{40pt}
+\renewcommand{\cfttoctitlefont}{\fontsize{36}{40}\fontfamily{pag}\selectfont}
+\renewcommand{\cftpartfont}{\fontsize{14}{20} \fontfamily{pag}\selectfont\vspace{0pt}}
+\renewcommand{\cftchapfont}{\large \fontfamily{pag}\selectfont}
+\renewcommand{\cftpartpagefont}{\normalfont\fontfamily{pag}\selectfont}
+\renewcommand{\cftchappagefont}{\normalfont\fontfamily{pag}\selectfont}
+\renewcommand{\cftsecfont}{\vspace{-0pt}\fontfamily{pag}{\selectfont}}
+\renewcommand{\cftsecpagefont}{\normalfont\fontfamily{pag}\selectfont}
+\renewcommand{\cftsubsecpagefont}{\normalfont\fontfamily{pag}\selectfont}
+\setlength{\cftbeforepartskip}{14pt}
+
+% Index
+%\usepackage{makeidx}
+%\usepackage{index}
+
+% Code listings
+\usepackage{listings}
+\lstset{showstringspaces=true}
+%\lstset{language=C++}
+\lstset{basicstyle=\ttfamily}
+\lstset{numbers=left, numbersep=15pt}}
+%\lstset{backgroundcolor=\color{gray}}
+
+
+\newcommand{\newblk}{\\ \smallskip \noindent}
+\newcommand{\helvet}[1]{\fontfamily{phv}\selectfont #1}
+\newcommand{\avant}[1]{\fontfamily{pag}\selectfont #1}
+
+%\setlength{\footnotesep}{20pt}
+\addtolength{\skip\footins}{10pt}
+
+\setlength{\parindent}{0pt}
+%\setlength{\parskip}{8pt}
+
+
+% ---- Text part ---------------------------------------------------------------------------------
+
+
+% Text sections 
+\newcommand{\tsection}[1]{\section*{#1}\addcontentsline{toc}{section}{\vspace{-6pt}\\ \mbox{}~~\avant{#1}}}
+
+% Text subsections 
+\newcommand{\tsubsection}[1]{\subsection*{#1}\addcontentsline{toc}{subsection}{\vspace{-6pt}\\ \mbox{}~~\avant{#1}}}
+\newcommand{\tlsubsection}[1]{
+	\subsection*{\fontsize{20}{24}\selectfont#1}
+	\addcontentsline{toc}{subsection}{#1}}
+
+
+
+% ---- Class descripton part ----------------------------------------------------------------------
+
+\definecolor{signtrcolor}{RGB}{100,100,200}
+
+\newenvironment{cldescr}[1]{\\ \noindent{\Huge #1}\\ \\ \addcontentsline{toc}{subsection}{#1}}{\vspace{40pt}}
+\newenvironment{classd}[1]{\noindent #1}{\\}
+
+\newenvironment{memberlist}
+{\vspace{5pt}\begin{description}[leftmargin=20pt]\setlength{\parskip}{0pt}}
+{\end{description}\vspace{8pt}}
+
+\newenvironment{clgroup}[1][]{\vspace{-6pt}\subsection*{\uppercase #1}\vspace{-12pt}\begin{memberlist}}{\end{memberlist}}
+\newenvironment{clgroupn}[1][]{\vspace{-10pt}{\small #1}\begin{memberlist}}{\end{memberlist}} 
+\newenvironment{pgroup}[1][]{\vspace{-6pt}\subsubsection*{\uppercase #1}\vspace{-6pt}\begin{memberlist}}{\end{memberlist}}
+
+\newenvironment{constrd}{\begin{clgroup}[Constructors]}{ \end{clgroup}}
+\newenvironment{nconstr}{\begin{clgroup}[Named Constructors]}{ \end{clgroup}}
+\newenvironment{fund}{\begin{clgroup}[Methods]}{ \end{clgroup}}
+\newenvironment{pfund}{\begin{clgroup}[Private Methods]}{ \end{clgroup}}
+\newenvironment{vard}{\begin{clgroup}[Variables]}{ \end{clgroup}}
+
+\newcommand{\member}[2]{\vspace{2pt}\item[\ccode{#1}]\mbox{} \\ #2}
+
+\newcommand{\fmember}[3]{
+\vspace{2pt}\item[\ccode{#1}]\hfill \ccode{\color{signtrcolor} #2}\mbox{} \\ \mbox{} \hspace{-10pt} #3}
+
+\newcommand{\fmmember}[3]{
+\vspace{2pt}\item[]
+\begin{minipage}{\textwidth}
+\mbox{}\hspace{-11pt}\ccode{\begin{tabular}{l}#1\end{tabular}}\hfill 
+\ccode{\color{signtrcolor}\begin{tabular}{r}#2\end{tabular}}
+\end{minipage}
+\mbox{}\vspace{-5pt}\\ {#3}
+}
+
+%\ccode{#1}]\hfill \ccode{\color{signtrcolor} #2}\mbox{} \\ #3}
+%\newcommand{\member}[2]{\vspace{2pt}\ccode{#1} \mbox{} \\ #2}
+\newcommand{\smember}[2]{\vspace{2pt}\item[\ccode{#1}]~#2}
+\newcommand{\mmember}[2]{\vspace{2pt}
+\item[\mbox{}\hspace{-6pt}\ccode{\begin{tabular}{l}#1\end{tabular}}]\mbox{}\vspace{-0pt}\\ {#2}}
+%\newcommand{\vmember}[2]{\item[\ccode{#1}]\mbox{}\\#2}
+
+\newcommand{\pmember}[2]{\small \item[\ccode{#1}]\mbox{}\\ #2}
+\newcommand{\pmmember}[2]{\small \item[\mbox{}\hspace{-6pt}\ccode{\begin{tabular}{l}#1\end{tabular}}]\mbox{}\vspace{-0pt}\\ {#2}}
+
+
+\newcommand{\parentclass}[2]{\vspace{-12pt}\paragraph*{Derived from:}{\hspace{-0pt}\ccode{#1}~~#2}}
+\newcommand{\induced}[1]{\vspace{-12pt}\paragraph*{Induced objects:}{\hspace{-5pt}#1}}
+\newcommand{\owned}[1]{\vspace{-12pt}\paragraph*{Owned objects:}{\hspace{-0pt}#1}}
+\newcommand{\dependent}[1]{\vspace{-12pt}\paragraph*{Dependent on:}{\hspace{-5pt}#1}}
+
+\renewcommand{\textfloatsep}{10pt}
+\setlength{\partopsep}{0pt}
+%\setlength{\itemsep}{-4pt}
+\setlength{\pltopsep}{-4pt}
+\setlength{\plpartopsep}{5pt}
+\setlength{\plitemsep}{1pt}
+
+
+% ---- Examples ----------------------------------------------------------------------------------------
+
+
+% Tutorial Example 
+\newcounter{tutexample}
+\newcommand{\tutexample}[1]{
+\stepcounter{tutexample}
+\section*{\arabic{tutexample}.~#1}\\ \noindent
+\addcontentsline{toc}{section}{\vspace{-6pt}\\ \mbox{}~~~\avant{\arabic{tutexample}. #1}}
+}
+
+\newcommand{\boxedcode}[2][]{
+\bigskip 
+\centerline{\setlength{\fboxsep}{5pt} 
+\framebox[\textwidth]{\texttt{
+\parbox{.9\textwidth}{#2
+}
+}\hfill }}}
+
+
+
+\newcommand{\excode}[2][]{
+\bigskip%\bigskip 
+\centerline{\setlength{\fboxsep}{5pt} \framebox[\textwidth]{~~~~~~~~\small \lstinputlisting{#2}\hfill}}
+{\vspace{-2pt}\ccode{#1}} 
+\bigskip%\bigskip
+}
+
+\newcommand{\excodeB}[2][]{
+%\bigskip
+\bigskip 
+\centerline{\setlength{\fboxsep}{5pt} \framebox[\textwidth]{
+~~~~~~~~\footnotesize \lstinputlisting{#2}\hfill}}
+{\vspace{-2pt}\ccode{#1}} 
+%\bigskip%\bigskip
+}
+
+\newcommand{\exoutput}[2][]{
+\bigskip%\bigskip
+\centerline{\setlength{\fboxsep}{15pt} \framebox[\textwidth]{
+%\bigspkip
+~~~~\small \lstinputlisting{#2}\hfill 
+%\bigskip
+}}
+{\vspace{-2pt}Output of \ccode{#1}} 
+\bigskip%\bigskip
+}
+
+\newcommand{\exoutputB}[2][]{
+\bigskip%\bigskip
+\centerline{\setlength{\fboxsep}{10pt} \framebox[\textwidth]{
+%\bigspkip
+\mbox{}\vspace{-10pt}
+~~~~\footnotesize \lstinputlisting{#2}\hfill
+\vspace{-10pt}\mbox{} 
+%\bigskip
+}}
+{\vspace{-2pt}Output of \ccode{#1}} 
+\bigskip%\bigskip
+}
+
+\newcommand{\exoutputC}[2][]{
+\bigskip%\bigskip
+\centerline{\setlength{\fboxsep}{10pt} \framebox[\textwidth]{
+%\bigspkip
+~~~~\scriptsize \lstinputlisting{#2}\hfill 
+%\bigskip
+}}
+{\vspace{-2pt}Output of \ccode{#1}} 
+\bigskip%\bigskip
+}
+
+\newenvironment{exsummary}{\begin{compactitem}[~\m{\circ}]}{\end{compactitem}}
+
+
+
+
+% Class description sections 
+%\newcounter{clsection}[]
+%\newcommand{\clsection}[1]{\stepcounter{clsection}
+%{\fontsize{32}{40}\fontfamily{pag}\selectfont \noindent \arabic{clsection}.~#1 \\ \\ \\ \\}
+%\addcontentsline{toc}{section}{\vspace{-6pt}\\ \mbox{}~~\avant{\arabic{clsection}.~#1}} %\arabic{clsection}.
+%}
+
+% Class description subsections -- unused 
+%\newcounter{clsubsection}[clsection]
+%\newcommand{\clsubsection}[1]{\stepcounter{clsubsection}\\
+%{\fontsize{24}{30}\fontfamily{pag}\selectfont\noindent\arabic{clsubsection}.~#1 \\ \\ \\ \\}
+%\addcontentsline{toc}{subsection}{\bfseries #1}
+%}
+
+% Class description unit 
+%\newcommand{\clunit}[1]{\vspace{20pt}\\{\fontsize{24}{30}\fontfamily{pag}\selectfont \noindent #1\\ }
+%\addcontentsline{toc}{subsection}{\fontsize{9}{13}\fontfamily{pag}\selectfont #1}}
+
+%\newcommand{\clunitb}[1]{{\fontsize{34}{40}\fontfamily{pag}\selectfont \noindent #1\\ \vspace{10pt}}
+%\addcontentsline{toc}{chapter}{#1} %{\fontsize{10}{12}\fontfamily{pag}\selectfont #1}
+%}
+
+
+%\newenvironment{classdescription}[1]{\\ \noindent{\Huge #1}\\ \\ \addcontentsline{toc}{subsection}{#1}}{\clearpage}
+%\newenvironment{classdescr}[1]{\\ \noindent{\Huge #1}\\ \\ \addcontentsline{toc}{subsection}{#1}}{\vspace{40pt}}
+%\newenvironment{cldescrsub}[1]{\\ \noindent{\Huge #1}\\ \\ \addcontentsline{toc}{subsubsection}{#1}}{\vspace{40pt}}
+%\newenvironment{memberlist}{}{}

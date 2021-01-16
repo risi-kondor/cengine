@@ -1,0 +1,42 @@
+\begin{cldescr}{\ccode{BatchedOperator}}
+
+\ccode{BatchedOperator} is the virtual base class of all \ccode{Coperator}s that are batchable. 
+New batchable operators are defined by subclassing \ccode{BtachedOperator}. 
+
+\parentclass{Coperator}{}
+
+\begin{clgroup}[Member variables]
+\member{Cnode* owner}{Pointer to the compute graph node associated with this operation.}
+\member{vector<Cnode*> inputs}{Vector of pointes to the compute graph nodes corresponding to the inputs 
+of this operation.}
+\end{clgroup}
+
+\begin{clgroup}[Methods]
+\member{virtual int batcher\_id() const=0}{Return the index of this operator class. 
+The index is a static variable of the operator class that is set by the engine itself.}
+\member{virtual void set\_batcher\_id(const int i=0}{Set the index of this operator class to \m{i}. 
+This function is used by the engine to set the index of the operator class, the first time the 
+operator is encountered.}
+\\ 
+\member{virtual void exec()=0}{
+As in the \ccode{Coperator} base class, this function defines the operator's operation when 
+executed on data objects individually (not batched).} 
+\member{virtual void batched_exec()=0}{
+This function defines the operator's operation when executed on a batch of inputs. 
+}
+\\
+\member{SIGNATURE signature() const=0}{
+Return a \ccode{SIGNATURE} object that captures the given operator's signature.}
+\member{Batcher* spawn\_batcher() const=0}{
+Create a new \ccode{Batcher} object for this operator.  
+}
+\end{clgroup}
+\\
+\begin{clgroup}[I/O]
+\member{virtual string str() const=0}{
+Return a human readable representation of the operator for debugging purposes. 
+}
+\end{clgroup}
+
+
+\end{cldescr}

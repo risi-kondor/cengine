@@ -22,9 +22,9 @@ namespace Cengine{
 
 #include "Cengine.hpp"
 
-std::default_random_engine rndGen;
+//std::default_random_engine rndGen;
 mutex Cengine::CoutLock::mx;
-Cengine::Cengine* Cengine_engine=new Cengine::Cengine();
+Cengine::Cengine* cengine; //=new Cengine::Cengine();
 
 
 #ifdef _WITH_CUDA
@@ -42,10 +42,21 @@ Cengine::Cengine* Cengine_engine=new Cengine::Cengine();
 namespace Cengine{
 
   void shutdown(){
-    delete Cengine_engine;
+    delete cengine;
   }
 
 
 }
 
 
+/*
+#ifdef _WITH_CUDA
+__device__ __constant__ unsigned char cg_cmem[CG_CONST_MEM_SIZE];
+#endif 
+
+#ifdef _WITH_CUBLAS
+#include <cublas_v2.h>
+cublasHandle_t Cengine_cublas;
+//cublasCreate(&Cengine_cublas);
+#endif 
+*/

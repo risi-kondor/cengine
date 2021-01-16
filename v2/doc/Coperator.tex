@@ -1,0 +1,29 @@
+\begin{cldescr}{\ccode{Coperator}}
+
+\ccode{Coperator} is the virtual base class of all operator objects that the \ccode{Cengine} can 
+accept in its \ccode{push} method. 
+New operators are defined simply by subclassing \ccode{Coperator}. 
+
+
+
+\begin{clgroup}[Member variables]
+\member{Cnode* owner}{Pointer to the compute graph node associated with this operation.}
+\member{vector<Cnode*> inputs}{Vector of pointes to the compute graph nodes corresponding to the inputs 
+of this operation.}
+\end{clgroup}
+
+\begin{clgroup}[Methods]
+\member{virtual void exec()=0}{
+The \ccode{exec} member function carries out the actual operation. 
+This function is run by one of the CPU worker threads after all the inputs of the operator 
+have already been computed. Therefore the body of the function can assume 
+\ccode{inputs[0]->obj,...,inputs[k]->obj} point to all the correct input objects.  
+}
+\\
+\member{virtual string str() const=0}{
+Return a human readable representation of the operator for debugging purposes. 
+}
+\end{clgroup}
+
+
+\end{cldescr}
