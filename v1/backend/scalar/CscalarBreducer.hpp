@@ -3,36 +3,32 @@
 
 #include "CscalarBpack.hpp"
 
-namespace Cengine{
+namespace Cengine {
 
-  class CscalarBreducer: public CscalarBpack{
-  public:
+class CscalarBreducer : public CscalarBpack {
+ public:
+  CscalarB& target;
 
-    CscalarB& target;
+  CscalarBreducer(const int _N, CscalarB& _target)
+      : CscalarBpack(_N), target(_target) {}
 
-    CscalarBreducer(const int _N, CscalarB& _target):
-      CscalarBpack(_N), target(_target){
-    }
-
-
-    ~CscalarBreducer(){
+  ~CscalarBreducer() {
 #ifdef _WITH_CUDA
-	target.to_device(1);
-	cudaStream_t stream;
-	CUDA_SAFE(cudaStreamCreate(&stream));
-	//reduce_cu(target,stream);
-	CUDA_SAFE(cudaStreamSynchronize(stream));
-	CUDA_SAFE(cudaStreamDestroy(stream));
+    target.to_device(1);
+    cudaStream_t stream;
+    CUDA_SAFE(cudaStreamCreate(&stream));
+    // reduce_cu(target,stream);
+    CUDA_SAFE(cudaStreamSynchronize(stream));
+    CUDA_SAFE(cudaStreamDestroy(stream));
 #else
-	NOCUDA_ERROR;
+    NOCUDA_ERROR;
 #endif
-	CUDA_SAFE(cudaMemcpy(&target.val,arrg,2*sizeof(float),cudaMemcpyDeviceToHost)); 
-	CUDA_SAFE(cudaFree(arrg));
-    }
+    CUDA_SAFE(cudaMemcpy(&target.val, arrg, 2 * sizeof(float),
+                         cudaMemcpyDeviceToHost));
+    CUDA_SAFE(cudaFree(arrg));
+  }
+};
 
-
-  };
-
-}
+}  // namespace Cengine
 
 #endif

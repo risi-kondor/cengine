@@ -1,19 +1,13 @@
 #ifndef _BatchedCtensorExecutor
 #define _BatchedCtensorExecutor
 
+namespace GEnet {
 
-namespace GEnet{
+class BatchedCtensorExecutor {
+ public:
+ public:
+};
 
-  class BatchedCtensorExecutor{
-  public:
-
-
-
-  public:
-
-
-  };
-
-}
+}  // namespace GEnet
 
 #endif

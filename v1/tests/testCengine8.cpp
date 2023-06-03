@@ -7,37 +7,32 @@ using namespace Cengine;
 typedef CscalarObject Cscalar;
 typedef CtensorObject Ctensor;
 
+int main(int argc, char** argv) {
+  Cscalar x(4, fill::gaussian);
+  Cscalar y(4, fill::gaussian);
 
-int main(int argc, char** argv){
+  cout << endl << "x= " << x << endl << endl;
+  cout << endl << "y= " << y << endl << endl;
 
-  Cscalar x(4,fill::gaussian);
-  Cscalar y(4,fill::gaussian);
+  x += y;
+  cout << endl << "x+y=" << x << endl << endl;
 
-  cout<<endl<<"x= "<<x<<endl<<endl; 
-  cout<<endl<<"y= "<<y<<endl<<endl; 
+  cout << endl << "y*y=" << y * y << endl << endl;
 
-  x+=y; 
-  cout<<endl<<"x+y="<<x<<endl<<endl; 
+  Ctensor A({4, 4}, 3, fill::identity);
+  Ctensor B({4, 4}, 3, fill::sequential);
 
-  cout<<endl<<"y*y="<<y*y<<endl<<endl; 
+  Ctensor N = B.column_norms();
+  cout << N << endl << endl;
 
-  Ctensor A({4,4},3,fill::identity);
-  Ctensor B({4,4},3,fill::sequential);
+  Ctensor D = B.divide_columns(N);
+  cout << D << endl;
+  cout << D.column_norms() << endl;
+  cout << endl;
 
-  Ctensor N=B.column_norms(); 
-  cout<<N<<endl<<endl; 
+  Ctensor C = A + B;
+  cout << C << endl;
 
-  Ctensor D=B.divide_columns(N);
-  cout<<D<<endl;
-  cout<<D.column_norms()<<endl; 
-  cout<<endl;
-
-  Ctensor C=A+B;
-  cout<<C<<endl; 
-
-  Ctensor W({4,4},fill::gaussian);
-  cout<<W.mix(x)<<endl; 
-
-  
-
+  Ctensor W({4, 4}, fill::gaussian);
+  cout << W.mix(x) << endl;
 }

@@ -3,29 +3,23 @@
 
 #include "Cengine_base.hpp"
 
+namespace Cengine {
 
-namespace Cengine{
+class Batcher {
+ public:
+  // Cengine* engine;
 
+  virtual ~Batcher() {}
 
-  class Batcher{
-  public:
+  virtual void push(Coperator* op) = 0;
+  virtual void release(Cnode* node) = 0;
+  virtual void kill(Cnode* node) = 0;
 
-    //Cengine* engine;
+  virtual void release() = 0;
+  virtual int flush() = 0;
+  virtual int npending() const = 0;
+};
 
-    virtual ~Batcher(){}
+}  // namespace Cengine
 
-    virtual void push(Coperator* op)=0;
-    virtual void release(Cnode* node)=0;
-    virtual void kill(Cnode* node)=0;
-
-    virtual void release()=0; 
-    virtual int flush()=0; 
-    virtual int npending() const=0; 
-
-  };
-
-
-}
-
-
-#endif 
+#endif

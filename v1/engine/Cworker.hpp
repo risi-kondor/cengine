@@ -1,37 +1,31 @@
 #ifndef _Cworker
 #define _Cworker
 
-namespace Cengine{
+namespace Cengine {
 
-  class Cengine;
+class Cengine;
 
+class Cworker {
+ public:
+  Cengine* owner;
+  int id;
+  bool killflag = false;
+  bool working = false;
 
-  class Cworker{
-  public:
+  thread th;
 
-    Cengine* owner;
-    int id;
-    bool killflag=false; 
-    bool working=false; 
+  Cworker(Cengine* _owner, const int _id)
+      : owner(_owner), id(_id), th([this]() { this->run(); }) {}
 
-    thread th;
+  ~Cworker() {
+    killflag = true;
+    th.join();
+  }
 
-    Cworker(Cengine* _owner, const int _id): 
-      owner(_owner), id(_id), 
-      th([this](){this->run();}){}
+ public:
+  void run();
+};
 
-    ~Cworker(){
-      killflag=true; 
-      th.join();
-    }
-
-	
-  public:
-
-    void run();
-
-  };
-
-}
+}  // namespace Cengine
 
 #endif

@@ -1,54 +1,36 @@
 #ifndef _CtensorB_mix_ops
 #define _CtensorB_mix_ops
 
-#include "CtensorBpack.hpp"
 #include "BatcherA.hpp"
+#include "CtensorBpack.hpp"
 #include "ctensor_Mprod_signature.hpp"
 
+namespace Cengine {
 
-namespace Cengine{
+class cscalar_mix_op : public CumulativeOp3<CscalarB, CtensorB, CscalarB> {
+ public:
+  using CumulativeOp3::CumulativeOp3;
 
-  class cscalar_mix_op: public CumulativeOp3<CscalarB,CtensorB,CscalarB>{
-  public:
+  void exec(CscalarB& r, const CtensorB& M, const CscalarB& x) {
+    M.mix_into(r, x);
+  }
 
-    using CumulativeOp3::CumulativeOp3;
+ public:
+  string str() const { return "cscalar_mix_op" + inp_str(); }
+};
 
-    void exec(CscalarB& r, const CtensorB& M, const CscalarB& x){
-      M.mix_into(r,x);
-    }
+class ctensor_mix_op : public CumulativeOp3<CtensorB, CtensorB, CtensorB> {
+ public:
+  using CumulativeOp3::CumulativeOp3;
 
+  void exec(CtensorB& r, const CtensorB& M, const CtensorB& x) {
+    M.mix_into(r, x);
+  }
 
+ public:
+  string str() const { return "ctensor_mix_op" + inp_str(); }
+};
 
-  public:
-
-    string str() const{
-      return "cscalar_mix_op"+inp_str();
-    }
-
-
-  };
-
-
-  class ctensor_mix_op: public CumulativeOp3<CtensorB,CtensorB,CtensorB>{
-  public:
-
-    using CumulativeOp3::CumulativeOp3;
-
-    void exec(CtensorB& r, const CtensorB& M, const CtensorB& x){
-      M.mix_into(r,x);
-    }
-
-
-
-  public:
-
-    string str() const{
-      return "ctensor_mix_op"+inp_str();
-    }
-
-
-  };
-
-}
+}  // namespace Cengine
 
 #endif

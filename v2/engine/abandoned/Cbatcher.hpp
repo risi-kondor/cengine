@@ -1,25 +1,19 @@
 #ifndef _Cbatcher
 #define _Cbatcher
 
-//#include ""
+// #include ""
 
-namespace Cengine{
+namespace Cengine {
 
-  class Cbatcher{
-  public:
+class Cbatcher {
+ public:
+  set<Cnode*> waiting;
+  vector<Cnode*> ready;
 
-    set<Cnode*> waiting;
-    vector<Cnode*> ready;
+ public:
+  void push(Coperator* op) {}
+};
 
-
-  public:
-
-    void push(Coperator* op){
-    }
-
-
-  };
-
-}
+}  // namespace Cengine
 
 #endif
