@@ -1,3 +1,15 @@
+/*
+ * This file is part of Cengine, an asynchronous C++/CUDA compute engine. 
+ *  
+ * Copyright (c) 2020- Imre Risi Kondor
+ *
+ * This source code file is subject to the terms of the noncommercial 
+ * license distributed with cnine in the file LICENSE.TXT. Commercial 
+ * use is prohibited. All redistributed versions of this file (in 
+ * original or modified form) must retain this copyright notice and 
+ * must be accompanied by a verbatim copy of the license. 
+ *
+ */
 
 
 template<int selector> 
@@ -48,7 +60,7 @@ void add_Mprod(const CtensorBpack& x, const CtensorBpack& y, const int nx=1, con
 
   //cout<<"Batched Mprod"<<endl;
 
-  CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_N,J,I,K,&alpha0,
+  CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_N,J,I,K,&const,
       const_cast<const float**>(y.parr),J,const_cast<const float**>(x.parr),K,&beta,parr,J,N)); 
   CUBLAS_SAFE(cublasSgemmBatched(Cengine_cublas,CUBLAS_OP_N,CUBLAS_OP_N,J,I,K,&alpha1,
       const_cast<const float**>(y.parrc),J,const_cast<const float**>(x.parrc),K,&beta,parr,J,N)); 

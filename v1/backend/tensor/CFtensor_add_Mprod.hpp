@@ -1,3 +1,16 @@
+/*
+ * This file is part of Cengine, an asynchronous C++/CUDA compute engine. 
+ *  
+ * Copyright (c) 2020- Imre Risi Kondor
+ *
+ * This source code file is subject to the terms of the noncommercial 
+ * license distributed with cnine in the file LICENSE.TXT. Commercial 
+ * use is prohibited. All redistributed versions of this file (in 
+ * original or modified form) must retain this copyright notice and 
+ * must be accompanied by a verbatim copy of the license. 
+ *
+ */
+
 // Simple vector/matrix matrix/vector matrix/matrix multiply routine
 // The last nx indices of x are contracted with the first ny indices of y
 // Selector: x is conjugated if selector is 1 or 3

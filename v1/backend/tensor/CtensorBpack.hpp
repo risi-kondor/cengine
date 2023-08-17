@@ -1,3 +1,15 @@
+/*
+ * This file is part of Cengine, an asynchronous C++/CUDA compute engine. 
+ *  
+ * Copyright (c) 2020- Imre Risi Kondor
+ *
+ * This source code file is subject to the terms of the noncommercial 
+ * license distributed with cnine in the file LICENSE.TXT. Commercial 
+ * use is prohibited. All redistributed versions of this file (in 
+ * original or modified form) must retain this copyright notice and 
+ * must be accompanied by a verbatim copy of the license. 
+ *
+ */
 #ifndef _CtensorBpack
 #define _CtensorBpack
 
@@ -77,7 +89,7 @@ namespace Cengine{
       CUDA_SAFE(cudaMemcpy(parrc,arrc,N*sizeof(float*),cudaMemcpyHostToDevice));  
     }
 
-    ~CtensorBpack(){
+    ~CtensorBpack(){ // what about arrg? memory leak?
       if(parr) CUDA_SAFE(cudaFree(parr));
       if(parrc) CUDA_SAFE(cudaFree(parrc));
     }
