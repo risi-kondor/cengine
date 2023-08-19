@@ -23,8 +23,11 @@ namespace Cengine{
 #include "Cengine.hpp"
 
 //std::default_random_engine rndGen;
-mutex Cengine::CoutLock::mx;
-Cengine::Cengine* cengine; //=new Cengine::Cengine();
+namespace Cengine{
+
+mutex CoutLock::mx;
+Cengine* cengine; //=new Cengine::Cengine();
+}
 
 
 #ifdef _WITH_CUDA

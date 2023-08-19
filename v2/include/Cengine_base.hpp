@@ -1,6 +1,34 @@
+/*
+ * This file is part of Cengine, an asynchronous C++/CUDA compute engine. 
+ *  
+ * Copyright (c) 2020- Imre Risi Kondor
+ *
+ * This source code file is subject to the terms of the noncommercial 
+ * license distributed with cnine in the file LICENSE.TXT. Commercial 
+ * use is prohibited. All redistributed versions of this file (in 
+ * original or modified form) must retain this copyright notice and 
+ * must be accompanied by a verbatim copy of the license. 
+ *
+ */
 #ifndef _Cengine_base 
 #define _Cengine_base 
 
+#include <mutex>
+#include <atomic>
+#include <condition_variable>
+#include <complex>
+#include <iostream>
+#include <unordered_map>
+#include <random>
+#include <functional> 
+#include <thread>
+#include <array>
+#include <set>
+#include <algorithm>
+
+#include "Cengine_helpers.hpp"
+
+using namespace std; 
 
 
 // ---- OPTIONS ----------------------------------------------------------------------------------------------
@@ -55,6 +83,32 @@
 #else
 #define CENGINE_QUEUE_ECHO(cmd);
 #endif 
+
+
+// ---- WARNINGS ---------------------------------------------------------------------------------------------
+
+
+//#define COPY_WARNING
+//#define COPY_WARNING cout<<"\e[1mWarning:\e[0m "<<classname()<<" copied."<<endl;
+//#define ASSIGN_WARNING
+//#define ASSIGN_WARNING cout<<"\e[1mWarning:\e[0m "<<classname()<<" assigned."<<endl;
+//#define CONVERT_WARNING(a,b)
+//#define CONVERT_WARNING(a,b) cout<<"\e[1mWarning:\e[0m "<<a<<" converted to "<<b<<"."<<endl;
+
+//#define FCG_ASSERT(condition, message)				\
+//    if (!(condition)) {cout<<message<<endl; assert ((condition)); exit(-1); }
+
+//#define FCG_UNIMPL() printf("Cengine error: function \"%s\" not implemented.\n",__PRETTY_FUNCTION__);
+//#define FCG_NOTIMPL() printf("Cengine error: function \"%s\" not implemented.\n",__PRETTY_FUNCTION__);
+#define CENGINE_UNIMPL() printf("Cengine error: function \"%s\" not implemented.\n",__PRETTY_FUNCTION__);
+//#define GENET_UNIMPL() printf("GEnet error: function \"%s\" not implemented.\n",__PRETTY_FUNCTION__);
+
+#define CENGINE_DEPRECATED() printf("Cengine warning: function \"%s\" is deprecated.\n",__PRETTY_FUNCTION__);
+//#define FCG_DEPRECATED(message) printf("Warning: %s is deprecated.\n",(message));
+
+//#define CENGINE_COUT(cmd) {CoutLock lk; cout<<cmd<<endl;}
+
+//#define FCG_WARNING(message) printf("Warning: %s.\n",(message));
 
 
 // ---- VERIFICATION -----------------------------------------------------------------------------------------
